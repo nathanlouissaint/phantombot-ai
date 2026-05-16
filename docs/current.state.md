@@ -1,6 +1,4 @@
-# PhantomBotAI — System Overview
-
-# Core Identity
+We are continuing development of PhantomBotAI from the current architecture-first behavioral commerce infrastructure state.
 
 PhantomBotAI is an AI-native behavioral commerce and revenue recovery platform for Shopify.
 
@@ -11,470 +9,238 @@ PhantomBotAI is NOT:
 * an analytics dashboard
 * a generic automation platform
 
-PhantomBotAI is:
+PhantomBotAI IS:
 
 * a behavioral commerce operating system
 * an adaptive recovery orchestration engine
 * an event-driven revenue recovery platform
 
----
+Core product flow:
 
-# Core Product Thesis
-
-The system detects:
-
-* shopper hesitation
-* trust degradation
-* abandoned purchase intent
-* behavioral drop-off patterns
-* conversion friction
-
-Then:
-
-* generates recovery opportunities
-* orchestrates interventions
-* adapts recovery workflows
-* optimizes recovered revenue
-
-Core flow:
-
-```txt
 Shopper Behavior
 → Behavioral Intelligence
 → Recovery Opportunity
 → Workflow Orchestration
 → Adaptive Intervention
 → Recovered Revenue
-```
 
----
+Current strategic direction:
 
-# Strategic Direction
-
-Architecture-first system.
+* architecture-first
+* infrastructure-first
+* orchestration-first
 
 NOT UI-first.
 
-Primary priorities:
-
-* event infrastructure
-* behavioral intelligence
-* orchestration systems
-* adaptive recovery logic
-* revenue attribution
-* scalable workflow execution
-
-Avoid:
+We are intentionally avoiding:
 
 * dashboard-heavy development
-* settings-first architecture
-* generic Shopify app UX
+* settings-heavy architecture
+* generic Shopify automation tooling
 * AI chat gimmicks
-* disconnected automation tooling
+* disconnected automation systems
 
----
-
-# Current Tech Stack
-
-## Frontend
+Current frontend stack:
 
 * React
 * TypeScript
 * Vite
 
-## Planned Infrastructure
+Planned infrastructure:
 
 * PostgreSQL
 * Redis
 * Kafka or Redpanda
 * ClickHouse
-* Worker-based orchestration runtime
+* worker orchestration runtime
 
----
+Current architecture principles:
 
-# Current Project Structure
+* event-driven architecture
+* domain ownership
+* centralized behavioral state
+* workflow isolation
+* deterministic processing
+* adaptive recovery systems
+* orchestration-first infrastructure
 
-```txt
-src/features/
+Current project file structure:
 
-commerce/
-events/
-intelligence/
-recovery/
-workflows/
-shared/
-```
+.
+├── app
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── README.md
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── assets
+│   │   │   ├── hero.png
+│   │   │   ├── react.svg
+│   │   │   └── vite.svg
+│   │   ├── features
+│   │   │   ├── commerce
+│   │   │   │   ├── domain
+│   │   │   │   │   └── session.types.ts
+│   │   │   │   └── services
+│   │   │   │       └── session-store.ts
+│   │   │   ├── events
+│   │   │   │   ├── domain
+│   │   │   │   │   └── event.types.ts
+│   │   │   │   ├── services
+│   │   │   │   │   └── event-bus.ts
+│   │   │   │   └── utils
+│   │   │   │       └── event-replay.ts
+│   │   │   ├── intelligence
+│   │   │   │   ├── domain
+│   │   │   │   │   └── behavior-signal.types.ts
+│   │   │   │   └── services
+│   │   │   │       ├── hesitation-detector.ts
+│   │   │   │       ├── intervention-selector.ts
+│   │   │   │       └── recovery-score-engine.ts
+│   │   │   ├── recovery
+│   │   │   │   ├── components
+│   │   │   │   │   └── RecoveryOpportunityFeed.tsx
+│   │   │   │   ├── domain
+│   │   │   │   │   ├── intervention.types.ts
+│   │   │   │   │   ├── recovery-opportunity.types.ts
+│   │   │   │   │   └── recovery-state-machine.ts
+│   │   │   │   └── services
+│   │   │   │       ├── intervention-engine.ts
+│   │   │   │       ├── recovery-opportunity-engine.ts
+│   │   │   │       └── revenue-attribution.ts
+│   │   │   ├── shared
+│   │   │   │   ├── config
+│   │   │   │   │   └── recovery.config.ts
+│   │   │   │   └── demo-pipeline.ts
+│   │   │   └── workflows
+│   │   │       ├── domain
+│   │   │       │   └── workflow.types.ts
+│   │   │       └── services
+│   │   │           ├── workflow-orchestrator.ts
+│   │   │           └── workflow-runtime.ts
+│   │   ├── index.css
+│   │   └── main.tsx
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── docs
+│   ├── cloud-architecture.md
+│   ├── current.state.md
+│   ├── go-to-market.md
+│   ├── Gpt-Prompt.md
+│   ├── linkedin-content-plan.md
+│   ├── marketing-angles.md
+│   ├── mvp-roadmap.md
+│   ├── pricing-strategy.md
+│   ├── product-strategy.md
+│   ├── shopify-strategy.md
+│   └── system-design.md
+├── FILE_STRUCTURE.md
+├── README.md
+└── src
+└── features
+└── commerce
+├── domain
+│   └── session.types.ts
+└── services
+└── session-store.ts
 
----
+Current implemented infrastructure:
 
-# Current System Architecture
+Events:
 
-## Event Infrastructure
-
-Files:
-
-* events/domain/event.types.ts
-* events/services/event-bus.ts
-
-Purpose:
-
-* centralized event orchestration
-* behavioral signal propagation
-* workflow triggering foundation
-
-Capabilities:
-
-* event publishing
-* event subscriptions
 * canonical event schema
-* orchestration entrypoint
+* event bus
+* event replay utilities
 
-Current event categories:
+Commerce:
 
-### Commerce Events
-
-* shopper.page_viewed
-* shopper.product_viewed
-* shopper.cart_updated
-* shopper.checkout_started
-* shopper.checkout_abandoned
-
-### Behavioral Events
-
-* behavior.hesitation_detected
-* behavior.intent_increased
-* behavior.trust_degraded
-
-### Recovery Events
-
-* recovery.opportunity_created
-* recovery.workflow_triggered
-* recovery.intervention_rendered
-* recovery.revenue_recovered
-
----
-
-# Commerce Session Engine
-
-Files:
-
-* commerce/domain/session.types.ts
-* commerce/services/session-store.ts
-
-Purpose:
-
-* centralized behavioral memory
+* centralized session model
 * session reconstruction
-* shopper state accumulation
+* behavioral state accumulation
 
-Capabilities:
-
-* cart tracking
-* product tracking
-* engagement tracking
-* attribution storage
-* session timeline history
-* intent accumulation
-
-Session tracks:
-
-* anonymous shopper identity
-* customer identity
-* attribution source
-* cart value
-* checkout progress
-* behavioral scores
-* engagement depth
-* timeline reconstruction
-
----
-
-# Behavioral Intelligence Layer
-
-Files:
-
-* intelligence/domain/behavior-signal.types.ts
-* intelligence/services/hesitation-detector.ts
-
-Purpose:
-
-* transform shopper behavior into intelligence
-
-Capabilities:
+Intelligence:
 
 * hesitation detection
-* behavioral signal generation
-* confidence scoring
-* purchase intent scoring
+* behavioral signals
+* recovery scoring
+* intervention selection
 
-Current signal types:
+Recovery:
 
-* hesitation
-* trust_breakdown
-* purchase_intent
-* comparison_behavior
+* recovery opportunity engine
+* recovery state machine
+* intervention domain
+* intervention engine
+* revenue attribution scaffolding
+* merchant recovery feed
 
-Current intelligence logic:
+Workflows:
 
-* high engagement
-* cart creation
-* checkout progression
-* stalled purchase flow
+* workflow orchestrator
+* workflow runtime foundation
 
----
+Shared:
 
-# Recovery Opportunity Engine
+* orchestration demo pipeline
+* centralized recovery config
 
-Files:
+Current working behavioral pipeline:
 
-* recovery/domain/recovery-opportunity.types.ts
-* recovery/services/recovery-opportunity-engine.ts
-
-Purpose:
-
-* convert intelligence into merchant recovery actions
-
-Capabilities:
-
-* opportunity generation
-* opportunity deduplication
-* priority assignment
-* revenue-at-risk calculation
-
-Current output:
-merchant-facing recovery feed.
-
----
-
-# Merchant Recovery Feed
-
-Files:
-
-* recovery/components/RecoveryOpportunityFeed.tsx
-
-Purpose:
-
-* operational recovery cockpit
-* merchant observability layer
-
-Displays:
-
-* revenue at risk
-* recovery status
-* priority level
-* behavioral reasoning
-
-Important:
-This is NOT the product moat.
-
-The moat is:
-behavioral intelligence infrastructure.
-
----
-
-# Demo Behavioral Pipeline
-
-Files:
-
-* shared/demo-pipeline.ts
-
-Purpose:
-
-* orchestration simulation
-* behavioral flow testing
-* event replay simulation
-
-Current pipeline:
-
-```txt
 Shopify Event
 → Event Bus
 → Session Context
 → Hesitation Detection
 → Recovery Opportunity
 → Merchant Feed
-```
 
-Capabilities:
+Current working UI:
+
+* dark-mode merchant recovery feed
+* simulated recovery opportunities
+* end-to-end orchestration functioning
+
+Critical lessons already learned:
+
+* React StrictMode caused duplicate event execution
+* HMR caused replay duplication
+* event systems must be idempotent
+* orchestration systems require replay safety
+* singleton orchestration layers require reset boundaries
+
+Current technical debt:
+
+* no persistence layer yet
+* no PostgreSQL integration
+* no Redis session caching
+* no Kafka/Redpanda streaming
+* no ClickHouse analytics layer
+* no durable workflow execution
+* no adaptive AI optimization loop
+* no deterministic replay controls yet
+
+Immediate next priorities:
+
+1. durable persistence layer
+2. PostgreSQL integration
+3. Redis session cache
+4. deterministic replay controls
+5. workflow execution lifecycle
+6. adaptive intervention orchestration
+7. revenue attribution pipeline
+8. event streaming architecture
+9. worker/runtime separation
+10. recovery optimization loops
+
+Long-term architecture target:
 
-* pipeline bootstrap
-* simulated shopper events
-* orchestration verification
-
----
-
-# Current Working System
-
-Current UI:
-
-* dark-mode merchant feed
-* live behavioral simulation
-* recovery opportunity rendering
-
-Current behavior:
-
-* simulated shopper activity
-* hesitation detection
-* revenue opportunity generation
-* merchant recovery feed rendering
-
-System currently functioning end-to-end.
-
----
-
-# Architecture Principles
-
-## Event-Driven Architecture
-
-All intelligence originates from events.
-
-Everything downstream depends on:
-
-* event consistency
-* orchestration integrity
-* deterministic processing
-
----
-
-## Domain Ownership
-
-Each domain owns:
-
-* its state
-* its orchestration
-* its lifecycle
-* its logic
-
-Avoid:
-
-* shared mutable chaos
-* random utility abstractions
-* cross-domain coupling
-
----
-
-## Centralized Behavioral State
-
-The commerce session model acts as:
-
-* behavioral memory
-* orchestration context
-* AI context substrate
-* recovery intelligence foundation
-
----
-
-## Adaptive Recovery Systems
-
-Future system direction:
-
-* adaptive intervention selection
-* behavioral optimization
-* AI-assisted orchestration
-* reinforcement learning loops
-
----
-
-## Workflow Isolation
-
-Workflows must remain:
-
-* composable
-* isolated
-* replayable
-* deterministic
-
----
-
-# Current Lessons Learned
-
-## React Strict Mode Duplication
-
-Observed:
-duplicate recovery opportunities.
-
-Cause:
-useEffect double execution.
-
-Impact:
-duplicate event simulation.
-
-Resolution:
-removed React.StrictMode.
-
-Lesson:
-all event systems must be idempotent.
-
----
-
-## Event Replay Issues
-
-Observed:
-duplicate subscribers via HMR.
-
-Cause:
-singleton in-memory orchestration.
-
-Lesson:
-event systems require replay safety and reset boundaries.
-
----
-
-# Current Technical Debt
-
-Not yet implemented:
-
-## Persistence
-
-* PostgreSQL storage
-* Redis session cache
-* durable event storage
-
-## Recovery Infrastructure
-
-* recovery state machine
-* intervention lifecycle
-* orchestration runtime
-
-## Intelligence Infrastructure
-
-* recovery scoring engine
-* intervention selector
-* adaptive optimization
-* AI feedback loops
-
-## Reliability Infrastructure
-
-* deterministic replay
-* event reset controls
-* workflow retries
-* replay-safe orchestration
-
-## Analytics Infrastructure
-
-* revenue attribution
-* intervention performance scoring
-* conversion lift tracking
-
----
-
-# Immediate Build Priorities
-
-1. recovery state machine
-2. intervention domain
-3. workflow runtime
-4. recovery scoring engine
-5. intervention selector
-6. revenue attribution
-7. deterministic replay system
-
----
-
-# Long-Term Platform Architecture
-
-Target architecture:
-
-```txt
 Event Stream
 → Session Intelligence
 → Behavioral Models
@@ -483,11 +249,6 @@ Event Stream
 → Adaptive Intervention Layer
 → Revenue Attribution
 → Optimization Feedback Loop
-```
-
----
-
-# Future Competitive Moat
 
 The moat is NOT:
 
@@ -499,54 +260,26 @@ The moat is NOT:
 The moat IS:
 
 * behavioral commerce intelligence
-* recovery orchestration infrastructure
-* adaptive intervention optimization
-* proprietary recovery intelligence graph
+* adaptive recovery orchestration
+* proprietary recovery intelligence graphs
+* intervention optimization infrastructure
 
-Future proprietary loop:
+Act as:
 
-```txt
-Behavior Pattern
-→ Intervention
-→ Recovery Outcome
-→ Revenue Result
-→ Optimization Feedback
-```
+* senior SaaS systems architect
+* Shopify platform strategist
+* AI systems architect
+* startup CTO
 
-This becomes:
+Focus on:
 
-* AI training infrastructure
-* merchant retention engine
-* conversion optimization moat
+* scalable architecture
+* event-driven systems
+* orchestration infrastructure
+* behavioral intelligence
+* merchant ROI
+* operational simplicity
+* infrastructure depth
+* long-term defensibility
 
----
-
-# Strategic Warning
-
-DO NOT become:
-"Klaviyo + AI"
-
-That market is commoditized.
-
-Build:
-behavioral recovery infrastructure.
-
-That is the category opportunity.
-
----
-
-# Current Milestone Status
-
-Completed milestone:
-
-```txt
-Shopify Event
-→ Session Context
-→ Hesitation Detection
-→ Recovery Opportunity
-→ Merchant Feed
-```
-
-System operational end-to-end.
-
-Architecture foundation established.
+Continue building from this exact state without resetting context.
