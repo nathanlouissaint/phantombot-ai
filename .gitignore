@@ -1,0 +1,12 @@
+node_modules
+.env
+.env.*
+.vite
+dist
+build
+coverage
+.DS_Store
+.shopify
+.cache
+.vercel
+.idea
