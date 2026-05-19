@@ -1,29 +1,19 @@
-# 5/18/26
+We are continuing PhantomBotAI from the current deterministic behavioral infrastructure state.
 
-# PhantomBotAI — Infrastructure Continuation Prompt
+Current infrastructure status:
 
-We are continuing development of PhantomBotAI from the current durable behavioral infrastructure state.
+PhantomBotAI has successfully completed:
 
-Current architecture status:
+- canonical behavioral ingestion
+- immutable event persistence
+- replay-safe event ordering
+- deterministic projection runtime
+- session projection workers
+- replay controller infrastructure
+- checkpoint rewinds
+- deterministic projection rebuilding
 
-PhantomBotAI has officially transitioned from:
-
-frontend behavioral orchestration prototype
-
-to:
-
-replay-safe event-driven behavioral infrastructure.
-
-Current operational infrastructure:
-
-## Infrastructure Runtime
-
-Operational containers:
-
-- phantom-postgres
-- phantom-redis
-
-Infrastructure stack:
+Operational infrastructure:
 
 - Docker
 - PostgreSQL
@@ -33,175 +23,101 @@ Infrastructure stack:
 - Zod
 - tsx runtime
 
----
+Operational containers:
 
-# Current Operational Capabilities
+- phantom-postgres
+- phantom-redis
 
-Fully working pipeline:
+Current runtime architecture:
 
 Shopify Event
 → Fastify Ingestion API
 → Zod Validation
 → Redis Idempotency
 → PostgreSQL Persistence
-→ Replay Protection
+→ Projection Runtime
+→ Session Projection Worker
+→ behavior_sessions
+→ Projection Checkpoints
 
-Validated capabilities:
+Current validated infrastructure:
 
-- canonical event ingestion
-- immutable behavioral persistence
-- replay-safe processing
-- idempotent event handling
-- deterministic ingestion
-- backend-owned orchestration boundary
+- replay-safe persistence
+- deterministic replay ordering
+- disposable projections
+- replay reconstruction
+- ordered event consumption
+- materialized behavioral state
+- checkpoint rewinds
+- replay-safe session rebuilding
 
----
+Current PostgreSQL infrastructure:
 
-# Current Repo Structure
+## behavior_events
 
-/apps
-  /ingestion-api
+Includes:
 
-/infrastructure
-  /docker
-  /postgres
-  /redis
+- immutable append-only storage
+- sequence_id BIGSERIAL UNIQUE
+- deterministic replay ordering
 
-Current ingestion API structure:
+## projection_checkpoints
 
-src
-├── lib
-│   ├── postgres.ts
-│   └── redis.ts
-├── routes
-│   └── ingest.route.ts
-├── schemas
-│   └── canonical-event.schema.ts
-├── services
-│   ├── event-store.service.ts
-│   └── idempotency.service.ts
-└── server.ts
+Supports:
 
----
+- replay progression
+- checkpoint rewinds
+- worker resumption
 
-# Current PostgreSQL Schema
+## behavior_sessions
 
-behavior_events table:
+Supports:
 
-- immutable
-- append-only
-- replay-safe
-- event-sourced
+- deterministic behavioral projections
+- replayable session reconstruction
+- operational behavioral state
 
-Columns:
+Current architecture weakness:
 
-- event_id
-- shop_id
-- session_id
-- event_type
-- event_version
-- payload
-- source
-- occurred_at
-- ingested_at
+Projection processing is NOT transactional yet.
 
----
+Current dangerous runtime flow:
 
-# Critical Architecture Principles
+process event
+→ update projection
+→ crash
+→ checkpoint not updated
+→ replay duplicates projection writes
 
-Official enforced infrastructure rules:
+Current priority:
 
-1. No orchestration before persistence
-2. All event systems must be idempotent
-3. Behavioral history must be immutable
-4. Replay must be deterministic
-5. Frontend orchestration ownership is prohibited
-6. Runtime ownership belongs to infrastructure
-7. Event ingestion must remain canonical
+# Phase 2C — Transactional Projection Runtime
 
----
+Immediate objectives:
 
-# Major Infrastructure Lessons Learned
-
-## Runtime Isolation
-
-Encountered local PostgreSQL collisions.
-
-Final runtime mapping:
-
-- local postgres: 5432
-- PhantomBotAI postgres: 5433
-
-Infrastructure isolation is now mandatory.
-
----
-
-# Current Strategic Direction
-
-We are NOT building:
-
-- chatbot UI
-- dashboards
-- workflow builders
-- generic Shopify automation
-- shallow AI tooling
-
-We ARE building:
-
-behavioral intelligence infrastructure.
-
-Core moat:
-
-- replay-safe orchestration
-- behavioral event sourcing
-- adaptive recovery infrastructure
-- deterministic behavioral intelligence
-- recovery optimization systems
-
----
-
-# Immediate Next Objectives
-
-Build next:
-
-1. Internal runtime event publisher
-2. Runtime event bus abstraction
-3. Worker runtime service
-4. Session reconstruction worker
-5. Behavioral accumulation engine
-6. Recovery orchestration workers
-7. Deterministic replay controller
-
----
-
-# Next Planned Runtime Flow
-
-Persisted Event
-→ Internal Event Publisher
-→ Worker Runtime
-→ Session Reconstruction
-→ Behavioral Accumulation
-→ Recovery Intelligence
-→ Recovery Opportunity Engine
-
----
+1. transactional projection processing
+2. atomic checkpoint advancement
+3. projection consistency guarantees
+4. replay correctness protection
+5. runtime hardening
+6. graceful shutdown
+7. batching + backpressure
+8. deterministic failure recovery
 
 Act as:
-
 - senior distributed systems architect
-- AI infrastructure architect
-- event-driven systems CTO
-- behavioral commerce infrastructure strategist
+- event-sourcing infrastructure architect
+- replay-safe runtime systems CTO
+- behavioral intelligence infrastructure strategist
+
+Continue from this exact infrastructure state without resetting context.
 
 Focus on:
-
-- deterministic systems
-- replay-safe infrastructure
-- worker orchestration
-- event sourcing
-- behavioral intelligence
-- runtime durability
-- scalable event-driven design
-- long-term infrastructure moat
-
-Continue from this exact system state without resetting context.
+- replay determinism
+- transactional correctness
+- worker runtime safety
+- event-sourced behavioral infrastructure
+- scalable projection systems
+- deterministic state reconstruction
+- operational durability
+- infrastructure moat development
