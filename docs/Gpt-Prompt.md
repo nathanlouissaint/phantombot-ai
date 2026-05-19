@@ -1,167 +1,207 @@
+# 5/18/26
 
-* GPT Prompt 5/16/26 
+# PhantomBotAI — Infrastructure Continuation Prompt
 
-We are continuing development of PhantomBotAI from the current architecture-first behavioral commerce infrastructure state.
+We are continuing development of PhantomBotAI from the current durable behavioral infrastructure state.
 
-Current completed infrastructure:
+Current architecture status:
 
-* canonical event schema
-* event bus
-* commerce session engine
-* behavioral intelligence layer
-* hesitation detection engine
-* recovery opportunity engine
-* recovery opportunity deduplication
-* merchant recovery feed
-* orchestration demo pipeline
+PhantomBotAI has officially transitioned from:
 
-Current working behavioral flow:
+frontend behavioral orchestration prototype
+
+to:
+
+replay-safe event-driven behavioral infrastructure.
+
+Current operational infrastructure:
+
+## Infrastructure Runtime
+
+Operational containers:
+
+- phantom-postgres
+- phantom-redis
+
+Infrastructure stack:
+
+- Docker
+- PostgreSQL
+- Redis
+- Fastify
+- TypeScript
+- Zod
+- tsx runtime
+
+---
+
+# Current Operational Capabilities
+
+Fully working pipeline:
 
 Shopify Event
-→ Event Bus
-→ Session Context
-→ Hesitation Detection
-→ Recovery Opportunity
-→ Merchant Feed
+→ Fastify Ingestion API
+→ Zod Validation
+→ Redis Idempotency
+→ PostgreSQL Persistence
+→ Replay Protection
 
-Current architecture principles:
+Validated capabilities:
 
-* event-driven architecture
-* domain ownership
-* centralized behavioral state
-* workflow isolation
-* orchestration-first infrastructure
-* adaptive recovery systems
-* deterministic processing
+- canonical event ingestion
+- immutable behavioral persistence
+- replay-safe processing
+- idempotent event handling
+- deterministic ingestion
+- backend-owned orchestration boundary
 
-Current frontend stack:
+---
 
-* React
-* TypeScript
-* Vite
+# Current Repo Structure
 
-Planned infrastructure:
+/apps
+  /ingestion-api
 
-* PostgreSQL
-* Redis
-* Kafka or Redpanda
-* ClickHouse
-* worker orchestration runtime
+/infrastructure
+  /docker
+  /postgres
+  /redis
 
-Current project structure:
+Current ingestion API structure:
 
-src/features/
+src
+├── lib
+│   ├── postgres.ts
+│   └── redis.ts
+├── routes
+│   └── ingest.route.ts
+├── schemas
+│   └── canonical-event.schema.ts
+├── services
+│   ├── event-store.service.ts
+│   └── idempotency.service.ts
+└── server.ts
 
-commerce/
-events/
-intelligence/
-recovery/
-workflows/
-shared/
+---
 
-Current implemented domains:
+# Current PostgreSQL Schema
 
-Events:
+behavior_events table:
 
-* event.types.ts
-* event-bus.ts
+- immutable
+- append-only
+- replay-safe
+- event-sourced
 
-Commerce:
+Columns:
 
-* session.types.ts
-* session-store.ts
+- event_id
+- shop_id
+- session_id
+- event_type
+- event_version
+- payload
+- source
+- occurred_at
+- ingested_at
 
-Intelligence:
+---
 
-* behavior-signal.types.ts
-* hesitation-detector.ts
+# Critical Architecture Principles
 
-Recovery:
+Official enforced infrastructure rules:
 
-* recovery-opportunity.types.ts
-* recovery-opportunity-engine.ts
-* RecoveryOpportunityFeed.tsx
+1. No orchestration before persistence
+2. All event systems must be idempotent
+3. Behavioral history must be immutable
+4. Replay must be deterministic
+5. Frontend orchestration ownership is prohibited
+6. Runtime ownership belongs to infrastructure
+7. Event ingestion must remain canonical
 
-Shared:
+---
 
-* demo-pipeline.ts
+# Major Infrastructure Lessons Learned
 
-Current system capabilities:
+## Runtime Isolation
 
-* event publishing
-* event subscriptions
-* canonical behavioral session tracking
-* timeline reconstruction
-* hesitation detection
-* recovery opportunity generation
-* merchant recovery feed rendering
+Encountered local PostgreSQL collisions.
 
-Current UI:
+Final runtime mapping:
 
-* dark-mode recovery feed
-* simulated shopper recovery opportunity
-* end-to-end orchestration working
+- local postgres: 5432
+- PhantomBotAI postgres: 5433
 
-Critical lessons already learned:
+Infrastructure isolation is now mandatory.
 
-* React StrictMode caused duplicate event execution
-* singleton event orchestration caused replay duplication
-* all event systems must be idempotent
-* orchestration systems require replay safety
+---
 
-Current technical debt:
+# Current Strategic Direction
 
-* no persistence layer
-* no workflow runtime
-* no recovery lifecycle state machine
-* no intervention orchestration
-* no revenue attribution
-* no deterministic replay infrastructure
-
-Immediate next priorities:
-
-1. recovery state machine
-2. intervention domain
-3. workflow runtime
-4. recovery scoring engine
-5. intervention selector
-6. revenue attribution
-7. deterministic event replay system
-
-Strategic direction:
 We are NOT building:
 
-* chatbot UI
-* analytics dashboards
-* settings-heavy systems
-* generic Shopify automation tooling
+- chatbot UI
+- dashboards
+- workflow builders
+- generic Shopify automation
+- shallow AI tooling
 
 We ARE building:
-behavioral commerce infrastructure.
 
-The moat is:
+behavioral intelligence infrastructure.
 
-* behavioral intelligence
-* adaptive recovery orchestration
-* proprietary recovery intelligence loops
-* intervention optimization infrastructure
+Core moat:
+
+- replay-safe orchestration
+- behavioral event sourcing
+- adaptive recovery infrastructure
+- deterministic behavioral intelligence
+- recovery optimization systems
+
+---
+
+# Immediate Next Objectives
+
+Build next:
+
+1. Internal runtime event publisher
+2. Runtime event bus abstraction
+3. Worker runtime service
+4. Session reconstruction worker
+5. Behavioral accumulation engine
+6. Recovery orchestration workers
+7. Deterministic replay controller
+
+---
+
+# Next Planned Runtime Flow
+
+Persisted Event
+→ Internal Event Publisher
+→ Worker Runtime
+→ Session Reconstruction
+→ Behavioral Accumulation
+→ Recovery Intelligence
+→ Recovery Opportunity Engine
+
+---
 
 Act as:
 
-* senior SaaS systems architect
-* Shopify platform strategist
-* AI systems architect
-* startup CTO
+- senior distributed systems architect
+- AI infrastructure architect
+- event-driven systems CTO
+- behavioral commerce infrastructure strategist
 
 Focus on:
 
-* scalable architecture
-* behavioral intelligence systems
-* orchestration infrastructure
-* recovery systems
-* merchant ROI
-* operational simplicity
-* long-term defensibility
-* event-driven design
+- deterministic systems
+- replay-safe infrastructure
+- worker orchestration
+- event sourcing
+- behavioral intelligence
+- runtime durability
+- scalable event-driven design
+- long-term infrastructure moat
 
 Continue from this exact system state without resetting context.

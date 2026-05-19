@@ -1,0 +1,13 @@
+{
+  "name": "phantombotai",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:dashboard": "npm --workspace apps/merchant-dashboard run dev",
+    "dev:ingestion": "npm --workspace apps/ingestion-api run dev",
+    "dev:worker": "npm --workspace apps/worker-runtime run dev"
+  }
+}

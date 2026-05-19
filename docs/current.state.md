@@ -1,285 +1,314 @@
-We are continuing development of PhantomBotAI from the current architecture-first behavioral commerce infrastructure state.
+---
 
-PhantomBotAI is an AI-native behavioral commerce and revenue recovery platform for Shopify.
+# Phase 2 Progress Update — Durable Behavioral Infrastructure
 
-PhantomBotAI is NOT:
+## Current System State
 
-* a chatbot
-* a support widget
-* an analytics dashboard
-* a generic automation platform
+PhantomBotAI has officially transitioned from:
 
-PhantomBotAI IS:
+frontend behavioral orchestration prototype
 
-* a behavioral commerce operating system
-* an adaptive recovery orchestration engine
-* an event-driven revenue recovery platform
+to:
 
-Core product flow:
+durable event-driven behavioral infrastructure.
 
-Shopper Behavior
-→ Behavioral Intelligence
-→ Recovery Opportunity
-→ Workflow Orchestration
-→ Adaptive Intervention
-→ Recovered Revenue
+The platform now includes operational backend infrastructure capable of:
 
-Current strategic direction:
+- canonical event ingestion
+- immutable behavioral persistence
+- replay-safe processing
+- idempotent event handling
+- deterministic ingestion boundaries
+- infrastructure-owned orchestration foundations
 
-* architecture-first
-* infrastructure-first
-* orchestration-first
+---
 
-NOT UI-first.
+# Operational Infrastructure — COMPLETE
 
-We are intentionally avoiding:
+## Docker Runtime Infrastructure
 
-* dashboard-heavy development
-* settings-heavy architecture
-* generic Shopify automation tooling
-* AI chat gimmicks
-* disconnected automation systems
+Operational local infrastructure now includes:
 
-Current frontend stack:
+### PostgreSQL
 
-* React
-* TypeScript
-* Vite
+Container:
 
-Planned infrastructure:
+phantom-postgres
 
-* PostgreSQL
-* Redis
-* Kafka or Redpanda
-* ClickHouse
-* worker orchestration runtime
+Responsibilities:
 
-Current architecture principles:
+- immutable behavioral event storage
+- replay source-of-truth
+- event sourcing foundation
+- deterministic history reconstruction
+- orchestration replay foundation
 
-* event-driven architecture
-* domain ownership
-* centralized behavioral state
-* workflow isolation
-* deterministic processing
-* adaptive recovery systems
-* orchestration-first infrastructure
+### Redis
 
-Current project file structure:
+Container:
 
-.
-├── app
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── public
-│   │   ├── favicon.svg
-│   │   └── icons.svg
-│   ├── README.md
-│   ├── src
-│   │   ├── App.css
-│   │   ├── App.tsx
-│   │   ├── assets
-│   │   │   ├── hero.png
-│   │   │   ├── react.svg
-│   │   │   └── vite.svg
-│   │   ├── features
-│   │   │   ├── commerce
-│   │   │   │   ├── domain
-│   │   │   │   │   └── session.types.ts
-│   │   │   │   └── services
-│   │   │   │       └── session-store.ts
-│   │   │   ├── events
-│   │   │   │   ├── domain
-│   │   │   │   │   └── event.types.ts
-│   │   │   │   ├── services
-│   │   │   │   │   └── event-bus.ts
-│   │   │   │   └── utils
-│   │   │   │       └── event-replay.ts
-│   │   │   ├── intelligence
-│   │   │   │   ├── domain
-│   │   │   │   │   └── behavior-signal.types.ts
-│   │   │   │   └── services
-│   │   │   │       ├── hesitation-detector.ts
-│   │   │   │       ├── intervention-selector.ts
-│   │   │   │       └── recovery-score-engine.ts
-│   │   │   ├── recovery
-│   │   │   │   ├── components
-│   │   │   │   │   └── RecoveryOpportunityFeed.tsx
-│   │   │   │   ├── domain
-│   │   │   │   │   ├── intervention.types.ts
-│   │   │   │   │   ├── recovery-opportunity.types.ts
-│   │   │   │   │   └── recovery-state-machine.ts
-│   │   │   │   └── services
-│   │   │   │       ├── intervention-engine.ts
-│   │   │   │       ├── recovery-opportunity-engine.ts
-│   │   │   │       └── revenue-attribution.ts
-│   │   │   ├── shared
-│   │   │   │   ├── config
-│   │   │   │   │   └── recovery.config.ts
-│   │   │   │   └── demo-pipeline.ts
-│   │   │   └── workflows
-│   │   │       ├── domain
-│   │   │       │   └── workflow.types.ts
-│   │   │       └── services
-│   │   │           ├── workflow-orchestrator.ts
-│   │   │           └── workflow-runtime.ts
-│   │   ├── index.css
-│   │   └── main.tsx
-│   ├── tsconfig.app.json
-│   ├── tsconfig.json
-│   ├── tsconfig.node.json
-│   └── vite.config.ts
-├── docs
-│   ├── cloud-architecture.md
-│   ├── current.state.md
-│   ├── go-to-market.md
-│   ├── Gpt-Prompt.md
-│   ├── linkedin-content-plan.md
-│   ├── marketing-angles.md
-│   ├── mvp-roadmap.md
-│   ├── pricing-strategy.md
-│   ├── product-strategy.md
-│   ├── shopify-strategy.md
-│   └── system-design.md
-├── FILE_STRUCTURE.md
-├── README.md
-└── src
-└── features
-└── commerce
-├── domain
-│   └── session.types.ts
-└── services
-└── session-store.ts
+phantom-redis
 
-Current implemented infrastructure:
+Responsibilities:
 
-Events:
+- idempotency protection
+- replay protection
+- worker coordination foundation
+- distributed runtime coordination
+- hot behavioral cache foundation
 
-* canonical event schema
-* event bus
-* event replay utilities
+---
 
-Commerce:
+# Canonical Event Ingestion Pipeline — COMPLETE
 
-* centralized session model
-* session reconstruction
-* behavioral state accumulation
-
-Intelligence:
-
-* hesitation detection
-* behavioral signals
-* recovery scoring
-* intervention selection
-
-Recovery:
-
-* recovery opportunity engine
-* recovery state machine
-* intervention domain
-* intervention engine
-* revenue attribution scaffolding
-* merchant recovery feed
-
-Workflows:
-
-* workflow orchestrator
-* workflow runtime foundation
-
-Shared:
-
-* orchestration demo pipeline
-* centralized recovery config
-
-Current working behavioral pipeline:
+The platform now supports fully operational:
 
 Shopify Event
-→ Event Bus
-→ Session Context
-→ Hesitation Detection
-→ Recovery Opportunity
-→ Merchant Feed
+→ Fastify Ingestion API
+→ Zod Schema Validation
+→ Redis Idempotency Check
+→ PostgreSQL Persistence
+→ Replay Protection
 
-Current working UI:
+This is the first fully operational backend-owned behavioral ingestion boundary.
 
-* dark-mode merchant recovery feed
-* simulated recovery opportunities
-* end-to-end orchestration functioning
+---
 
-Critical lessons already learned:
+# Ingestion API
 
-* React StrictMode caused duplicate event execution
-* HMR caused replay duplication
-* event systems must be idempotent
-* orchestration systems require replay safety
-* singleton orchestration layers require reset boundaries
+Location:
 
-Current technical debt:
+/apps/ingestion-api
 
-* no persistence layer yet
-* no PostgreSQL integration
-* no Redis session caching
-* no Kafka/Redpanda streaming
-* no ClickHouse analytics layer
-* no durable workflow execution
-* no adaptive AI optimization loop
-* no deterministic replay controls yet
+Current responsibilities:
 
-Immediate next priorities:
+- canonical behavioral event ingestion
+- event validation
+- idempotency enforcement
+- event persistence
+- replay protection
+- deterministic ingestion processing
 
-1. durable persistence layer
-2. PostgreSQL integration
-3. Redis session cache
-4. deterministic replay controls
-5. workflow execution lifecycle
-6. adaptive intervention orchestration
-7. revenue attribution pipeline
-8. event streaming architecture
-9. worker/runtime separation
-10. recovery optimization loops
+Current infrastructure:
 
-Long-term architecture target:
+### Runtime Stack
 
-Event Stream
-→ Session Intelligence
-→ Behavioral Models
-→ Opportunity Engine
-→ Workflow Runtime
-→ Adaptive Intervention Layer
-→ Revenue Attribution
-→ Optimization Feedback Loop
+- Fastify
+- TypeScript
+- Zod
+- PostgreSQL
+- Redis
+- tsx runtime
 
-The moat is NOT:
+### Current Services
 
-* UI
-* dashboards
-* AI chat
-* automation templates
+#### PostgreSQL Client
 
-The moat IS:
+Location:
 
-* behavioral commerce intelligence
-* adaptive recovery orchestration
-* proprietary recovery intelligence graphs
-* intervention optimization infrastructure
+src/lib/postgres.ts
 
-Act as:
+Responsibilities:
 
-* senior SaaS systems architect
-* Shopify platform strategist
-* AI systems architect
-* startup CTO
+- connection pooling
+- database connectivity
+- persistence infrastructure
 
-Focus on:
+#### Redis Client
 
-* scalable architecture
-* event-driven systems
-* orchestration infrastructure
-* behavioral intelligence
-* merchant ROI
-* operational simplicity
-* infrastructure depth
-* long-term defensibility
+Location:
 
-Continue building from this exact state without resetting context.
+src/lib/redis.ts
+
+Responsibilities:
+
+- idempotency coordination
+- replay protection
+- distributed coordination foundation
+
+#### Canonical Event Schema
+
+Location:
+
+src/schemas/canonical-event.schema.ts
+
+Responsibilities:
+
+- canonical event validation
+- runtime event contracts
+- ingestion normalization
+
+#### Idempotency Service
+
+Location:
+
+src/services/idempotency.service.ts
+
+Responsibilities:
+
+- duplicate event prevention
+- replay safety
+- deterministic ingestion guarantees
+
+#### Event Store Service
+
+Location:
+
+src/services/event-store.service.ts
+
+Responsibilities:
+
+- immutable event persistence
+- behavioral history storage
+- event sourcing foundation
+
+#### Ingestion Route
+
+Location:
+
+src/routes/ingest.route.ts
+
+Responsibilities:
+
+- canonical ingress endpoint
+- orchestration boundary
+- validation execution
+- persistence coordination
+
+---
+
+# Current Proven System Capabilities
+
+Validated infrastructure capabilities:
+
+- HTTP ingestion runtime
+- canonical event validation
+- Redis idempotency enforcement
+- PostgreSQL event persistence
+- immutable behavioral storage
+- replay-safe ingestion
+- deterministic event handling
+- infrastructure-owned orchestration boundaries
+
+---
+
+# Current Architecture Flow
+
+Current operational infrastructure flow:
+
+Shopify Webhook
+→ Ingestion API
+→ Schema Validation
+→ Idempotency Layer
+→ PostgreSQL Event Store
+→ Replay-Safe Persistence
+
+---
+
+# Major Architecture Lessons Learned
+
+## Infrastructure Isolation Matters
+
+Critical issue encountered:
+
+local PostgreSQL runtime collisions.
+
+Resolution:
+
+- explicit container runtime isolation
+- dedicated infrastructure ports
+- runtime namespace separation
+
+Final runtime mapping:
+
+- local postgres: 5432
+- PhantomBotAI postgres: 5433
+
+---
+
+## Durable Infrastructure Rules
+
+The following rules are now officially enforced:
+
+1. No orchestration before persistence
+2. All event systems must be idempotent
+3. Behavioral history must be immutable
+4. Replay must be deterministic
+5. Event ingestion must be canonical
+6. Runtime ownership belongs to infrastructure
+7. Frontend orchestration ownership is prohibited
+
+---
+
+# Current Technical State
+
+The platform is now:
+
+- infrastructure-first
+- replay-capable
+- persistence-backed
+- deterministic
+- runtime-oriented
+- event-driven
+- backend-owned
+
+The system is NO LONGER:
+
+- frontend orchestration software
+- a React behavioral demo
+- simulated recovery infrastructure
+
+---
+
+# Next Active Build Phase
+
+## Internal Runtime Event System
+
+Immediate next infrastructure objectives:
+
+1. Internal event publisher abstraction
+2. Runtime event bus
+3. Worker runtime infrastructure
+4. Session reconstruction workers
+5. Behavioral accumulation pipeline
+6. Recovery orchestration workers
+7. Deterministic replay controller
+
+---
+
+# Planned Next Runtime Flow
+
+Persisted Event
+→ Internal Event Publisher
+→ Worker Runtime
+→ Session Reconstruction
+→ Behavioral Accumulation
+→ Recovery Intelligence
+→ Recovery Opportunity Generation
+
+---
+
+# Long-Term Infrastructure Direction
+
+PhantomBotAI is now officially being architected as:
+
+behavioral intelligence infrastructure.
+
+Core moat development is centered around:
+
+- replay-safe orchestration
+- behavioral event sourcing
+- adaptive recovery infrastructure
+- deterministic behavioral intelligence
+- intervention optimization systems
+- proprietary recovery intelligence loops
+
+NOT:
+
+- dashboards
+- chatbot UX
+- generic Shopify automation
+- frontend workflow tooling
+- shallow AI wrappers
+
+The infrastructure moat is now the primary company strategy.
