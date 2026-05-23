@@ -1,47 +1,42 @@
 {
   "name": "phantombotai",
   "private": true,
-
+  "packageManager": "pnpm@9.12.2",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-
   "scripts": {
-    "dev:dashboard": "npm --workspace apps/merchant-dashboard run dev",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
 
-    "replay:reset": "tsx apps/replay-controller/src/index.ts",
-
-    "dev:ingestion": "npm --workspace apps/ingestion-api run dev",
-
-    "dev:worker": "npm --workspace apps/worker-runtime run dev",
+    "dev:dashboard": "pnpm --filter app dev",
+    "dev:ingestion": "pnpm --filter ingestion-api dev",
+    "dev:worker": "pnpm --filter worker-runtime dev",
 
     "worker:session": "tsx apps/session-projection-worker/src/index.ts",
+
+    "replay:reset": "tsx apps/replay-controller/src/index.ts",
 
     "db:migrate:projection": "docker exec -i phantom-postgres psql -U postgres -d phantom < infrastructure/postgres/migrations/002_projection_runtime.sql",
 
     "infra:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
-
     "infra:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
-
     "infra:logs": "docker compose -f infrastructure/docker/docker-compose.yml logs -f"
   },
-
   "dependencies": {
-    "dotenv": "^16.4.5",
-
-    "postgres": "^3.4.4",
-
-    "redis": "^4.6.13",
-
-    "zod": "^3.23.8"
+    "dotenv": "17.4.2",
+    "postgres": "3.4.9",
+    "redis": "4.7.1",
+    "zod": "4.4.3"
   },
-
   "devDependencies": {
-    "@types/node": "^22.5.4",
-
-    "tsx": "^4.19.1",
-
-    "typescript": "^5.6.2"
+    "@types/node": "24.12.4",
+    "tsx": "4.22.3",
+    "turbo": "2.9.14",
+    "typescript": "5.9.3"
   }
 }

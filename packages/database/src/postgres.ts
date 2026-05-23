@@ -2,40 +2,90 @@
  * postgres.ts
  *
  * Responsibility:
- * Establish PostgreSQL runtime connectivity.
+ * Provide canonical PostgreSQL infrastructure ownership.
  *
  * Owns:
  * - database connection management
+ * - infrastructure configuration
  * - runtime database connectivity
- * - replay-safe persistence access
+ * - fail-fast environment validation
  *
  * Does NOT Own:
+ * - projection mutations
+ * - runtime orchestration
+ * - replay coordination
  * - business logic
- * - event orchestration
- * - projections
- * - worker execution
  *
  * Critical Rules:
- * - infrastructure owns persistence
- * - workers consume through infrastructure
- * - runtime connectivity must remain centralized
+ * - infrastructure must fail loudly
+ * - no implicit defaults
+ * - no environment ambiguity
  */
 
 import postgres from "postgres";
 
+function required(
+  value: string | undefined,
+  name: string
+): string {
+  if (!value) {
+    throw new Error(
+      `[MISSING ENV] ${name}`
+    );
+  }
+
+  return value;
+}
+
+const POSTGRES_HOST =
+  required(
+    process.env.POSTGRES_HOST,
+    "POSTGRES_HOST"
+  );
+
+const POSTGRES_PORT =
+  required(
+    process.env.POSTGRES_PORT,
+    "POSTGRES_PORT"
+  );
+
+const POSTGRES_USER =
+  required(
+    process.env.POSTGRES_USER,
+    "POSTGRES_USER"
+  );
+
+const POSTGRES_PASSWORD =
+  required(
+    process.env.POSTGRES_PASSWORD,
+    "POSTGRES_PASSWORD"
+  );
+
+const POSTGRES_DB =
+  required(
+    process.env.POSTGRES_DB,
+    "POSTGRES_DB"
+  );
+
 export const sql = postgres({
-  host: process.env.POSTGRES_HOST || "localhost",
+  host: POSTGRES_HOST,
 
   port: Number(
-    process.env.POSTGRES_PORT || 5433
+    POSTGRES_PORT
   ),
 
-  database:
-    process.env.POSTGRES_DB || "phantom",
-
   username:
-    process.env.POSTGRES_USER || "postgres",
+    POSTGRES_USER,
 
   password:
-    process.env.POSTGRES_PASSWORD || "postgres",
+    POSTGRES_PASSWORD,
+
+  database:
+    POSTGRES_DB,
+
+  max: 20,
+
+  idle_timeout: 20,
+
+  connect_timeout: 10,
 });

@@ -34,14 +34,19 @@ import {
 }
 from "../projections/session/session.projection";
 
+import {
+  ProjectionNamespace,
+}
+from "../../../contracts/src/projection-namespace.types";
+
 export async function rebuildProjection({
   namespace,
 }: {
-  namespace: string;
+  namespace: ProjectionNamespace;
 }) {
   console.log(
     `[REBUILD START]
-     namespace=${namespace}`
+namespace=${namespace}`
   );
 
   /**
@@ -49,35 +54,34 @@ export async function rebuildProjection({
    */
   await sql`
     DELETE FROM behavior_sessions
+
     WHERE projection_namespace =
       ${namespace}
   `;
 
   console.log(
     `[NAMESPACE RESET]
-     namespace=${namespace}`
+namespace=${namespace}`
   );
 
   /**
    * Create namespace-aware projection.
-   *
-   * Critical:
-   * Replay rebuilds must NEVER use
-   * implicit live projection defaults.
    */
   const projection =
-    new SessionProjection(
-      namespace as any
-    );
+    new SessionProjection({
+      namespace,
+    });
 
   /**
    * Create deterministic runtime.
    */
   const runtime =
-    new ProjectionRuntime(
-      projection.constructor.name,
-      namespace as any
-    );
+    new ProjectionRuntime({
+      projectionName:
+        projection.constructor.name,
+
+      namespace,
+    });
 
   /**
    * Sequential replay progression.
@@ -111,12 +115,12 @@ export async function rebuildProjection({
 
     console.log(
       `[REPLAY PROGRESSED]
-       checkpoint=${checkpoint}`
+checkpoint=${checkpoint}`
     );
   }
 
   console.log(
     `[REBUILD COMPLETE]
-     namespace=${namespace}`
+namespace=${namespace}`
   );
 }

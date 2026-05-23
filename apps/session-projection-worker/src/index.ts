@@ -1,27 +1,3 @@
-/**
- * index.ts
- *
- * Responsibility:
- * Execute deterministic projection runtime loop.
- *
- * Owns:
- * - runtime execution loop
- * - ordered event consumption
- * - replay-safe worker execution
- * - checkpoint progression
- *
- * Does NOT Own:
- * - business logic
- * - projection persistence
- * - orchestration intelligence
- * - AI systems
- *
- * Critical Rules:
- * - workers process events sequentially
- * - checkpoints advance only after success
- * - replay must remain deterministic
- */
-
 import "dotenv/config";
 
 import {
@@ -29,23 +5,47 @@ import {
 } from "../../../packages/runtime/src/projection-runtime";
 
 import {
-  SessionProjectionWorker,
-} from "./session-projection.worker";
+  SessionProjection,
+} from "../../../packages/runtime/src/projections/session/session.projection";
 
 const runtime =
   new ProjectionRuntime(
     "session_projection"
   );
 
-const worker =
-  new SessionProjectionWorker();
+const projection =
+  new SessionProjection();
+
+let shuttingDown = false;
+
+process.on(
+  "SIGINT",
+  async () => {
+    console.log(
+      "[Runtime] Graceful shutdown..."
+    );
+
+    shuttingDown = true;
+  }
+);
+
+process.on(
+  "SIGTERM",
+  async () => {
+    console.log(
+      "[Runtime] Graceful shutdown..."
+    );
+
+    shuttingDown = true;
+  }
+);
 
 async function start() {
   console.log(
     "[SessionProjectionWorker] Starting..."
   );
 
-  while (true) {
+  while (!shuttingDown) {
     try {
       const checkpoint =
         await runtime.loadCheckpoint();
@@ -63,17 +63,20 @@ async function start() {
         continue;
       }
 
-      for (const event of events) {
-        await worker.process(event);
+      await runtime.processBatch(
+        events,
 
-        await runtime.updateCheckpoint(
-          event.sequence_id
-        );
+        async (tx, event) => {
+          await projection.process(
+            tx,
+            event
+          );
+        }
+      );
 
-        console.log(
-          `[SessionProjectionWorker] Processed sequence ${event.sequence_id}`
-        );
-      }
+      console.log(
+        `[SessionProjectionWorker] Processed batch ending at ${events[events.length - 1].sequence_id}`
+      );
     } catch (error) {
       console.error(
         "[SessionProjectionWorker] Runtime error:",
@@ -85,6 +88,12 @@ async function start() {
       );
     }
   }
+
+  console.log(
+    "[SessionProjectionWorker] Shutdown complete"
+  );
+
+  process.exit(0);
 }
 
 start();

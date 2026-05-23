@@ -22,12 +22,27 @@ import "dotenv/config";
 import { rebuildProjection }
 from "./rebuild-projection";
 
+import {
+  ProjectionNamespace,
+}
+from "../../../contracts/src/projection-namespace.types";
+
 async function runReplay() {
+  const namespaceArg =
+    process.argv[2];
+
+  if (!namespaceArg) {
+    throw new Error(
+      "Missing replay namespace argument."
+    );
+  }
+
   const namespace =
-    process.argv[2] ?? "replay";
+    namespaceArg as ProjectionNamespace;
 
   console.log(
-    "[REPLAY START]"
+    `[REPLAY START]
+namespace=${namespace}`
   );
 
   await rebuildProjection({
@@ -35,10 +50,18 @@ async function runReplay() {
   });
 
   console.log(
-    "[REPLAY COMPLETE]"
+    `[REPLAY COMPLETE]
+namespace=${namespace}`
   );
 
   process.exit(0);
 }
 
-runReplay();
+runReplay().catch((error) => {
+  console.error(
+    "[REPLAY FAILURE]",
+    error
+  );
+
+  process.exit(1);
+});

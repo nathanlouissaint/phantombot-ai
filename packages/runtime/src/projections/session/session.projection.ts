@@ -35,10 +35,15 @@ import {
 } from "../../../../contracts/src/projection-namespace.types";
 
 export class SessionProjection {
-  constructor(
-    private namespace: ProjectionNamespace =
-      DEFAULT_PROJECTION_NAMESPACE
-  ) {}
+  private namespace: ProjectionNamespace;
+
+  constructor({
+    namespace = DEFAULT_PROJECTION_NAMESPACE,
+  }: {
+    namespace?: ProjectionNamespace;
+  } = {}) {
+    this.namespace = namespace;
+  }
 
   async process(
     tx: any,

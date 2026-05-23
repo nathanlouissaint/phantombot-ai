@@ -28,37 +28,64 @@
 
 import { PoolClient } from "pg";
 
-import { projectionIdempotencyService } from "./idempotency/projection-idempotency.service";
+import { projectionIdempotencyService }
+from "./idempotency/projection-idempotency.service";
 
-import { sql } from "../../database/src/postgres";
+import { sql }
+from "../../database/src/postgres";
 
 import {
   ProjectionCheckpoint,
   ProjectionEvent,
 } from "../../contracts/src/projection.types";
 
+import {
+  ProjectionNamespace,
+} from "../../contracts/src/projection-namespace.types";
+
 export class ProjectionRuntime {
-  constructor(
-    private projectionName: string
-  ) {}
+  readonly projectionName: string;
+
+  readonly namespace: ProjectionNamespace;
+
+  constructor({
+    projectionName,
+    namespace,
+  }: {
+    projectionName: string;
+    namespace: ProjectionNamespace;
+  }) {
+    this.projectionName =
+      projectionName;
+
+    this.namespace =
+      namespace;
+  }
 
   async loadCheckpoint(): Promise<number> {
     const result =
       await sql<ProjectionCheckpoint[]>`
         SELECT *
         FROM projection_checkpoints
+
         WHERE projection_name =
           ${this.projectionName}
+
+        AND projection_namespace =
+          ${this.namespace}
       `;
 
     if (result.length === 0) {
       await sql`
         INSERT INTO projection_checkpoints (
           projection_name,
+          projection_namespace,
           last_processed_sequence
         )
+
         VALUES (
           ${this.projectionName},
+          ${this.namespace},
           0
         )
       `;
@@ -77,8 +104,12 @@ export class ProjectionRuntime {
     return sql<ProjectionEvent[]>`
       SELECT *
       FROM behavior_events
-      WHERE sequence_id > ${lastSequence}
+
+      WHERE sequence_id >
+        ${lastSequence}
+
       ORDER BY sequence_id ASC
+
       LIMIT ${batchSize}
     `;
   }
@@ -95,6 +126,7 @@ export class ProjectionRuntime {
         client,
         projectionName:
           this.projectionName,
+
         eventSequenceId,
       });
   }
@@ -111,24 +143,35 @@ export class ProjectionRuntime {
         client,
         projectionName:
           this.projectionName,
+
         eventSequenceId,
       });
   }
 
-  async updateCheckpoint(
-    sequence: number
-  ) {
-    await sql`
-      UPDATE projection_checkpoints
+  async updateCheckpoint({
+    client,
+    sequence,
+  }: {
+    client: PoolClient;
+    sequence: number;
+  }) {
+    await client.query(
+      `
+        UPDATE projection_checkpoints
 
-      SET
-        last_processed_sequence =
-          ${sequence},
+        SET
+          last_processed_sequence = $1,
+          updated_at = NOW()
 
-        updated_at = NOW()
+        WHERE projection_name = $2
 
-      WHERE projection_name =
-        ${this.projectionName}
-    `;
+        AND projection_namespace = $3
+      `,
+      [
+        sequence,
+        this.projectionName,
+        this.namespace,
+      ]
+    );
   }
 }

@@ -1,0 +1,5 @@
+
+
+> @phantombot/runtime@1.0.0 typecheck /Users/natelouissaint/phantombot-ai/phantombot-ai/packages/runtime
+> tsc --noEmit
+

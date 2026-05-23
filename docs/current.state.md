@@ -1,467 +1,611 @@
-# PhantomBotAI — Current Infrastructure State
-## Date: 5/19/2026
+# PhantomBotAI — Current System State
+Date: 2026-05-23
 
 ---
 
-# Strategic Position
+# Project Identity
 
-PhantomBotAI has officially transitioned from:
+PhantomBotAI is no longer evolving as a traditional Shopify chatbot SaaS.
 
-frontend behavioral orchestration prototype
+The platform is becoming:
+
+```txt
+AI-native deterministic commerce intelligence infrastructure
+```
+
+Current direction:
+
+- deterministic behavioral runtime systems
+- replay-safe event orchestration
+- behavioral intelligence accumulation
+- recovery opportunity generation
+- workflow orchestration
+- adaptive intervention infrastructure
+- distributed runtime coordination
+- commerce intelligence projections
+
+The architecture is converging toward concepts found in:
+
+- Temporal
+- Kafka Streams
+- deterministic workflow runtimes
+- event-sourced intelligence systems
+- replay-driven orchestration platforms
+
+---
+
+# Strategic System Direction
+
+Canonical system flow:
+
+```txt
+shopper interaction
+→ behavioral signal collection
+→ session intelligence update
+→ hesitation analysis
+→ recovery opportunity generation
+→ workflow orchestration
+→ intervention execution
+→ outcome tracking
+```
+
+The platform is now being architected as:
+
+```txt
+behavioral operating system for commerce
+```
+
+NOT:
+- AI support chatbot
+- generic Shopify assistant
+- automation dashboard SaaS
+
+---
+
+# Canonical Repository
+
+```txt
+phantombot-ai/phantombot-ai
+```
+
+---
+
+# Major Infrastructure Progress
+
+# 1. Monorepo Stabilization
+
+Completed:
+
+- pnpm workspace orchestration
+- Turbo dependency graph
+- workspace governance
+- deterministic package compilation
+
+Installed:
+- pnpm
+- turbo
+
+Created:
+- turbo.json
+- pnpm-workspace.yaml
+
+---
+
+# 2. Runtime Contract Consolidation
+
+Resolved previous architectural fracture between:
+
+OLD:
+```ts
+projection.handle()
+```
+
+and
+
+NEW:
+```ts
+projection.process(tx, event)
+```
+
+Platform officially standardized on:
+
+```txt
+constructor-driven deterministic runtime orchestration
+```
+
+---
+
+# 3. Projection Runtime Refactor
+
+ProjectionRuntime upgraded from:
+
+```ts
+constructor(
+  projectionName: string
+)
+```
 
 to:
 
-deterministic replay-safe behavioral infrastructure.
+```ts
+constructor({
+  projectionName,
+  namespace,
+})
+```
 
-The company is NO LONGER building:
-
-- chatbot tooling
-- generic Shopify automation
-- frontend orchestration software
-- dashboard-first infrastructure
-- shallow AI wrappers
-
-The company IS building:
-
-behavioral intelligence infrastructure.
-
-Core moat direction:
-
+Enabled:
+- namespace-aware execution
 - replay-safe orchestration
-- immutable behavioral history
-- deterministic replay systems
-- behavioral state reconstruction
-- recovery intelligence infrastructure
-- event-sourced behavioral accumulation
-- intervention optimization systems
+- deterministic checkpoint ownership
+- multi-tenant replay isolation
 
 ---
 
-# Current Operational Infrastructure
+# 4. Replay Runtime Stabilization
 
-## Runtime Stack
+Replay infrastructure now consistently enforces:
 
-Operational infrastructure:
+- ProjectionNamespace typing
+- deterministic replay sequencing
+- replay-safe projection rebuilding
+- transactional replay progression
 
-- Docker
-- PostgreSQL
-- Redis
-- Fastify
-- TypeScript
-- Zod
-- tsx runtime
-
-Operational containers:
-
-- phantom-postgres
-- phantom-redis
-
-Infrastructure isolation:
-
-- local postgres: 5432
-- PhantomBotAI postgres: 5433
-
----
-
-# Current Runtime Environment
-
-## Root .env
-
-```env
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5433
-POSTGRES_USER=phantom
-POSTGRES_PASSWORD=phantom
-POSTGRES_DB=phantombotai
+Updated:
+```txt
+packages/runtime/src/replay
+├── rebuild-projection.ts
+├── run-replay.ts
 ```
 
-Infrastructure runtime configuration is now:
-
-- centralized
-- deterministic
-- environment-owned
-
-Critical lesson learned:
-
-Distributed infrastructure cannot rely on:
-- implicit defaults
-- silent fallbacks
-- hidden runtime assumptions
-
 ---
 
-# Canonical Behavioral Ingestion — COMPLETE
+# 5. Transactional Runtime Fixes
 
-Current operational ingestion flow:
+Critical runtime issue corrected.
 
-Shopify Event
-→ Fastify Ingestion API
-→ Zod Validation
-→ Redis Idempotency
-→ PostgreSQL Persistence
-→ Replay Protection
-
-Validated capabilities:
-
-- canonical event ingestion
-- immutable event persistence
-- replay-safe ingestion
-- deterministic event handling
-- idempotent processing
-- backend-owned orchestration boundaries
-
----
-
-# Current PostgreSQL Infrastructure
-
-## behavior_events
-
-Immutable append-only behavioral event store.
-
-Current capabilities:
-
-- canonical persistence
-- replay-safe storage
-- immutable history
-- ordered event replay
-
-Critical upgrade completed:
-
-```sql
-sequence_id BIGSERIAL UNIQUE
+OLD:
+```ts
+client`
+`
 ```
 
-This now provides:
+NEW:
+```ts
+client.query(...)
+```
 
-- deterministic replay ordering
-- projection replay sequencing
-- worker progression anchors
-- canonical replay order
-
----
-
-## projection_checkpoints
-
-Projection runtime progression tracking.
-
-Current capabilities:
-
-- replay checkpoints
-- projection progression
-- replay rewind support
-- deterministic worker resumption
-
-Validated:
-
-- checkpoint rewinds
-- replay resets
-- deterministic progression
+Stabilized:
+- transactional execution
+- checkpoint correctness
+- projection atomicity
 
 ---
 
-## behavior_sessions
+# 6. Idempotency + Checkpoint Atomicity
 
-Materialized behavioral session projections.
+Projection execution loop now guarantees:
 
-Current capabilities:
-
-- deterministic session reconstruction
-- replayable behavioral state
-- event accumulation
-- operational behavioral state materialization
-
-Current projected fields:
-
-- session_id
-- shop_id
-- started_at
-- last_activity_at
-- event_count
-- cart_state
-- engagement_state
-- recovery_state
-- abandonment_score
+- transactional mutation
+- atomic checkpoint advancement
+- replay-safe progression ordering
+- idempotent event processing
 
 ---
 
-# Projection Runtime Infrastructure — COMPLETE
+# 7. Namespace Isolation Hardening
 
-## Projection Runtime
+Canonical namespace contracts introduced:
+
+```ts
+export type ProjectionNamespace =
+  | "live"
+  | "replay"
+  | "experimental";
+```
+
+Prevents:
+- replay contamination
+- invalid runtime drift
+- unsafe rebuild execution
+
+---
+
+# 8. TypeScript Runtime Stabilization
+
+Compiler interoperability issues resolved.
+
+Added:
+
+```json
+"esModuleInterop": true,
+"allowSyntheticDefaultImports": true
+```
+
+Stabilized:
+- postgres imports
+- dotenv imports
+- pino/thread-stream
+- crypto compatibility
+
+---
+
+# 9. Formal Workspace Contract Package Created
+
+Created:
+
+```txt
+packages/contracts
+```
+
+This is now the canonical contract ownership layer.
+
+The platform officially moved from:
+
+```txt
+scattered runtime types
+```
+
+to:
+
+```txt
+governed workspace contracts
+```
+
+---
+
+# 10. Canonical Commerce Event Contracts Created
+
+Created:
+
+```txt
+packages/contracts/src/commerce/commerce-event.types.ts
+```
+
+Canonical commerce events now exist:
+
+```txt
+SHOPPER_SESSION_STARTED
+PRODUCT_VIEWED
+PRODUCT_ADDED_TO_CART
+PRODUCT_REMOVED_FROM_CART
+CHECKOUT_STARTED
+CHECKOUT_HESITATED
+CHECKOUT_ABANDONED
+RECOVERY_CONVERTED
+```
+
+These events now define the behavioral language of the platform.
+
+---
+
+# 11. Shopper Intelligence Contracts Created
+
+Created:
+
+```txt
+packages/contracts/src/commerce/shopper-session.types.ts
+```
+
+Formalized deterministic shopper intelligence state:
+
+```ts
+hesitationScore
+purchaseIntent
+primaryFrictionType
+```
+
+This establishes:
+
+```txt
+deterministic behavioral truth systems
+```
+
+LLMs will NOT own intelligence truth.
+
+---
+
+# 12. Hesitation Intelligence Contracts Created
+
+Created:
+
+```txt
+packages/contracts/src/commerce/hesitation.types.ts
+```
+
+Defined:
+- hesitation signal types
+- friction analysis contracts
+- behavioral heuristics
+
+Examples:
+
+```txt
+checkout_idle
+shipping_revisit
+coupon_field_interaction
+checkout_exit
+```
+
+---
+
+# 13. Recovery Opportunity Contracts Created
+
+Created:
+
+```txt
+packages/contracts/src/commerce/recovery-opportunity.types.ts
+```
+
+Recovery systems now formally model:
+
+```txt
+opportunity generation
+```
+
+instead of:
+- chatbot responses
+- random automation
+- generic AI outputs
+
+Recovery opportunities now include:
+- opportunity type
+- confidence
+- estimated revenue
+- recommended intervention
+
+---
+
+# Current System State
+
+## Runtime Infrastructure
+STABILIZED
+
+## Replay Infrastructure
+STABILIZED
+
+## Namespace Isolation
+WORKING
+
+## Transactional Runtime
+WORKING
+
+## Workspace Contracts
+WORKING
+
+## Canonical Commerce Events
+WORKING
+
+## Shopper Intelligence Contracts
+WORKING
+
+## Hesitation Contracts
+WORKING
+
+## Recovery Opportunity Contracts
+WORKING
+
+## Worker Lease Infrastructure
+WORKING
+
+## Idempotency Layer
+WORKING
+
+## Frontend Architecture
+STILL DRIFTED
+
+---
+
+# Current Architecture Layers
+
+# Contracts Layer
+
+Owns:
+- commerce events
+- shopper intelligence state
+- hesitation contracts
+- recovery opportunity contracts
 
 Location:
 
 ```txt
-packages/runtime/src/projection-runtime.ts
+packages/contracts
 ```
-
-Current responsibilities:
-
-- checkpoint loading
-- ordered event loading
-- replay-safe event progression
-- deterministic runtime execution
-
-Validated capabilities:
-
-- ordered replay consumption
-- deterministic checkpoint advancement
-- replay-safe progression
 
 ---
 
-# Session Projection Worker — COMPLETE
+# Runtime Layer
+
+Owns:
+- deterministic mutation
+- replay-safe execution
+- projection orchestration
+- transactional progression
 
 Location:
 
 ```txt
-apps/session-projection-worker
-```
-
-Current responsibilities:
-
-- session projection materialization
-- deterministic event accumulation
-- replay-safe behavioral reconstruction
-
-Validated runtime:
-
-```txt
-behavior_events
-→ ordered replay
-→ session projection worker
-→ behavior_sessions
-→ checkpoint advancement
-```
-
-Validated successful replay:
-
-```txt
-Processed sequence 1
-```
-
-Validated reconstructed session:
-
-```txt
-session_abc
-event_count = 1
+packages/runtime
 ```
 
 ---
 
-# Replay Infrastructure — COMPLETE
+# Future AI Layer
 
-## Replay Controller
+Will own:
+- persuasion adaptation
+- intervention personalization
+- merchant summaries
+- conversational rendering
 
-Location:
+AI will NOT own:
+- behavioral truth
+- event validity
+- recovery correctness
+- deterministic scoring
+
+---
+
+# Current Strategic Direction
+
+The platform is now becoming:
 
 ```txt
-apps/replay-controller
+deterministic behavioral commerce infrastructure
 ```
 
-Current capabilities:
+This changes:
+- engineering standards
+- scalability requirements
+- infrastructure governance
+- competitive positioning
+- hiring requirements
 
-- projection resets
-- checkpoint rewinds
-- deterministic replay preparation
-- disposable projection infrastructure
+---
 
-Validated replay flow:
+# Current Immediate Focus
+
+# Phase 2 — Session Intelligence Projection Runtime
+
+Current target:
 
 ```txt
-Reset projections
-→ reset checkpoints
-→ rerun worker
-→ rebuild projections
-→ reconstruct behavioral state
-```
-
-This validates:
-
-- replay-safe reconstruction
-- immutable source-of-truth architecture
-- deterministic projection rebuilding
-- disposable projections
-
----
-
-# Major Infrastructure Lessons Learned
-
-## 1. Infrastructure Isolation
-
-Critical issue encountered:
-
-local PostgreSQL collisions.
-
-Resolution:
-
-- dedicated runtime ports
-- isolated infrastructure runtime
-- explicit container mapping
-
-Final mapping:
-
-- local postgres: 5432
-- PhantomBotAI postgres: 5433
-
----
-
-## 2. Environment Ownership
-
-Critical issue encountered:
-
-runtime authentication drift caused by implicit defaults.
-
-Resolution:
-
-- centralized .env
-- explicit infrastructure configuration
-- removal of silent runtime fallbacks
-
----
-
-## 3. Idempotent Infrastructure
-
-Critical issue encountered:
-
-non-idempotent migrations.
-
-Resolution:
-
-Use:
-
-```sql
-IF NOT EXISTS
-```
-
-for:
-- tables
-- indexes
-- schema evolution
-
-Infrastructure migrations must remain:
-- rerunnable
-- recoverable
-- replay-safe
-
----
-
-# Current Critical Architecture Weakness
-
-## NON-TRANSACTIONAL PROJECTION PROCESSING
-
-Current dangerous runtime flow:
-
-```txt
-process event
-→ write projection
-→ crash
-→ checkpoint not updated
-→ replay reprocesses event
-→ projection drift occurs
-```
-
-Current risk:
-
-- double counting
-- projection corruption
-- replay drift
-- nondeterministic state accumulation
-
-This is the next major infrastructure priority.
-
----
-
-# NEXT ACTIVE BUILD PHASE
-
-# Phase 2C — Transactional Projection Runtime
-
-Immediate objectives:
-
-1. transactional projection processing
-2. atomic checkpoint advancement
-3. replay correctness guarantees
-4. projection consistency protection
-5. runtime failure recovery
-6. graceful worker shutdown
-7. projection batching
-8. backpressure handling
-
----
-
-# Planned Runtime Upgrade
-
-Current flow:
-
-```txt
-process event
-→ update projection
-→ update checkpoint
-```
-
-Target flow:
-
-```txt
-BEGIN TRANSACTION
-→ process projection
-→ update checkpoint
-COMMIT
+packages/runtime/src/projections/session-intelligence
 ```
 
 Goal:
 
-projection updates + checkpoint advancement become atomic.
+```txt
+commerce events
+→ deterministic session projection
+→ accumulated shopper intelligence
+```
 
-This is required before:
-- scaling workers
-- behavioral accumulation
-- recovery intelligence
-- orchestration systems
-
----
-
-# Future Infrastructure Roadmap
-
-After transactional projections:
-
-## Phase 2D
-
-Build:
-
-- behavioral accumulation engine
-- abandonment scoring
-- engagement state machines
-- recovery opportunity projections
-- intervention timing infrastructure
+This projection will:
+- process canonical commerce events
+- update shopper intelligence state
+- accumulate behavioral signals
+- classify hesitation
+- maintain replay-safe deterministic state
 
 ---
 
-## Phase 2E
+# Next Major Runtime Build
 
-ONLY AFTER runtime correctness stabilizes:
+Upcoming runtime responsibilities:
 
-Build:
+```txt
+SHOPPER_SESSION_STARTED
+→ initialize shopper state
 
-- adaptive recovery intelligence
-- AI optimization systems
-- intervention sequencing
-- recovery experimentation
-- behavioral optimization loops
+PRODUCT_VIEWED
+→ increment behavioral counters
+
+PRODUCT_ADDED_TO_CART
+→ update purchase intent
+
+CHECKOUT_HESITATED
+→ increase hesitation score
+
+CHECKOUT_ABANDONED
+→ generate recovery signals
+```
 
 ---
 
-# Strategic Infrastructure Position
+# Current Immediate Priorities
 
-PhantomBotAI is now architected as:
+Priority 1:
+- SessionIntelligenceProjection
 
-deterministic behavioral runtime infrastructure.
+Priority 2:
+- deterministic projection mutation
 
-The infrastructure moat is now centered around:
+Priority 3:
+- replay-safe intelligence rebuilding
 
-- behavioral replay intelligence
-- deterministic reconstruction
-- event-sourced behavioral history
+Priority 4:
+- hesitation classification engine
+
+Priority 5:
+- recovery opportunity generation
+
+Priority 6:
+- orchestration runtime
+
+Priority 7:
+- adaptive AI intervention layer
+
+---
+
+# Architectural Rules
+
+## Contracts Own Truth
+
+```txt
+packages/contracts
+```
+
+Owns:
+- event schemas
+- state contracts
+- intelligence contracts
+- recovery contracts
+
+---
+
+## Runtime Owns Mutation
+
+```txt
+packages/runtime
+```
+
+Owns:
+- deterministic state transitions
+- projection execution
+- replay coordination
+- transactional progression
+
+---
+
+## AI Owns Adaptation
+
+Future AI systems own:
+- persuasion
+- tone
+- personalization
+- merchant-facing communication
+
+AI does NOT own:
+- system truth
+- scoring
+- event ordering
+- behavioral correctness
+
+---
+
+# Long-Term Direction
+
+Long-term platform direction:
+
+```txt
+AI-native autonomous commerce orchestration
+```
+
+Future architecture:
+
+```txt
+interaction
+→ intelligence
+→ workflow
+→ automation
+→ adaptive rendering
+```
+
+The platform moat is now converging around:
+
+- deterministic behavioral intelligence
 - replay-safe orchestration
-- proprietary behavioral state accumulation
-- recovery intelligence infrastructure
-
-This is now infrastructure-first company architecture.
+- commerce event infrastructure
+- recovery opportunity systems
+- adaptive commerce intervention

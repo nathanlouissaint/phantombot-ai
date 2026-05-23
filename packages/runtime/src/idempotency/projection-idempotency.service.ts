@@ -40,7 +40,7 @@ export class ProjectionIdempotencyService {
       [projectionName, eventSequenceId]
     );
 
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async markEventApplied({

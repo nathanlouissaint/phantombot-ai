@@ -2,18 +2,23 @@
   "name": "@phantombot/runtime",
   "version": "1.0.0",
   "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "tsx src/rebuild-runtime.ts",
-    "verify:replay": "tsx src/verification/run-verification.ts",
-    "replay:rebuild": "tsx src/replay/run-replay.ts"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "pg": "^8.16.0"
+    "dotenv": "17.4.2",
+    "pg": "8.21.0",
+    "zod": "4.4.3",
+    "@phantombot/contracts": "workspace:*",
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "tsx": "^4.20.0",
-    "typescript": "^5.8.0"
+    "@types/node": "24.12.4",
+    "@types/pg": "^8.20.0",
+    "tsx": "4.22.3",
+    "typescript": "5.9.3"
   }
 }

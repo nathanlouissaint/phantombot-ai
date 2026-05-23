@@ -1,20 +1,47 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+
     "module": "ESNext",
+
     "moduleResolution": "Node",
+
     "strict": true,
+
     "resolveJsonModule": true,
+
     "esModuleInterop": true,
+
+    "allowSyntheticDefaultImports": true,
+
     "skipLibCheck": true,
+
     "baseUrl": ".",
+
     "paths": {
-      "@shared-types/*": ["packages/shared-types/src/*"],
-      "@event-schema/*": ["packages/event-schema/src/*"],
-      "@event-bus/*": ["packages/event-bus/src/*"],
-      "@session-engine/*": ["packages/session-engine/src/*"],
-      "@recovery-engine/*": ["packages/recovery-engine/src/*"],
-      "@workflow-core/*": ["packages/workflow-core/src/*"]
+      "@shared-types/*": [
+        "packages/shared-types/src/*"
+      ],
+
+      "@event-schema/*": [
+        "packages/event-schema/src/*"
+      ],
+
+      "@event-bus/*": [
+        "packages/event-bus/src/*"
+      ],
+
+      "@session-engine/*": [
+        "packages/session-engine/src/*"
+      ],
+
+      "@recovery-engine/*": [
+        "packages/recovery-engine/src/*"
+      ],
+
+      "@workflow-core/*": [
+        "packages/workflow-core/src/*"
+      ]
     }
   }
 }
