@@ -1,0 +1,25 @@
+{
+  "files": [],
+
+  "references": [
+    {
+      "path": "./packages/contracts"
+    },
+
+    {
+      "path": "./packages/database"
+    },
+
+    {
+      "path": "./packages/event-bus"
+    },
+
+    {
+      "path": "./packages/runtime"
+    },
+
+    {
+      "path": "./apps/ingestion-api"
+    }
+  ]
+}

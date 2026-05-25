@@ -31,6 +31,10 @@
         "packages/runtime/src/index.ts"
       ],
 
+      "@phantombot/event-bus": [
+        "packages/event-bus/src/index.ts"
+      ],
+
       "@phantombot/event-bus/*": [
         "packages/event-bus/src/*"
       ]

@@ -30,3 +30,4 @@ export * from "./projection-runtime.types";
 export * from "./replay.types";
 export * from "./runtime-state.types";
 export * from "./worker-lease.types";
+export * from "./ingestion-event.types";

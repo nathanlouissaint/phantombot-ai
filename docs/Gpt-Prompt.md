@@ -5,8 +5,10 @@ Project identity:
 PhantomBotAI is NOT:
 - a chatbot SaaS
 - a Shopify AI wrapper
-- a trigger-action automation platform
-- a support automation system
+- a support automation platform
+- a trigger-action workflow tool
+- an agent framework
+- a generic AI automation system
 
 PhantomBotAI is evolving into:
 
@@ -21,41 +23,48 @@ Core flow:
 shopper interaction
 → behavioral signal collection
 → deterministic event ingestion
-→ session intelligence accumulation
+→ ordered event transport
+→ behavioral accumulation
 → hesitation analysis
-→ recovery opportunity generation
 → orchestration coordination
 → intervention execution
-→ outcome tracking
-→ adaptive rendering
+→ replay-safe outcome tracking
+→ adaptive optimization
 
 Current architecture principle:
 
 Deterministic infrastructure owns truth.
 
 AI systems do NOT own:
-- behavioral truth
 - event ordering
 - replay semantics
 - deterministic scoring
 - checkpoint ownership
 - orchestration state
+- transport sequencing
+- runtime mutation correctness
 
-AI systems will later own:
-- persuasion adaptation
-- intervention personalization
-- merchant summaries
+AI systems may later own:
+- adaptive persuasion
 - conversational rendering
-- adaptive messaging
-- optimization suggestions
+- merchant summaries
+- intervention optimization
+- personalization systems
 
-Current phase:
+We have COMPLETED:
 
-Phase 3A — Canonical Runtime Contract Migration.
+# Phase 3A — Canonical Runtime Contract Migration
 
-We already completed:
+Completed:
+- canonical runtime contracts
+- replay-safe runtime typing
+- deterministic projection contracts
+- namespace-aware replay infrastructure
+- replay generic propagation
+- runtime translation boundaries
+- checkpoint stabilization
 
-1. Runtime contract system creation under:
+Created:
 
 packages/contracts/src/runtime
 
@@ -70,40 +79,20 @@ Files:
 - worker-lease.types.ts
 - index.ts
 
-2. Removed fake architecture packages:
-- packages/event-schema
-- packages/recovery-engine
-- packages/session-engine
-- packages/shared-types
-- packages/workflow-core
-
-3. Removed empty runtime folders:
-- packages/runtime/src/checkpoints
-- packages/runtime/src/transactions
-- packages/runtime/src/batching
-- packages/runtime/src/shutdown
-
-4. Removed duplicate replay file:
-- packages/runtime/src/rebuild-runtime.ts
-
-Replay ownership is now consolidated under:
-- packages/runtime/src/replay
-
-5. Updated:
+We updated:
 - packages/contracts/src/projection.types.ts
 - packages/contracts/src/index.ts
 - packages/runtime/src/projection-runtime.ts
 - packages/runtime/src/projections/session/session.projection.ts
 - packages/runtime/src/replay/rebuild-projection.ts
 
-6. Established rule:
+Critical architectural rule established:
 
 Database schema uses snake_case.
 Runtime contracts use camelCase.
 Runtime layer translates between them.
 
-Allowed:
-SQL strings may use:
+Allowed ONLY in SQL:
 - sequence_id
 - shop_id
 - occurred_at
@@ -115,124 +104,209 @@ NOT allowed in runtime TypeScript:
 - event.occurred_at
 - checkpoint.last_processed_sequence
 
-7. Session projection now uses:
+ProjectionRuntime.loadEvents<TPayload>() was fixed to support:
 - ProjectionEvent<TPayload>
-- event.payload.sessionId
-- event.shopId
-- event.occurredAt
+- replay-safe generic propagation
+- strongly typed deterministic replay
 
-8. Replay rebuild now uses:
-- projection.apply(event)
-- event.sequence
-- typed replay event loading
+Verified:
+- pnpm turbo run typecheck passes
+- grep -R "ProjectionEvent<unknown>" packages/runtime/src returns no results
 
-Current likely next step:
+This confirms:
+- replay contract drift resolved
+- canonical runtime typing stabilized
+- deterministic event propagation compiler-enforced
 
-Run:
+We also removed architectural drift:
+- packages/event-schema
+- packages/recovery-engine
+- packages/session-engine
+- packages/shared-types
+- packages/workflow-core
 
-pnpm turbo run typecheck
+Replay ownership is consolidated under:
+- packages/runtime/src/replay
 
-If errors appear:
-fix ONLY canonical runtime contract migration issues.
+Current stable infrastructure packages:
+- packages/contracts
+- packages/runtime
+- packages/database
 
-Then run:
+--------------------------------------------------
 
-grep -R "sequence_id\|shop_id\|occurred_at\|session_id\|last_processed_sequence" packages/runtime/src
+# Phase 3B — Event Transport Abstraction
 
-Goal:
-No snake_case runtime object access in TypeScript logic.
+Completed:
+- infrastructure-owned transport layer
+- Redis transport abstraction
+- transport publishing abstraction
+- transport consumption abstraction
+- transport envelope contracts
+- package-level transport ownership
 
-Current runtime structure:
+Created:
 
-packages/runtime/src
-├── batch-loader.ts
-├── checkpoint-manager.ts
-├── dead-letter
-│   └── dead-letter.service.ts
-├── graceful-shutdown.ts
-├── idempotency
-│   └── projection-idempotency.service.ts
+packages/event-bus
+
+Canonical structure:
+
+packages/event-bus/src
+├── event-envelope.types.ts
+├── event-publisher.types.ts
+├── event-consumer.types.ts
+├── event-transport.types.ts
+├── redis-event-publisher.ts
+├── redis-event-consumer.ts
 ├── index.ts
-├── leases
-│   ├── lease-heartbeat.ts
-│   └── worker-lease.service.ts
-├── projection-registry.ts
-├── projection-runtime.ts
-├── projections
-│   ├── session
-│   │   └── session.projection.ts
-│   └── session-intelligence
-│       ├── index.ts
-│       ├── session-intelligence.helpers.ts
-│       ├── session-intelligence.projection.ts
-│       ├── session-intelligence.reducer.ts
-│       └── session-intelligence.types.ts
-├── replay
-│   ├── projection-reset.ts
-│   ├── rebuild-projection.ts
-│   ├── rebuild-runtime.ts
-│   ├── replay-controller.ts
-│   └── run-replay.ts
-├── runtime
-│   └── retry-policy.ts
-├── transactional-runner.ts
-├── verification
-│   ├── projection-verifier.ts
-│   └── run-verification.ts
-└── worker-state.ts
 
-Current architectural rules:
+Transport ownership now belongs to:
+- packages/event-bus
 
-DO NOT build:
+Applications no longer should own:
+- Redis publishing
+- transport serialization
+- transport consumption
+- infrastructure transport clients
+
+Critical architectural rule established:
+
+apps compose infrastructure
+packages own infrastructure
+
+Workspace-wide typecheck currently passes:
+- pnpm turbo run typecheck
+
+--------------------------------------------------
+
+# Current Stable Architecture Boundaries
+
+packages/contracts owns:
+- canonical contracts
+- runtime types
+- replay semantics
+- projection contracts
+- namespace contracts
+
+packages/runtime owns:
+- replay execution
+- projection orchestration
+- checkpoint progression
+- deterministic runtime execution
+- idempotency enforcement
+
+packages/database owns:
+- SQL ownership
+- database clients
+- persistence primitives
+- transactional infrastructure
+
+packages/event-bus owns:
+- transport ownership
+- Redis publishing
+- Redis consumption
+- transport contracts
+- event serialization
+
+Applications should ONLY own:
+- HTTP routes
+- request validation
+- composition logic
+- orchestration entrypoints
+
+Applications should NOT own:
+- Redis clients
+- Postgres clients
+- transport infrastructure
+- persistence primitives
+
+--------------------------------------------------
+
+# Current Architectural Rules
+
+DO NOT BUILD:
 - frontend systems
 - merchant UX
 - AI orchestration
-- automation DSLs
-- agent frameworks
-- generic workflow engines
+- workflow engines
 - LangChain abstractions
 - trigger-action systems
+- agent frameworks
+- automation DSLs
 
 Focus ONLY on:
-- deterministic runtime correctness
-- replay-safe infrastructure
-- governed runtime contracts
-- orchestration primitives
-- behavioral intelligence accumulation
-- projection execution infrastructure
-- distributed runtime foundations
+- deterministic runtime infrastructure
+- replay-safe systems
+- distributed orchestration primitives
+- transport correctness
+- checkpoint correctness
+- behavioral accumulation infrastructure
+- compiler-enforced contracts
 
-After runtime typecheck fully passes:
+--------------------------------------------------
 
-Next phase:
-Phase 3B — Event Transport Abstraction.
+# Current Workspace Structure
+
+Important packages:
+
+packages/contracts
+packages/runtime
+packages/database
+packages/event-bus
+
+Important apps:
+
+apps/ingestion-api
+apps/replay-controller
+apps/session-projection-worker
+
+--------------------------------------------------
+
+# NEXT PHASE
+
+# Phase 3C — Ingestion Infrastructure Decoupling
 
 Goal:
-Stop apps from owning infrastructure clients.
+
+Remove infrastructure ownership from:
+
+apps/ingestion-api
 
 Current violations:
-- apps/ingestion-api/src/lib/postgres.ts
 - apps/ingestion-api/src/lib/redis.ts
+- apps/ingestion-api/src/lib/postgres.ts
 
 Correct architecture:
-Apps compose packages.
-Packages own infrastructure primitives.
+apps compose packages
+packages own infrastructure
 
-Next likely work:
-- inspect ingestion-api
-- inspect packages/event-bus
-- create minimal event transport contracts
+Next required inspections:
+
+sed -n '1,260p' apps/ingestion-api/src/lib/redis.ts
+
+sed -n '1,260p' apps/ingestion-api/src/lib/postgres.ts
+
+sed -n '1,320p' apps/ingestion-api/src/services/event-store.service.ts
+
+sed -n '1,320p' apps/ingestion-api/src/routes/ingest.route.ts
+
+sed -n '1,260p' apps/ingestion-api/src/server.ts
+
+Next implementation goals:
 - move Redis ownership into packages/event-bus
-- keep Postgres ownership inside packages/database
+- move persistence ownership into packages/database
 - keep ingestion-api as HTTP composition layer only
+- centralize deterministic ingestion boundaries
+- enforce package ownership direction
 
 When responding:
 - give CLI commands
-- give full files
+- give FULL files
 - include detailed responsibility comments at top of every file
 - preserve deterministic replay guarantees
-- maintain strict package ownership
-- avoid architectural drift
+- preserve package ownership correctness
+- avoid abstraction drift
 - challenge premature frontend or AI work
-- optimize for distributed orchestration infrastructure
-```
+- optimize for distributed deterministic infrastructure
+- maintain replay-safe architecture
+- maintain compiler-enforced boundaries

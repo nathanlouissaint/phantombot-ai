@@ -1,7 +1,9 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS behavior_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sequence_id BIGSERIAL PRIMARY KEY,
+
+    id UUID DEFAULT gen_random_uuid(),
 
     event_id VARCHAR(255) UNIQUE NOT NULL,
     shop_id VARCHAR(255) NOT NULL,
@@ -19,14 +21,17 @@ CREATE TABLE IF NOT EXISTS behavior_events (
     ingested_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE INDEX idx_behavior_events_shop_id
+CREATE INDEX IF NOT EXISTS idx_behavior_events_shop_id
 ON behavior_events(shop_id);
 
-CREATE INDEX idx_behavior_events_session_id
+CREATE INDEX IF NOT EXISTS idx_behavior_events_session_id
 ON behavior_events(session_id);
 
-CREATE INDEX idx_behavior_events_event_type
+CREATE INDEX IF NOT EXISTS idx_behavior_events_event_type
 ON behavior_events(event_type);
 
-CREATE INDEX idx_behavior_events_occurred_at
+CREATE INDEX IF NOT EXISTS idx_behavior_events_occurred_at
 ON behavior_events(occurred_at);
+
+CREATE INDEX IF NOT EXISTS idx_behavior_events_sequence_id
+ON behavior_events(sequence_id);
