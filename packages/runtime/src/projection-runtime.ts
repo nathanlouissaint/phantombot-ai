@@ -11,12 +11,14 @@
  * - checkpoint advancement
  * - transactional projection execution
  * - replay-safe idempotency enforcement
+ * - deterministic event sequencing
  *
  * Does NOT Own:
  * - business logic
  * - orchestration
  * - projections
  * - intelligence systems
+ * - AI adaptation
  *
  * Critical Rules:
  * - event ordering must remain deterministic
@@ -24,6 +26,8 @@
  * - workers advance only after successful processing
  * - idempotency checks must occur inside transaction boundaries
  * - projection mutation + checkpoint advancement must remain atomic
+ * - runtime contracts must remain canonical
+ * - runtime systems must translate persistence schema to runtime contracts
  */
 
 import { PoolClient } from "pg";
@@ -32,16 +36,16 @@ import { projectionIdempotencyService }
 from "./idempotency/projection-idempotency.service";
 
 import { sql }
-from "../../database/src/postgres";
+from "@phantombot/database";
 
 import {
   ProjectionCheckpoint,
   ProjectionEvent,
-} from "../../contracts/src/projection.types";
+} from "@phantombot/contracts";
 
 import {
   ProjectionNamespace,
-} from "../../contracts/src/projection-namespace.types";
+} from "@phantombot/contracts";
 
 export class ProjectionRuntime {
   readonly projectionName: string;
@@ -65,7 +69,15 @@ export class ProjectionRuntime {
   async loadCheckpoint(): Promise<number> {
     const result =
       await sql<ProjectionCheckpoint[]>`
-        SELECT *
+        SELECT
+          projection_name as "projectionName",
+
+          projection_namespace as "namespace",
+
+          last_processed_sequence as "lastProcessedSequence",
+
+          updated_at as "updatedAt"
+
         FROM projection_checkpoints
 
         WHERE projection_name =
@@ -94,7 +106,7 @@ export class ProjectionRuntime {
     }
 
     return result[0]
-      .last_processed_sequence;
+      .lastProcessedSequence;
   }
 
   async loadEvents(
@@ -102,7 +114,19 @@ export class ProjectionRuntime {
     batchSize = 100
   ): Promise<ProjectionEvent[]> {
     return sql<ProjectionEvent[]>`
-      SELECT *
+      SELECT
+        sequence_id as "sequence",
+
+        event_id as "id",
+
+        event_type as "type",
+
+        shop_id as "shopId",
+
+        occurred_at as "occurredAt",
+
+        payload
+
       FROM behavior_events
 
       WHERE sequence_id >
@@ -124,6 +148,7 @@ export class ProjectionRuntime {
     return projectionIdempotencyService
       .hasEventBeenApplied({
         client,
+
         projectionName:
           this.projectionName,
 
@@ -141,6 +166,7 @@ export class ProjectionRuntime {
     await projectionIdempotencyService
       .markEventApplied({
         client,
+
         projectionName:
           this.projectionName,
 

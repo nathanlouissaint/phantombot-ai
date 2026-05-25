@@ -19,7 +19,7 @@
  */
 
 import { sql }
-from "../../../database/src/postgres";
+from "@phantombot/database";
 
 export class DeadLetterService {
   async quarantineEvent({

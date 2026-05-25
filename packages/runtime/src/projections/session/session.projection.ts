@@ -25,66 +25,79 @@
  * - projections must NEVER generate wall-clock timestamps
  */
 
+import { sql }
+from "@phantombot/database";
+
 import {
   ProjectionEvent,
-} from "../../../../contracts/src/projection.types";
+} from "@phantombot/contracts";
 
 import {
   DEFAULT_PROJECTION_NAMESPACE,
   ProjectionNamespace,
-} from "../../../../contracts/src/projection-namespace.types";
+} from "@phantombot/contracts";
+
+/**
+ * SessionProjectionPayload
+ *
+ * Responsibility:
+ * Define deterministic behavioral session payload contracts.
+ *
+ * Owns:
+ * - session identity payload structure
+ * - replay-safe payload typing
+ *
+ * Does NOT Own:
+ * - runtime event envelope metadata
+ * - orchestration semantics
+ * - projection execution semantics
+ *
+ * Critical Rules:
+ * - payload contracts must remain deterministic
+ * - payload contracts must remain replay-safe
+ * - payloads must not contain runtime-owned metadata
+ */
+export interface SessionProjectionPayload {
+  readonly sessionId: string;
+}
 
 export class SessionProjection {
-  private namespace: ProjectionNamespace;
+  constructor(
+    private namespace: ProjectionNamespace =
+      DEFAULT_PROJECTION_NAMESPACE
+  ) {}
 
-  constructor({
-    namespace = DEFAULT_PROJECTION_NAMESPACE,
-  }: {
-    namespace?: ProjectionNamespace;
-  } = {}) {
-    this.namespace = namespace;
-  }
-
-  async process(
-    tx: any,
-    event: ProjectionEvent
-  ) {
+  async apply(
+    event: ProjectionEvent<SessionProjectionPayload>
+  ): Promise<void> {
     const sessionId =
-      event.session_id;
+      event.payload.sessionId;
 
-    await tx`
+    await sql`
       INSERT INTO behavior_sessions (
-        projection_namespace,
         session_id,
         shop_id,
         started_at,
         last_activity_at,
-        event_count
+        projection_namespace
       )
 
       VALUES (
-        ${this.namespace},
         ${sessionId},
-        ${event.shop_id},
-        ${event.occurred_at},
-        ${event.occurred_at},
-        1
+        ${event.shopId},
+        ${event.occurredAt},
+        ${event.occurredAt},
+        ${this.namespace}
       )
 
       ON CONFLICT (
-        projection_namespace,
-        session_id
+        session_id,
+        projection_namespace
       )
 
       DO UPDATE SET
-        event_count =
-          behavior_sessions.event_count + 1,
-
         last_activity_at =
           EXCLUDED.last_activity_at
     `;
   }
 }
-
-export const sessionProjection =
-  new SessionProjection();

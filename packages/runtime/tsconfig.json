@@ -1,23 +1,29 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
 
     "strict": true,
 
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     "skipLibCheck": true,
 
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
 
-    "resolveJsonModule": true,
-
-    "types": ["node"],
+    "paths": {
+      "@phantombot/contracts": [
+        "../contracts/src/index.ts"
+      ]
+    },
 
     "outDir": "dist"
   },
 
-  "include": ["src"]
+  "include": [
+    "src",
+    "../contracts/src"
+  ]
 }

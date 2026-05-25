@@ -2,49 +2,41 @@
  * projection.types.ts
  *
  * Responsibility:
- * Define canonical runtime projection contracts.
+ * Define projection-level mutation contracts that are independent from
+ * runtime execution, checkpoint ownership, and event transport envelopes.
  *
  * Owns:
- * - projection event contracts
- * - checkpoint contracts
- * - replay-safe runtime typing
+ * - projection mutation intent contracts
+ * - projection reducer output contracts
+ * - deterministic projection state mutation metadata
  *
  * Does NOT Own:
- * - business logic
- * - orchestration
- * - persistence
- * - worker execution
+ * - projection event envelopes
+ * - checkpoint progression contracts
+ * - replay execution contracts
+ * - worker execution contracts
+ * - persistence implementation
  *
  * Critical Rules:
  * - projection contracts must remain deterministic
- * - projection contracts must remain canonical
- * - runtime typing must remain infrastructure-owned
+ * - projection contracts must not duplicate runtime contracts
+ * - projection contracts must not own checkpoint or event envelope semantics
+ * - runtime execution contracts belong in packages/contracts/src/runtime
  */
 
-export interface ProjectionCheckpoint {
-  projection_name: string;
+export type ProjectionMutationOperation =
+  | "insert"
+  | "update"
+  | "delete"
+  | "noop";
 
-  last_processed_sequence: number;
+export interface ProjectionMutation {
+  readonly operation: ProjectionMutationOperation;
+  readonly target: string;
+  readonly deterministicKey: string;
 }
 
-export interface ProjectionEvent {
-  sequence_id: number;
-
-  event_id: string;
-
-  shop_id: string;
-
-  session_id: string;
-
-  event_type: string;
-
-  event_version: string;
-
-  payload: Record<string, unknown>;
-
-  source: string;
-
-  occurred_at: string;
-
-  ingested_at: string;
+export interface ProjectionReducerResult<TState = unknown> {
+  readonly state: TState;
+  readonly mutations: readonly ProjectionMutation[];
 }

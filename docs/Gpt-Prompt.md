@@ -1,123 +1,238 @@
-We are continuing PhantomBotAI from the current deterministic behavioral infrastructure state.
+We are continuing work on PhantomBotAI.
 
-Current infrastructure status:
+Project identity:
 
-PhantomBotAI has successfully completed:
+PhantomBotAI is NOT:
+- a chatbot SaaS
+- a Shopify AI wrapper
+- a trigger-action automation platform
+- a support automation system
 
-- canonical behavioral ingestion
-- immutable event persistence
-- replay-safe event ordering
-- deterministic projection runtime
-- session projection workers
-- replay controller infrastructure
-- checkpoint rewinds
-- deterministic projection rebuilding
+PhantomBotAI is evolving into:
 
-Operational infrastructure:
+AI-native deterministic behavioral orchestration infrastructure.
 
-- Docker
-- PostgreSQL
-- Redis
-- Fastify
-- TypeScript
-- Zod
-- tsx runtime
+The platform direction is converging toward:
 
-Operational containers:
+behavioral operating system for commerce.
 
-- phantom-postgres
-- phantom-redis
+Core flow:
 
-Current runtime architecture:
+shopper interaction
+→ behavioral signal collection
+→ deterministic event ingestion
+→ session intelligence accumulation
+→ hesitation analysis
+→ recovery opportunity generation
+→ orchestration coordination
+→ intervention execution
+→ outcome tracking
+→ adaptive rendering
 
-Shopify Event
-→ Fastify Ingestion API
-→ Zod Validation
-→ Redis Idempotency
-→ PostgreSQL Persistence
-→ Projection Runtime
-→ Session Projection Worker
-→ behavior_sessions
-→ Projection Checkpoints
+Current architecture principle:
 
-Current validated infrastructure:
+Deterministic infrastructure owns truth.
 
-- replay-safe persistence
-- deterministic replay ordering
-- disposable projections
-- replay reconstruction
-- ordered event consumption
-- materialized behavioral state
-- checkpoint rewinds
-- replay-safe session rebuilding
+AI systems do NOT own:
+- behavioral truth
+- event ordering
+- replay semantics
+- deterministic scoring
+- checkpoint ownership
+- orchestration state
 
-Current PostgreSQL infrastructure:
+AI systems will later own:
+- persuasion adaptation
+- intervention personalization
+- merchant summaries
+- conversational rendering
+- adaptive messaging
+- optimization suggestions
 
-## behavior_events
+Current phase:
 
-Includes:
+Phase 3A — Canonical Runtime Contract Migration.
 
-- immutable append-only storage
-- sequence_id BIGSERIAL UNIQUE
-- deterministic replay ordering
+We already completed:
 
-## projection_checkpoints
+1. Runtime contract system creation under:
 
-Supports:
+packages/contracts/src/runtime
 
-- replay progression
-- checkpoint rewinds
-- worker resumption
+Files:
+- deterministic-time.types.ts
+- execution-result.types.ts
+- projection-checkpoint.types.ts
+- projection-event.types.ts
+- projection-runtime.types.ts
+- replay.types.ts
+- runtime-state.types.ts
+- worker-lease.types.ts
+- index.ts
 
-## behavior_sessions
+2. Removed fake architecture packages:
+- packages/event-schema
+- packages/recovery-engine
+- packages/session-engine
+- packages/shared-types
+- packages/workflow-core
 
-Supports:
+3. Removed empty runtime folders:
+- packages/runtime/src/checkpoints
+- packages/runtime/src/transactions
+- packages/runtime/src/batching
+- packages/runtime/src/shutdown
 
-- deterministic behavioral projections
-- replayable session reconstruction
-- operational behavioral state
+4. Removed duplicate replay file:
+- packages/runtime/src/rebuild-runtime.ts
 
-Current architecture weakness:
+Replay ownership is now consolidated under:
+- packages/runtime/src/replay
 
-Projection processing is NOT transactional yet.
+5. Updated:
+- packages/contracts/src/projection.types.ts
+- packages/contracts/src/index.ts
+- packages/runtime/src/projection-runtime.ts
+- packages/runtime/src/projections/session/session.projection.ts
+- packages/runtime/src/replay/rebuild-projection.ts
 
-Current dangerous runtime flow:
+6. Established rule:
 
-process event
-→ update projection
-→ crash
-→ checkpoint not updated
-→ replay duplicates projection writes
+Database schema uses snake_case.
+Runtime contracts use camelCase.
+Runtime layer translates between them.
 
-Current priority:
+Allowed:
+SQL strings may use:
+- sequence_id
+- shop_id
+- occurred_at
+- last_processed_sequence
 
-# Phase 2C — Transactional Projection Runtime
+NOT allowed in runtime TypeScript:
+- event.sequence_id
+- event.shop_id
+- event.occurred_at
+- checkpoint.last_processed_sequence
 
-Immediate objectives:
+7. Session projection now uses:
+- ProjectionEvent<TPayload>
+- event.payload.sessionId
+- event.shopId
+- event.occurredAt
 
-1. transactional projection processing
-2. atomic checkpoint advancement
-3. projection consistency guarantees
-4. replay correctness protection
-5. runtime hardening
-6. graceful shutdown
-7. batching + backpressure
-8. deterministic failure recovery
+8. Replay rebuild now uses:
+- projection.apply(event)
+- event.sequence
+- typed replay event loading
 
-Act as:
-- senior distributed systems architect
-- event-sourcing infrastructure architect
-- replay-safe runtime systems CTO
-- behavioral intelligence infrastructure strategist
+Current likely next step:
 
-Continue from this exact infrastructure state without resetting context.
+Run:
 
-Focus on:
-- replay determinism
-- transactional correctness
-- worker runtime safety
-- event-sourced behavioral infrastructure
-- scalable projection systems
-- deterministic state reconstruction
-- operational durability
-- infrastructure moat development
+pnpm turbo run typecheck
+
+If errors appear:
+fix ONLY canonical runtime contract migration issues.
+
+Then run:
+
+grep -R "sequence_id\|shop_id\|occurred_at\|session_id\|last_processed_sequence" packages/runtime/src
+
+Goal:
+No snake_case runtime object access in TypeScript logic.
+
+Current runtime structure:
+
+packages/runtime/src
+├── batch-loader.ts
+├── checkpoint-manager.ts
+├── dead-letter
+│   └── dead-letter.service.ts
+├── graceful-shutdown.ts
+├── idempotency
+│   └── projection-idempotency.service.ts
+├── index.ts
+├── leases
+│   ├── lease-heartbeat.ts
+│   └── worker-lease.service.ts
+├── projection-registry.ts
+├── projection-runtime.ts
+├── projections
+│   ├── session
+│   │   └── session.projection.ts
+│   └── session-intelligence
+│       ├── index.ts
+│       ├── session-intelligence.helpers.ts
+│       ├── session-intelligence.projection.ts
+│       ├── session-intelligence.reducer.ts
+│       └── session-intelligence.types.ts
+├── replay
+│   ├── projection-reset.ts
+│   ├── rebuild-projection.ts
+│   ├── rebuild-runtime.ts
+│   ├── replay-controller.ts
+│   └── run-replay.ts
+├── runtime
+│   └── retry-policy.ts
+├── transactional-runner.ts
+├── verification
+│   ├── projection-verifier.ts
+│   └── run-verification.ts
+└── worker-state.ts
+
+Current architectural rules:
+
+DO NOT build:
+- frontend systems
+- merchant UX
+- AI orchestration
+- automation DSLs
+- agent frameworks
+- generic workflow engines
+- LangChain abstractions
+- trigger-action systems
+
+Focus ONLY on:
+- deterministic runtime correctness
+- replay-safe infrastructure
+- governed runtime contracts
+- orchestration primitives
+- behavioral intelligence accumulation
+- projection execution infrastructure
+- distributed runtime foundations
+
+After runtime typecheck fully passes:
+
+Next phase:
+Phase 3B — Event Transport Abstraction.
+
+Goal:
+Stop apps from owning infrastructure clients.
+
+Current violations:
+- apps/ingestion-api/src/lib/postgres.ts
+- apps/ingestion-api/src/lib/redis.ts
+
+Correct architecture:
+Apps compose packages.
+Packages own infrastructure primitives.
+
+Next likely work:
+- inspect ingestion-api
+- inspect packages/event-bus
+- create minimal event transport contracts
+- move Redis ownership into packages/event-bus
+- keep Postgres ownership inside packages/database
+- keep ingestion-api as HTTP composition layer only
+
+When responding:
+- give CLI commands
+- give full files
+- include detailed responsibility comments at top of every file
+- preserve deterministic replay guarantees
+- maintain strict package ownership
+- avoid architectural drift
+- challenge premature frontend or AI work
+- optimize for distributed orchestration infrastructure
+```

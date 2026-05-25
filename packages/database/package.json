@@ -1,5 +1,5 @@
 {
-  "name": "@phantombot/contracts",
+  "name": "@phantombot/database",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,5 +10,12 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }

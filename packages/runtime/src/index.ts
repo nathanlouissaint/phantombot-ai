@@ -1,5 +1,18 @@
+/**
+ * index.ts
+ *
+ * Responsibility:
+ * Expose stable runtime package exports.
+ *
+ * Owns:
+ * - runtime export boundaries
+ *
+ * Does NOT Own:
+ * - runtime orchestration
+ * - persistence
+ * - workflow execution
+ */
+
 export * from "./projection-runtime";
-export * from "./projection-registry";
-export * from "./checkpoint-manager";
-export * from "./transactional-runner";
-export * from "./worker-state";
+
+export * from "./projections/session-intelligence";

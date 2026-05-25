@@ -27,7 +27,7 @@
 import crypto from "crypto";
 
 import { sql }
-from "../../../database/src/postgres";
+from "@phantombot/database";
 
 export class ProjectionVerifier {
   async loadProjectionState(

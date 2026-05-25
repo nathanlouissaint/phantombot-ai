@@ -20,7 +20,7 @@
 
 import { randomUUID } from "crypto";
 
-import { sql } from "../../../database/src/postgres";
+import { sql } from "@phantombot/database";
 
 const LEASE_DURATION_SECONDS = 30;
 

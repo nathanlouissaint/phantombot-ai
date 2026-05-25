@@ -9,35 +9,39 @@
  * - namespace reconstruction
  * - deterministic replay execution
  * - projection reset orchestration
+ * - sequential replay progression
  *
  * Does NOT Own:
  * - projection mutation logic
  * - checkpoint ownership
  * - worker leases
  * - business intelligence
+ * - orchestration coordination
  *
  * Critical Rules:
  * - replay execution must remain deterministic
  * - replay ordering must remain sequential
  * - replay namespaces must remain isolated
  * - projection namespace ownership must remain explicit
+ * - replay systems must not generate side effects
+ * - replay systems must consume canonical runtime contracts
  */
 
 import { sql }
-from "../../../database/src/postgres";
+from "@phantombot/database";
 
 import { ProjectionRuntime }
 from "../projection-runtime";
 
 import {
   SessionProjection,
+  SessionProjectionPayload,
 }
 from "../projections/session/session.projection";
 
 import {
   ProjectionNamespace,
-}
-from "../../../contracts/src/projection-namespace.types";
+} from "@phantombot/contracts";
 
 export async function rebuildProjection({
   namespace,
@@ -50,7 +54,7 @@ namespace=${namespace}`
   );
 
   /**
-   * Reset namespace state.
+   * Reset namespace-owned projection state.
    */
   await sql`
     DELETE FROM behavior_sessions
@@ -68,9 +72,9 @@ namespace=${namespace}`
    * Create namespace-aware projection.
    */
   const projection =
-    new SessionProjection({
-      namespace,
-    });
+    new SessionProjection(
+      namespace
+    );
 
   /**
    * Create deterministic runtime.
@@ -90,7 +94,9 @@ namespace=${namespace}`
 
   while (true) {
     const events =
-      await runtime.loadEvents(
+      await runtime.loadEvents<
+        SessionProjectionPayload
+      >(
         checkpoint,
         500
       );
@@ -99,18 +105,16 @@ namespace=${namespace}`
       break;
     }
 
+    /**
+     * Deterministic sequential replay.
+     */
     for (const event of events) {
-      await sql.begin(
-        async (tx: any) => {
-          await projection.process(
-            tx,
-            event
-          );
-        }
+      await projection.apply(
+        event
       );
 
       checkpoint =
-        event.sequence_id;
+        event.sequence;
     }
 
     console.log(

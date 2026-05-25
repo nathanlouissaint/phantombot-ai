@@ -25,7 +25,7 @@ from "./rebuild-projection";
 import {
   ProjectionNamespace,
 }
-from "../../../contracts/src/projection-namespace.types";
+from "@phantombot/contracts";
 
 async function runReplay() {
   const namespaceArg =
