@@ -8,47 +8,37 @@
  * - checkpoint loading
  * - ordered event loading
  * - replay-safe progression
- * - checkpoint advancement
- * - transactional projection execution
- * - replay-safe idempotency enforcement
+ * - transactional projection orchestration
  * - deterministic event sequencing
  * - persistence-to-runtime contract translation
  *
  * Does NOT Own:
- * - business logic
- * - orchestration
- * - projections
- * - intelligence systems
- * - AI adaptation
+ * - SQL ownership
+ * - transaction lifecycle ownership
+ * - repository mutation semantics
+ * - infrastructure orchestration
+ * - postgres awareness
  *
  * Critical Rules:
- * - event ordering must remain deterministic
- * - replay progression must remain sequential
- * - workers advance only after successful processing
- * - idempotency checks must occur inside transaction boundaries
- * - projection mutation + checkpoint advancement must remain atomic
- * - runtime contracts must remain canonical
- * - runtime systems must translate persistence schema to runtime contracts
- * - runtime contracts must remain strongly typed
+ * - runtime must remain infrastructure-agnostic
+ * - replay progression must remain deterministic
+ * - event ordering must remain sequential
+ * - runtime systems consume repositories only
+ * - runtime must NEVER import postgres directly
  */
 
-import { PoolClient }
-from "pg";
-
-import { sql }
-from "@phantombot/database";
+import {
+  sql,
+  projectionCheckpointRepository,
+  projectionIdempotencyRepository,
+  runInTransaction,
+  TransactionContext,
+} from "@phantombot/database";
 
 import {
-  ProjectionCheckpoint,
   ProjectionEvent,
   ProjectionNamespace,
-}
-from "@phantombot/contracts";
-
-import {
-  projectionIdempotencyService,
-}
-from "./idempotency/projection-idempotency.service";
+} from "@phantombot/contracts";
 
 export class ProjectionRuntime {
   readonly projectionName: string;
@@ -74,57 +64,16 @@ export class ProjectionRuntime {
    *
    * Responsibility:
    * Load deterministic replay checkpoint state.
-   *
-   * Critical Rules:
-   * - checkpoint ownership remains namespace-aware
-   * - checkpoint progression must remain deterministic
-   * - runtime contracts must remain canonical
    */
   async loadCheckpoint(): Promise<number> {
-    const result =
-      await sql<ProjectionCheckpoint[]>`
-        SELECT
-          projection_name as "projectionName",
+    return projectionCheckpointRepository
+      .loadCheckpoint({
+        projectionName:
+          this.projectionName,
 
-          projection_namespace as "namespace",
-
-          last_processed_sequence
-            as "lastProcessedSequence",
-
-          updated_at as "updatedAt"
-
-        FROM projection_checkpoints
-
-        WHERE projection_name =
-          ${this.projectionName}
-
-        AND projection_namespace =
-          ${this.namespace}
-      `;
-
-    /**
-     * Initialize deterministic checkpoint.
-     */
-    if (result.length === 0) {
-      await sql`
-        INSERT INTO projection_checkpoints (
-          projection_name,
-          projection_namespace,
-          last_processed_sequence
-        )
-
-        VALUES (
-          ${this.projectionName},
-          ${this.namespace},
-          0
-        )
-      `;
-
-      return 0;
-    }
-
-    return result[0]
-      .lastProcessedSequence;
+        namespace:
+          this.namespace,
+      });
   }
 
   /**
@@ -132,17 +81,6 @@ export class ProjectionRuntime {
    *
    * Responsibility:
    * Load ordered deterministic replay events.
-   *
-   * Owns:
-   * - runtime event envelope loading
-   * - persistence schema translation
-   * - strongly typed replay event contracts
-   *
-   * Critical Rules:
-   * - event ordering must remain sequential
-   * - persistence schema must not leak into runtime contracts
-   * - replay contracts must remain strongly typed
-   * - runtime event loading must remain deterministic
    */
   async loadEvents<TPayload>(
     lastSequence: number,
@@ -178,25 +116,37 @@ export class ProjectionRuntime {
   }
 
   /**
+   * runTransaction
+   *
+   * Responsibility:
+   * Execute deterministic replay transaction boundaries.
+   */
+  async runTransaction<T>(
+    operation: (
+      transaction: TransactionContext
+    ) => Promise<T>
+  ): Promise<T> {
+    return runInTransaction(
+      operation
+    );
+  }
+
+  /**
    * hasEventBeenApplied
    *
    * Responsibility:
    * Verify deterministic replay idempotency state.
-   *
-   * Critical Rules:
-   * - idempotency checks must remain transactional
-   * - replay progression must remain deterministic
    */
   async hasEventBeenApplied({
-    client,
+    transaction,
     eventSequenceId,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     eventSequenceId: number;
   }): Promise<boolean> {
-    return projectionIdempotencyService
+    return projectionIdempotencyRepository
       .hasEventBeenApplied({
-        client,
+        transaction,
 
         projectionName:
           this.projectionName,
@@ -210,21 +160,17 @@ export class ProjectionRuntime {
    *
    * Responsibility:
    * Persist deterministic replay progression.
-   *
-   * Critical Rules:
-   * - replay mutation tracking must remain atomic
-   * - idempotency ownership must remain runtime-scoped
    */
   async markEventApplied({
-    client,
+    transaction,
     eventSequenceId,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     eventSequenceId: number;
   }): Promise<void> {
-    await projectionIdempotencyService
+    await projectionIdempotencyRepository
       .markEventApplied({
-        client,
+        transaction,
 
         projectionName:
           this.projectionName,
@@ -238,36 +184,25 @@ export class ProjectionRuntime {
    *
    * Responsibility:
    * Advance deterministic replay checkpoint state.
-   *
-   * Critical Rules:
-   * - checkpoint advancement must remain sequential
-   * - namespace isolation must remain enforced
-   * - runtime checkpoint ownership must remain canonical
    */
   async updateCheckpoint({
-    client,
+    transaction,
     sequence,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     sequence: number;
   }): Promise<void> {
-    await client.query(
-      `
-        UPDATE projection_checkpoints
+    await projectionCheckpointRepository
+      .advanceCheckpoint({
+        transaction,
 
-        SET
-          last_processed_sequence = $1,
-          updated_at = NOW()
+        projectionName:
+          this.projectionName,
 
-        WHERE projection_name = $2
+        namespace:
+          this.namespace,
 
-        AND projection_namespace = $3
-      `,
-      [
         sequence,
-        this.projectionName,
-        this.namespace,
-      ]
-    );
+      });
   }
 }

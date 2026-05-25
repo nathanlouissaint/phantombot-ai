@@ -10,10 +10,12 @@
  * - deterministic replay execution
  * - projection reset orchestration
  * - sequential replay progression
+ * - transactional replay boundaries
  *
  * Does NOT Own:
  * - projection mutation logic
- * - checkpoint ownership
+ * - SQL ownership
+ * - transaction lifecycle ownership
  * - worker leases
  * - business intelligence
  * - orchestration coordination
@@ -25,6 +27,7 @@
  * - projection namespace ownership must remain explicit
  * - replay systems must not generate side effects
  * - replay systems must consume canonical runtime contracts
+ * - projection mutation + checkpoint advancement must remain atomic
  */
 
 import { sql }
@@ -109,8 +112,40 @@ namespace=${namespace}`
      * Deterministic sequential replay.
      */
     for (const event of events) {
-      await projection.apply(
-        event
+      await runtime.runTransaction(
+        async (transaction) => {
+          const alreadyApplied =
+            await runtime.hasEventBeenApplied({
+              transaction,
+
+              eventSequenceId:
+                event.sequence,
+            });
+
+          if (alreadyApplied) {
+            return;
+          }
+
+          await projection.apply({
+            transaction,
+
+            event,
+          });
+
+          await runtime.markEventApplied({
+            transaction,
+
+            eventSequenceId:
+              event.sequence,
+          });
+
+          await runtime.updateCheckpoint({
+            transaction,
+
+            sequence:
+              event.sequence,
+          });
+        }
       );
 
       checkpoint =

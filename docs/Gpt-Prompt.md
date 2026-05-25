@@ -1,312 +1,199 @@
-We are continuing work on PhantomBotAI.
+# PHANTOMBOT AI — PHASE 3D CONTINUATION PROMPT
 
-Project identity:
+We are continuing the ONEMOGO / PhantomBot AI infrastructure build.
 
-PhantomBotAI is NOT:
-- a chatbot SaaS
-- a Shopify AI wrapper
-- a support automation platform
-- a trigger-action workflow tool
-- an agent framework
-- a generic AI automation system
+Current branch:
 
-PhantomBotAI is evolving into:
+```txt
+architecture/core-system
+```
 
-AI-native deterministic behavioral orchestration infrastructure.
+We just completed:
 
-The platform direction is converging toward:
+# Phase 3C — Deterministic Ingestion Foundation
 
-behavioral operating system for commerce.
+Major completed work:
 
-Core flow:
+- Added deterministic replay-safe sequencing using:
 
-shopper interaction
-→ behavioral signal collection
-→ deterministic event ingestion
-→ ordered event transport
-→ behavioral accumulation
-→ hesitation analysis
-→ orchestration coordination
-→ intervention execution
-→ replay-safe outcome tracking
-→ adaptive optimization
+```sql
+sequence_id BIGSERIAL PRIMARY KEY
+```
 
-Current architecture principle:
+- Introduced canonical ingestion contracts:
 
-Deterministic infrastructure owns truth.
+```txt
+packages/contracts/src/runtime/ingestion-event.types.ts
+```
 
-AI systems do NOT own:
-- event ordering
-- replay semantics
-- deterministic scoring
-- checkpoint ownership
-- orchestration state
-- transport sequencing
-- runtime mutation correctness
+with:
+- IngestionEventInput
+- PersistedBehaviorEvent
 
-AI systems may later own:
-- adaptive persuasion
-- conversational rendering
-- merchant summaries
-- intervention optimization
-- personalization systems
+- Removed ingestion schema drift:
+  - removed `event_name`
+  - standardized `eventType`
 
-We have COMPLETED:
+- Created canonical persistence repository:
 
-# Phase 3A — Canonical Runtime Contract Migration
+```txt
+packages/database/src/repositories/behavior-event.repository.ts
+```
 
-Completed:
-- canonical runtime contracts
-- replay-safe runtime typing
-- deterministic projection contracts
-- namespace-aware replay infrastructure
-- replay generic propagation
-- runtime translation boundaries
-- checkpoint stabilization
+- Removed app-owned infrastructure:
+  - deleted ingestion-api/src/lib/postgres.ts
+  - deleted ingestion-api/src/lib/redis.ts
 
-Created:
+- Refactored ingestion-api into:
+  - HTTP composition only
+  - validation only
+  - infrastructure orchestration only
 
-packages/contracts/src/runtime
+- Implemented real monorepo TypeScript architecture:
+  - project references
+  - composite builds
+  - root tsconfig.json
+  - compiler-enforced package ownership
 
-Files:
-- deterministic-time.types.ts
-- execution-result.types.ts
-- projection-checkpoint.types.ts
-- projection-event.types.ts
-- projection-runtime.types.ts
-- replay.types.ts
-- runtime-state.types.ts
-- worker-lease.types.ts
-- index.ts
+- Verified:
+  - `pnpm tsc -b`
+  - `pnpm turbo run typecheck`
 
-We updated:
-- packages/contracts/src/projection.types.ts
-- packages/contracts/src/index.ts
-- packages/runtime/src/projection-runtime.ts
-- packages/runtime/src/projections/session/session.projection.ts
-- packages/runtime/src/replay/rebuild-projection.ts
+both pass successfully.
 
-Critical architectural rule established:
+---
 
-Database schema uses snake_case.
-Runtime contracts use camelCase.
-Runtime layer translates between them.
+# Current Architecture
 
-Allowed ONLY in SQL:
-- sequence_id
-- shop_id
-- occurred_at
-- last_processed_sequence
+Current layering:
 
-NOT allowed in runtime TypeScript:
-- event.sequence_id
-- event.shop_id
-- event.occurred_at
-- checkpoint.last_processed_sequence
+```txt
+contracts
+    ↓
+database
+    ↓
+runtime
+    ↓
+workers/apps
+```
 
-ProjectionRuntime.loadEvents<TPayload>() was fixed to support:
-- ProjectionEvent<TPayload>
-- replay-safe generic propagation
-- strongly typed deterministic replay
+System is now:
+- replay-safe
+- deterministically ordered
+- compiler-enforced
+- repository-driven
+- infrastructure-layered
 
-Verified:
-- pnpm turbo run typecheck passes
-- grep -R "ProjectionEvent<unknown>" packages/runtime/src returns no results
+---
 
-This confirms:
-- replay contract drift resolved
-- canonical runtime typing stabilized
-- deterministic event propagation compiler-enforced
+# CRITICAL REMAINING VIOLATION
 
-We also removed architectural drift:
-- packages/event-schema
-- packages/recovery-engine
-- packages/session-engine
-- packages/shared-types
-- packages/workflow-core
+Runtime still imports:
 
-Replay ownership is consolidated under:
-- packages/runtime/src/replay
+```ts
+import { PoolClient } from "pg";
+```
 
-Current stable infrastructure packages:
-- packages/contracts
-- packages/runtime
-- packages/database
+inside:
 
---------------------------------------------------
+```txt
+packages/runtime/src/projection-runtime.ts
+packages/runtime/src/idempotency/projection-idempotency.service.ts
+```
 
-# Phase 3B — Event Transport Abstraction
+This violates deterministic infrastructure ownership.
 
-Completed:
-- infrastructure-owned transport layer
-- Redis transport abstraction
-- transport publishing abstraction
-- transport consumption abstraction
-- transport envelope contracts
-- package-level transport ownership
+Runtime must NOT own:
+- pg
+- PoolClient
+- raw SQL drivers
+- infrastructure primitives
 
-Created:
-
-packages/event-bus
-
-Canonical structure:
-
-packages/event-bus/src
-├── event-envelope.types.ts
-├── event-publisher.types.ts
-├── event-consumer.types.ts
-├── event-transport.types.ts
-├── redis-event-publisher.ts
-├── redis-event-consumer.ts
-├── index.ts
-
-Transport ownership now belongs to:
-- packages/event-bus
-
-Applications no longer should own:
-- Redis publishing
-- transport serialization
-- transport consumption
-- infrastructure transport clients
-
-Critical architectural rule established:
-
-apps compose infrastructure
-packages own infrastructure
-
-Workspace-wide typecheck currently passes:
-- pnpm turbo run typecheck
-
---------------------------------------------------
-
-# Current Stable Architecture Boundaries
-
-packages/contracts owns:
-- canonical contracts
-- runtime types
-- replay semantics
-- projection contracts
-- namespace contracts
-
-packages/runtime owns:
-- replay execution
-- projection orchestration
-- checkpoint progression
-- deterministic runtime execution
-- idempotency enforcement
-
-packages/database owns:
-- SQL ownership
-- database clients
-- persistence primitives
-- transactional infrastructure
-
-packages/event-bus owns:
-- transport ownership
-- Redis publishing
-- Redis consumption
-- transport contracts
-- event serialization
-
-Applications should ONLY own:
-- HTTP routes
-- request validation
-- composition logic
-- orchestration entrypoints
-
-Applications should NOT own:
-- Redis clients
-- Postgres clients
-- transport infrastructure
-- persistence primitives
-
---------------------------------------------------
-
-# Current Architectural Rules
-
-DO NOT BUILD:
-- frontend systems
-- merchant UX
-- AI orchestration
-- workflow engines
-- LangChain abstractions
-- trigger-action systems
-- agent frameworks
-- automation DSLs
-
-Focus ONLY on:
-- deterministic runtime infrastructure
-- replay-safe systems
-- distributed orchestration primitives
-- transport correctness
-- checkpoint correctness
-- behavioral accumulation infrastructure
-- compiler-enforced contracts
-
---------------------------------------------------
-
-# Current Workspace Structure
-
-Important packages:
-
-packages/contracts
-packages/runtime
-packages/database
-packages/event-bus
-
-Important apps:
-
-apps/ingestion-api
-apps/replay-controller
-apps/session-projection-worker
-
---------------------------------------------------
+---
 
 # NEXT PHASE
 
-# Phase 3C — Ingestion Infrastructure Decoupling
+# Phase 3D — Runtime Infrastructure Isolation
+
+Objectives:
+
+## 1. Remove PostgreSQL Awareness From Runtime
+
+Move:
+- transaction ownership
+- transaction orchestration
+- client lifecycle
+
+into:
+- @phantombot/database
+
+Runtime should consume:
+- transaction abstractions
+- deterministic repositories
+- execution boundaries only
+
+---
+
+## 2. Introduce Canonical Transaction Interfaces
+
+Need abstractions for:
+- replay transactions
+- projection transactions
+- checkpoint advancement
+- idempotency writes
+
+Likely files:
+
+```txt
+packages/database/src/transactions/
+packages/database/src/repositories/
+```
+
+---
+
+## 3. Refactor Runtime Services
+
+Targets:
+
+```txt
+packages/runtime/src/projection-runtime.ts
+packages/runtime/src/idempotency/projection-idempotency.service.ts
+packages/runtime/src/dead-letter/dead-letter.service.ts
+```
 
 Goal:
+- remove PoolClient imports entirely
+- replace with deterministic repository interfaces
 
-Remove infrastructure ownership from:
+---
 
-apps/ingestion-api
+# IMPORTANT ARCHITECTURE RULES
 
-Current violations:
-- apps/ingestion-api/src/lib/redis.ts
-- apps/ingestion-api/src/lib/postgres.ts
+Critical constraints:
 
-Correct architecture:
-apps compose packages
-packages own infrastructure
+- projections remain deterministic
+- runtime remains side-effect free
+- runtime must not own infrastructure
+- repositories own persistence semantics
+- database package owns transactions
+- apps compose infrastructure only
 
-Next required inspections:
+---
 
-sed -n '1,260p' apps/ingestion-api/src/lib/redis.ts
+# BEFORE WRITING CODE
 
-sed -n '1,260p' apps/ingestion-api/src/lib/postgres.ts
+First inspect:
 
-sed -n '1,320p' apps/ingestion-api/src/services/event-store.service.ts
+```bash
+sed -n '1,320p' packages/runtime/src/projection-runtime.ts
 
-sed -n '1,320p' apps/ingestion-api/src/routes/ingest.route.ts
+sed -n '1,260p' packages/runtime/src/idempotency/projection-idempotency.service.ts
 
-sed -n '1,260p' apps/ingestion-api/src/server.ts
+sed -n '1,260p' packages/database/src/transactions.ts
 
-Next implementation goals:
-- move Redis ownership into packages/event-bus
-- move persistence ownership into packages/database
-- keep ingestion-api as HTTP composition layer only
-- centralize deterministic ingestion boundaries
-- enforce package ownership direction
+tree packages/database/src -L 4
+```
 
-When responding:
-- give CLI commands
-- give FULL files
-- include detailed responsibility comments at top of every file
-- preserve deterministic replay guarantees
-- preserve package ownership correctness
-- avoid abstraction drift
-- challenge premature frontend or AI work
-- optimize for distributed deterministic infrastructure
-- maintain replay-safe architecture
-- maintain compiler-enforced boundaries
+Need a full transaction ownership audit before introducing runtime abstraction boundaries.
+
+Continue from there.

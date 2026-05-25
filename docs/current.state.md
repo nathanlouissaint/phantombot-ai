@@ -1,4 +1,4 @@
-# Phase 3C — Deterministic Ingestion Foundation Complete
+# Phase 3D — Runtime Infrastructure Isolation Complete
 
 ## Date
 2026-05-25
@@ -7,338 +7,385 @@
 
 # Summary
 
-Phase 3C completed the transition from:
-- pseudo-monorepo architecture
-- app-owned infrastructure
-- non-deterministic ingestion persistence
-- weak replay guarantees
+Phase 3D completed the transition from:
+- runtime-owned infrastructure
+- postgres-aware replay systems
+- transaction leakage
+- projection SQL ownership
+- non-atomic replay mutation flow
 
 into:
-- deterministic replay-safe event persistence
-- canonical ingestion contracts
-- compiler-enforced package boundaries
-- true infrastructure ownership layering
+- infrastructure-isolated runtime orchestration
+- repository-owned persistence semantics
+- database-owned transaction lifecycle management
+- deterministic replay transaction boundaries
+- canonical transaction abstraction layering
 
-This is the first version of the platform with genuinely scalable infrastructure semantics.
+This phase finalized the core deterministic replay execution architecture.
 
 ---
 
 # Major Architectural Milestones
 
-## 1. Deterministic Event Sequencing
+# 1. Runtime Infrastructure Isolation
 
-Introduced canonical replay-safe ordering:
+Removed all runtime ownership of:
+- `pg`
+- `PoolClient`
+- raw SQL transaction execution
+- infrastructure transaction lifecycle management
 
-```sql
-sequence_id BIGSERIAL PRIMARY KEY
+Runtime no longer imports:
+- postgres drivers
+- raw transaction clients
+- infrastructure execution primitives
+
+Verification:
+
+```bash
+grep -R "from \"pg\"\|PoolClient\|client.query" packages/runtime/src -n
 ```
 
-inside:
+returns empty output.
 
-```txt
-infrastructure/postgres/init.sql
-```
-
-This sequence now acts as the:
-- global replay cursor
-- deterministic projection ordering source
-- canonical runtime progression primitive
-
-Replay ordering no longer depends on:
-- UUIDs
-- timestamps
-- ingestion timing
-- undefined SQL ordering
-
-This is now deterministic infrastructure.
+This completed the runtime/database separation.
 
 ---
 
-# 2. Canonical Ingestion Contracts
+# 2. Canonical Transaction Boundary Introduced
 
 Created:
 
 ```txt
-packages/contracts/src/runtime/ingestion-event.types.ts
+packages/database/src/transactions/
 ```
 
 Introduced:
-- `IngestionEventInput`
-- `PersistedBehaviorEvent`
+- `TransactionContext`
+- `runInTransaction`
+- deterministic transaction execution contracts
 
-This standardized:
-- event ingestion structure
-- persistence payload contracts
-- replay-safe metadata ownership
-- canonical naming conventions
+Database package now owns:
+- transaction lifecycle
+- rollback semantics
+- commit orchestration
+- deterministic durability boundaries
 
-Critical correction:
-- `event_name` was removed
-- `eventType` became canonical
+Runtime now consumes:
+- transaction abstractions only
 
-This eliminated ingestion schema drift.
+This established proper infrastructure ownership.
 
 ---
 
-# 3. Canonical Repository Ownership
+# 3. Repository-Oriented Persistence Architecture
 
-Created:
+Created canonical repositories:
 
 ```txt
-packages/database/src/repositories/behavior-event.repository.ts
+packages/database/src/repositories/
+├── behavior-event.repository.ts
+├── behavior-session.repository.ts
+├── projection-checkpoint.repository.ts
+├── projection-idempotency.repository.ts
+└── dead-letter.repository.ts
 ```
 
-Responsibilities:
-- deterministic event persistence
-- schema translation
-- sequence ownership handoff
-- replay-safe insert semantics
+Responsibilities moved into repositories:
+- checkpoint persistence
+- idempotency tracking
+- session projection persistence
+- dead-letter persistence
+- replay durability semantics
 
-Infrastructure ownership moved into packages.
-
-Apps no longer write directly to:
-- PostgreSQL
-- SQL primitives
-- persistence infrastructure
+Runtime no longer owns:
+- SQL mutation semantics
+- checkpoint persistence
+- replay idempotency persistence
 
 ---
 
-# 4. App Infrastructure Leakage Removed
+# 4. Projection Infrastructure Isolation
 
-Deleted:
+Refactored:
 
 ```txt
-apps/ingestion-api/src/lib/postgres.ts
-apps/ingestion-api/src/lib/redis.ts
+packages/runtime/src/projections/session/session.projection.ts
 ```
 
-Correct ownership model is now:
+Projection execution now:
+- consumes repositories
+- consumes transaction abstractions
+- remains infrastructure-agnostic
+
+Removed:
+- direct `sql` ownership
+- projection-owned SQL execution
+- infrastructure leakage inside projections
+
+Projection architecture now supports:
+- atomic replay mutation
+- deterministic transaction execution
+- replay-safe orchestration
+
+---
+
+# 5. Transactional Replay Execution
+
+Refactored:
 
 ```txt
-apps
-  compose
-
-packages
-  own infrastructure
+packages/runtime/src/replay/rebuild-projection.ts
 ```
 
-This corrected:
-- hidden coupling
-- infrastructure duplication
-- transport leakage
-- persistence ownership violations
+Replay execution now operates inside:
 
----
+```txt
+BEGIN
+  projection mutation
+  idempotency persistence
+  checkpoint advancement
+COMMIT
+```
 
-# 5. ingestion-api Refactor Complete
-
-`ingestion-api` is now:
-- HTTP composition only
-- request validation only
-- infrastructure orchestration only
-
-The app no longer owns:
-- Redis clients
-- Postgres clients
-- SQL semantics
-- persistence boundaries
-
-This matches the intended deterministic architecture model.
-
----
-
-# 6. Real Monorepo Compiler Architecture
-
-Implemented:
-- TypeScript project references
-- compiler-enforced package dependency graph
-- workspace package ownership
-
-Created:
-- root `tsconfig.json`
-- package `references`
-- proper composite build structure
-
-Compiler is now enforcing:
-- package layering
-- dependency boundaries
-- workspace correctness
-
-This transitions the project from:
-- path alias simulation
-into:
-- real monorepo infrastructure architecture
-
----
-
-# 7. Deterministic Replay Integrity Improved
-
-Corrected architectural contradiction:
-
-Before:
-- runtime expected deterministic ordering
-- schema did NOT guarantee deterministic ordering
-
-Now:
-- replay runtime ordering is aligned with database guarantees
+All replay mutation progression is now:
+- atomic
+- replay-safe
+- namespace-aware
+- deterministic
 
 This substantially improves:
+- crash recovery
 - replay correctness
-- projection consistency
-- future distributed orchestration reliability
+- distributed replay safety
+- future parallel replay infrastructure
 
 ---
 
-# Current System State
+# 6. Namespace-Aware Checkpoint Isolation
 
-Current architecture status:
+Created migration:
 
 ```txt
-FOUNDATIONALLY STABLE
+009_projection_checkpoint_namespaces.sql
 ```
 
-System now has:
-- deterministic replay ordering
-- canonical ingestion contracts
-- compiler-enforced package ownership
-- replay-safe persistence semantics
-- repository infrastructure boundaries
-- true monorepo layering
-- deterministic event progression
+Projection checkpoints now support:
+- replay namespace isolation
+- concurrent replay separation
+- deterministic replay validation
+- future experimental replay environments
 
-This is the first version of the platform capable of safely scaling distributed replay infrastructure.
-
----
-
-# Remaining Architectural Violations
-
-## Runtime Infrastructure Leakage
-
-Still unresolved:
+Checkpoint primary key transitioned from:
 
 ```txt
-packages/runtime
-  imports PoolClient directly
+(projection_name)
 ```
 
-Current runtime remains partially infrastructure-aware.
+to:
 
-This violates:
-- database ownership boundaries
-- deterministic layering rules
+```txt
+(projection_name, projection_namespace)
+```
 
----
-
-# Next Phase
-
-# Phase 3D — Runtime Infrastructure Isolation
-
-## Objectives
-
-### Remove PostgreSQL Driver Awareness From Runtime
-
-Runtime should consume:
-- transaction abstractions
-- deterministic execution boundaries
-- repository interfaces
-
-Runtime must NOT consume:
-- `pg`
-- `PoolClient`
-- raw infrastructure drivers
+This corrected a major replay isolation flaw.
 
 ---
 
-## Planned Deliverables
+# 7. PostgreSQL Infrastructure Consolidation
 
-### 1. Canonical Transaction Boundary Abstractions
+Removed fragmented schema ownership.
 
-Move transaction ownership into:
-- `@phantombot/database`
+Consolidated migrations into:
 
-Runtime should consume deterministic transaction interfaces only.
+```txt
+infrastructure/postgres/migrations/
+```
 
----
+Eliminated:
+- split SQL infrastructure ownership
+- duplicated schema domains
+- fragmented replay durability infrastructure
 
-### 2. Projection Runtime Decoupling
-
-Refactor:
-- `projection-runtime.ts`
-- idempotency services
-- replay services
-
-to eliminate:
-- direct SQL client awareness
-- infrastructure driver coupling
+Infrastructure ownership is now canonical.
 
 ---
 
-### 3. Repository-Oriented Runtime Execution
+# Current Architecture
 
-Introduce:
-- replay repositories
-- checkpoint repositories
-- deterministic persistence interfaces
-
----
-
-### 4. Runtime Infrastructure Isolation
-
-Target architecture:
+Current deterministic layering:
 
 ```txt
 contracts
     ↓
 database
+    ├── repositories
+    ├── transaction boundaries
+    ├── infrastructure durability
+    └── replay persistence semantics
     ↓
 runtime
+    ├── deterministic orchestration
+    ├── replay sequencing
+    ├── transaction coordination
+    └── infrastructure-agnostic execution
     ↓
 workers/apps
 ```
 
-NOT:
+This is now:
+- platform-grade replay infrastructure
+- deterministic execution architecture
+- compiler-enforced ownership layering
+- repository-oriented persistence architecture
+
+---
+
+# Current System Guarantees
+
+System now guarantees:
+- deterministic replay ordering
+- atomic replay mutation progression
+- namespace-safe replay execution
+- repository-owned persistence semantics
+- infrastructure-isolated runtime orchestration
+- canonical transaction boundaries
+- deterministic checkpoint progression
+- replay-safe idempotency enforcement
+
+---
+
+# Completed Architectural Corrections
+
+Resolved:
+- runtime postgres ownership
+- projection SQL ownership
+- transaction lifecycle leakage
+- replay checkpoint namespace collision
+- fragmented migration infrastructure
+- replay mutation non-atomicity
+- persistence semantic duplication
+
+---
+
+# Remaining Areas
+
+## Replay Verification Script Restoration
+
+Replay verification implementation still exists:
 
 ```txt
-runtime
-  ↔ postgres
+packages/runtime/src/verification/
 ```
+
+But package script:
+- `verify:replay`
+
+needs restoration inside:
+
+```txt
+packages/runtime/package.json
+```
+
+Replay verification runner still needs:
+- package script wiring
+- operational verification execution
+- deterministic replay hash validation rerun
+
+---
+
+# Next Phase
+
+# Phase 4 — Distributed Runtime Coordination
+
+## Objectives
+
+### 1. Distributed Worker Coordination
+
+Build:
+- deterministic replay workers
+- distributed replay ownership
+- lease-aware projection execution
+- parallel replay safety
+
+Likely areas:
+
+```txt
+packages/runtime/src/leases/
+packages/runtime/src/workers/
+```
+
+---
+
+### 2. Projection Execution Scaling
+
+Introduce:
+- projection partitioning
+- namespace-aware replay distribution
+- replay concurrency controls
+- projection scheduling
+
+---
+
+### 3. Runtime Recovery Orchestration
+
+Build:
+- replay recovery flows
+- worker failover
+- lease expiration recovery
+- checkpoint repair workflows
+
+---
+
+### 4. Operational Replay Infrastructure
+
+Expand:
+- replay verification
+- replay diagnostics
+- dead-letter recovery tooling
+- replay observability
 
 ---
 
 # Current Risk Assessment
 
 ## Low Risk Areas
-- ingestion persistence
-- deterministic ordering
-- package ownership
-- compiler graph integrity
-- repository boundaries
+- replay ordering
+- transaction boundaries
+- runtime/database layering
+- repository ownership
+- namespace isolation
+- deterministic sequencing
 
 ## Medium Risk Areas
-- runtime infrastructure coupling
-- transaction ownership leakage
-- replay execution abstraction depth
+- distributed worker coordination
+- replay concurrency management
+- lease failover orchestration
 
 ## High Priority Next Work
-- runtime/database boundary isolation
-- deterministic transaction orchestration
-- repository-driven replay execution
+- replay verification restoration
+- distributed replay workers
+- deterministic lease coordination
+- operational replay tooling
 
 ---
 
-# Important Architecture Milestone
+# Important Milestone
 
-Phase 3C marks the transition from:
-- startup-grade code organization
+Phase 3D marks the transition from:
+- infrastructure-coupled runtime systems
 
-to:
+into:
 
-- platform-grade infrastructure architecture
+- deterministic distributed replay architecture foundations
+
+This is one of the most important infrastructure transitions completed so far.
 
 The system now has:
-- enforceable ownership
-- deterministic replay guarantees
-- scalable monorepo layering
-- canonical ingestion semantics
+- enforceable infrastructure ownership
+- atomic replay guarantees
+- deterministic transaction orchestration
+- repository-driven persistence boundaries
+- scalable replay execution architecture
 
-This is one of the most important architectural transitions completed so far.
+This is now legitimate platform-grade infrastructure.
