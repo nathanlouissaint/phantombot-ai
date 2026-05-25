@@ -12,6 +12,7 @@
  * - transactional projection execution
  * - replay-safe idempotency enforcement
  * - deterministic event sequencing
+ * - persistence-to-runtime contract translation
  *
  * Does NOT Own:
  * - business logic
@@ -28,12 +29,11 @@
  * - projection mutation + checkpoint advancement must remain atomic
  * - runtime contracts must remain canonical
  * - runtime systems must translate persistence schema to runtime contracts
+ * - runtime contracts must remain strongly typed
  */
 
-import { PoolClient } from "pg";
-
-import { projectionIdempotencyService }
-from "./idempotency/projection-idempotency.service";
+import { PoolClient }
+from "pg";
 
 import { sql }
 from "@phantombot/database";
@@ -41,11 +41,14 @@ from "@phantombot/database";
 import {
   ProjectionCheckpoint,
   ProjectionEvent,
-} from "@phantombot/contracts";
+  ProjectionNamespace,
+}
+from "@phantombot/contracts";
 
 import {
-  ProjectionNamespace,
-} from "@phantombot/contracts";
+  projectionIdempotencyService,
+}
+from "./idempotency/projection-idempotency.service";
 
 export class ProjectionRuntime {
   readonly projectionName: string;
@@ -66,6 +69,17 @@ export class ProjectionRuntime {
       namespace;
   }
 
+  /**
+   * loadCheckpoint
+   *
+   * Responsibility:
+   * Load deterministic replay checkpoint state.
+   *
+   * Critical Rules:
+   * - checkpoint ownership remains namespace-aware
+   * - checkpoint progression must remain deterministic
+   * - runtime contracts must remain canonical
+   */
   async loadCheckpoint(): Promise<number> {
     const result =
       await sql<ProjectionCheckpoint[]>`
@@ -74,7 +88,8 @@ export class ProjectionRuntime {
 
           projection_namespace as "namespace",
 
-          last_processed_sequence as "lastProcessedSequence",
+          last_processed_sequence
+            as "lastProcessedSequence",
 
           updated_at as "updatedAt"
 
@@ -87,6 +102,9 @@ export class ProjectionRuntime {
           ${this.namespace}
       `;
 
+    /**
+     * Initialize deterministic checkpoint.
+     */
     if (result.length === 0) {
       await sql`
         INSERT INTO projection_checkpoints (
@@ -109,11 +127,32 @@ export class ProjectionRuntime {
       .lastProcessedSequence;
   }
 
-  async loadEvents(
+  /**
+   * loadEvents
+   *
+   * Responsibility:
+   * Load ordered deterministic replay events.
+   *
+   * Owns:
+   * - runtime event envelope loading
+   * - persistence schema translation
+   * - strongly typed replay event contracts
+   *
+   * Critical Rules:
+   * - event ordering must remain sequential
+   * - persistence schema must not leak into runtime contracts
+   * - replay contracts must remain strongly typed
+   * - runtime event loading must remain deterministic
+   */
+  async loadEvents<TPayload>(
     lastSequence: number,
     batchSize = 100
-  ): Promise<ProjectionEvent[]> {
-    return sql<ProjectionEvent[]>`
+  ): Promise<
+    ProjectionEvent<TPayload>[]
+  > {
+    return sql<
+      ProjectionEvent<TPayload>[]
+    >`
       SELECT
         sequence_id as "sequence",
 
@@ -138,6 +177,16 @@ export class ProjectionRuntime {
     `;
   }
 
+  /**
+   * hasEventBeenApplied
+   *
+   * Responsibility:
+   * Verify deterministic replay idempotency state.
+   *
+   * Critical Rules:
+   * - idempotency checks must remain transactional
+   * - replay progression must remain deterministic
+   */
   async hasEventBeenApplied({
     client,
     eventSequenceId,
@@ -156,6 +205,16 @@ export class ProjectionRuntime {
       });
   }
 
+  /**
+   * markEventApplied
+   *
+   * Responsibility:
+   * Persist deterministic replay progression.
+   *
+   * Critical Rules:
+   * - replay mutation tracking must remain atomic
+   * - idempotency ownership must remain runtime-scoped
+   */
   async markEventApplied({
     client,
     eventSequenceId,
@@ -174,13 +233,24 @@ export class ProjectionRuntime {
       });
   }
 
+  /**
+   * updateCheckpoint
+   *
+   * Responsibility:
+   * Advance deterministic replay checkpoint state.
+   *
+   * Critical Rules:
+   * - checkpoint advancement must remain sequential
+   * - namespace isolation must remain enforced
+   * - runtime checkpoint ownership must remain canonical
+   */
   async updateCheckpoint({
     client,
     sequence,
   }: {
     client: PoolClient;
     sequence: number;
-  }) {
+  }): Promise<void> {
     await client.query(
       `
         UPDATE projection_checkpoints

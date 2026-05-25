@@ -3,13 +3,3 @@
 > @phantombot/runtime@1.0.0 typecheck /Users/natelouissaint/phantombot-ai/phantombot-ai/packages/runtime
 > tsc --noEmit
 
-[96msrc/replay/rebuild-projection.ts[0m:[93m110[0m:[93m9[0m - [91merror[0m[90m TS2345: [0mArgument of type 'ProjectionEvent<unknown>' is not assignable to parameter of type 'ProjectionEvent<SessionProjectionPayload>'.
-  Type 'unknown' is not assignable to type 'SessionProjectionPayload'.
-
-[7m110[0m         event
-[7m   [0m [91m        ~~~~~[0m
-
-
-Found 1 error in src/replay/rebuild-projection.ts[90m:110[0m
-
-[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 2.[39m

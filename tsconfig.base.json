@@ -19,28 +19,20 @@
     "baseUrl": ".",
 
     "paths": {
-      "@shared-types/*": [
-        "packages/shared-types/src/*"
+      "@phantombot/contracts": [
+        "packages/contracts/src/index.ts"
       ],
 
-      "@event-schema/*": [
-        "packages/event-schema/src/*"
+      "@phantombot/database": [
+        "packages/database/src/index.ts"
       ],
 
-      "@event-bus/*": [
+      "@phantombot/runtime": [
+        "packages/runtime/src/index.ts"
+      ],
+
+      "@phantombot/event-bus/*": [
         "packages/event-bus/src/*"
-      ],
-
-      "@session-engine/*": [
-        "packages/session-engine/src/*"
-      ],
-
-      "@recovery-engine/*": [
-        "packages/recovery-engine/src/*"
-      ],
-
-      "@workflow-core/*": [
-        "packages/workflow-core/src/*"
       ]
     }
   }

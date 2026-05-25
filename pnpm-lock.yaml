@@ -135,6 +135,16 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
 
+  packages/event-bus:
+    dependencies:
+      ioredis:
+        specifier: ^5.10.1
+        version: 5.10.1
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/runtime:
     dependencies:
       '@phantombot/contracts':
