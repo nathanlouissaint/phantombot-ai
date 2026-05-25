@@ -1,0 +1,30 @@
+
+
+> @phantombot/runtime@1.0.0 build /Users/natelouissaint/phantombot-ai/phantombot-ai/packages/runtime
+> tsc
+
+[96msrc/idempotency/projection-idempotency.service.ts[0m:[93m20[0m:[93m28[0m - [91merror[0m[90m TS7016: [0mCould not find a declaration file for module 'pg'. '/Users/natelouissaint/phantombot-ai/phantombot-ai/node_modules/.pnpm/pg@8.21.0/node_modules/pg/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/pg` if it exists or add a new declaration (.d.ts) file containing `declare module 'pg';`
+
+[7m20[0m import { PoolClient } from "pg";
+[7m  [0m [91m                           ~~~~[0m
+
+[96msrc/projection-runtime.ts[0m:[93m29[0m:[93m28[0m - [91merror[0m[90m TS7016: [0mCould not find a declaration file for module 'pg'. '/Users/natelouissaint/phantombot-ai/phantombot-ai/node_modules/.pnpm/pg@8.21.0/node_modules/pg/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/pg` if it exists or add a new declaration (.d.ts) file containing `declare module 'pg';`
+
+[7m29[0m import { PoolClient } from "pg";
+[7m  [0m [91m                           ~~~~[0m
+
+[96msrc/replay/rebuild-projection.ts[0m:[93m79[0m:[93m7[0m - [91merror[0m[90m TS2554: [0mExpected 1 arguments, but got 2.
+
+[7m79[0m       namespace as any
+[7m  [0m [91m      ~~~~~~~~~~~~~~~~[0m
+
+
+Found 3 errors in 3 files.
+
+Errors  Files
+     1  src/idempotency/projection-idempotency.service.ts[90m:20[0m
+     1  src/projection-runtime.ts[90m:29[0m
+     1  src/replay/rebuild-projection.ts[90m:79[0m
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 2.[39m

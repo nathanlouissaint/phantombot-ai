@@ -1,0 +1,5 @@
+
+
+> @phantombot/contracts@0.0.0 typecheck /Users/natelouissaint/phantombot-ai/phantombot-ai/packages/contracts
+> tsc --noEmit
+

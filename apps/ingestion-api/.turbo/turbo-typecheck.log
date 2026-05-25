@@ -1,0 +1,5 @@
+
+
+> ingestion-api@1.0.0 typecheck /Users/natelouissaint/phantombot-ai/phantombot-ai/apps/ingestion-api
+> tsc --noEmit
+

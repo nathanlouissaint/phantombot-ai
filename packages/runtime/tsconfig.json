@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+
+    "strict": true,
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+
+    "paths": {
+      "@phantombot/contracts": [
+        "../contracts/src/index.ts"
+      ]
+    },
+
+    "outDir": "dist"
+  },
+
+  "include": [
+    "src",
+    "../contracts/src"
+  ]
+}
