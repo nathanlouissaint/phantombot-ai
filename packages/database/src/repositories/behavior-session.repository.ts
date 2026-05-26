@@ -8,12 +8,25 @@
  * - replay-safe session persistence
  * - namespace-aware session mutation
  * - deterministic session accumulation
+ * - replay namespace reset persistence
+ * - projection state query persistence
  *
  * Does NOT Own:
  * - projection orchestration
  * - replay coordination
  * - checkpoint advancement
+ * - runtime lifecycle orchestration
+ *
+ * Critical Rules:
+ * - repository owns all SQL mutation
+ * - replay persistence must remain deterministic
+ * - namespace isolation must remain explicit
+ * - projection query semantics must remain centralized
  */
+
+import {
+  sql,
+} from "../postgres";
 
 import {
   TransactionContext,
@@ -62,6 +75,38 @@ export class BehaviorSessionRepository {
       DO UPDATE SET
         last_activity_at =
           EXCLUDED.last_activity_at
+    `;
+  }
+
+  async resetNamespaceProjectionState(
+    namespace: ProjectionNamespace
+  ): Promise<void> {
+    await sql`
+      DELETE FROM behavior_sessions
+
+      WHERE projection_namespace =
+        ${namespace}
+    `;
+  }
+
+  async loadProjectionState(
+    namespace: ProjectionNamespace
+  ) {
+    return sql`
+      SELECT
+        projection_namespace,
+        session_id,
+        shop_id,
+        started_at,
+        last_activity_at,
+        event_count
+
+      FROM behavior_sessions
+
+      WHERE projection_namespace =
+        ${namespace}
+
+      ORDER BY session_id ASC
     `;
   }
 }

@@ -30,3 +30,4 @@ export * from "./repositories/projection-checkpoint.repository";
 export * from "./repositories/projection-idempotency.repository";
 export * from "./repositories/behavior-session.repository";
 export * from "./repositories/dead-letter.repository";
+export * from "./repositories/worker-lease.repository";

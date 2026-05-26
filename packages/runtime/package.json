@@ -4,22 +4,24 @@
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:replay": "tsx src/verification/run-verification.ts"
   },
+
   "dependencies": {
     "dotenv": "17.4.2",
-    "pg": "8.21.0",
     "zod": "4.4.3",
+
     "@phantombot/contracts": "workspace:*",
-     "@phantombot/database": "workspace:*"
-  
+    "@phantombot/database": "workspace:*"
   },
+
   "devDependencies": {
     "@types/node": "24.12.4",
-    "@types/pg": "^8.20.0",
     "tsx": "4.22.3",
     "typescript": "5.9.3"
   }

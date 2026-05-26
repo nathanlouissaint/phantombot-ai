@@ -1,182 +1,198 @@
-# PHANTOMBOT AI — PHASE 3D CONTINUATION PROMPT
+# PHANTOMBOT AI — PHASE 4 CONTINUATION PROMPT
 
 We are continuing the ONEMOGO / PhantomBot AI infrastructure build.
 
 Current branch:
 
-```txt
 architecture/core-system
-```
 
-We just completed:
+Phase 3D has been fully completed.
 
-# Phase 3C — Deterministic Ingestion Foundation
+---
+
+# PHASE 3D COMPLETED
 
 Major completed work:
 
-- Added deterministic replay-safe sequencing using:
+## Runtime Infrastructure Isolation
 
-```sql
-sequence_id BIGSERIAL PRIMARY KEY
-```
+Removed all runtime ownership of:
+- pg
+- PoolClient
+- raw SQL mutation
+- transaction lifecycle management
 
-- Introduced canonical ingestion contracts:
+Runtime is now fully infrastructure-agnostic.
 
-```txt
-packages/contracts/src/runtime/ingestion-event.types.ts
-```
+Verification:
 
-with:
-- IngestionEventInput
-- PersistedBehaviorEvent
+grep -R "from \"pg\"\|PoolClient\|client.query" packages/runtime/src -n
 
-- Removed ingestion schema drift:
-  - removed `event_name`
-  - standardized `eventType`
-
-- Created canonical persistence repository:
-
-```txt
-packages/database/src/repositories/behavior-event.repository.ts
-```
-
-- Removed app-owned infrastructure:
-  - deleted ingestion-api/src/lib/postgres.ts
-  - deleted ingestion-api/src/lib/redis.ts
-
-- Refactored ingestion-api into:
-  - HTTP composition only
-  - validation only
-  - infrastructure orchestration only
-
-- Implemented real monorepo TypeScript architecture:
-  - project references
-  - composite builds
-  - root tsconfig.json
-  - compiler-enforced package ownership
-
-- Verified:
-  - `pnpm tsc -b`
-  - `pnpm turbo run typecheck`
-
-both pass successfully.
+returns empty output.
 
 ---
 
-# Current Architecture
+## Canonical Transaction Architecture
 
-Current layering:
+Created:
 
-```txt
+packages/database/src/transactions/
+
+Introduced:
+- TransactionContext
+- runInTransaction
+- deterministic transaction boundaries
+
+Database package now owns:
+- transaction lifecycle
+- rollback orchestration
+- commit orchestration
+- deterministic durability semantics
+
+---
+
+## Repository-Oriented Persistence
+
+Created repositories:
+
+packages/database/src/repositories/
+├── behavior-event.repository.ts
+├── behavior-session.repository.ts
+├── projection-checkpoint.repository.ts
+├── projection-idempotency.repository.ts
+└── dead-letter.repository.ts
+
+Repositories now own:
+- replay durability
+- checkpoint persistence
+- idempotency persistence
+- dead-letter persistence
+- projection persistence semantics
+
+---
+
+## Transactional Replay Execution
+
+Replay execution now operates atomically:
+
+BEGIN
+  projection mutation
+  idempotency write
+  checkpoint advancement
+COMMIT
+
+Replay is now:
+- deterministic
+- atomic
+- replay-safe
+- namespace-isolated
+
+---
+
+## Namespace-Aware Replay Isolation
+
+Projection checkpoints now use:
+
+(projection_name, projection_namespace)
+
+instead of:
+
+(projection_name)
+
+This corrected replay namespace collision risk.
+
+---
+
+## PostgreSQL Migration Consolidation
+
+All runtime infrastructure migrations now live under:
+
+infrastructure/postgres/migrations/
+
+Removed fragmented:
+- infrastructure/sql
+- split schema ownership
+
+---
+
+# CURRENT ARCHITECTURE
+
 contracts
     ↓
 database
+    ├── repositories
+    ├── transaction boundaries
+    ├── replay durability
+    └── infrastructure ownership
     ↓
 runtime
+    ├── deterministic orchestration
+    ├── replay sequencing
+    ├── transaction coordination
+    └── infrastructure-agnostic execution
     ↓
 workers/apps
-```
-
-System is now:
-- replay-safe
-- deterministically ordered
-- compiler-enforced
-- repository-driven
-- infrastructure-layered
 
 ---
 
-# CRITICAL REMAINING VIOLATION
+# CURRENT SYSTEM GUARANTEES
 
-Runtime still imports:
+System now guarantees:
+- deterministic replay ordering
+- atomic replay progression
+- namespace-safe checkpoints
+- repository-owned persistence
+- infrastructure-isolated runtime orchestration
+- replay-safe idempotency
+- deterministic transaction boundaries
 
-```ts
-import { PoolClient } from "pg";
-```
+---
 
-inside:
+# REMAINING WORK
 
-```txt
-packages/runtime/src/projection-runtime.ts
-packages/runtime/src/idempotency/projection-idempotency.service.ts
-```
+Replay verification runner still exists:
 
-This violates deterministic infrastructure ownership.
+packages/runtime/src/verification/
 
-Runtime must NOT own:
-- pg
-- PoolClient
-- raw SQL drivers
-- infrastructure primitives
+But package.json script:
+- verify:replay
+
+needs restoration.
 
 ---
 
 # NEXT PHASE
 
-# Phase 3D — Runtime Infrastructure Isolation
+# Phase 4 — Distributed Runtime Coordination
 
 Objectives:
 
-## 1. Remove PostgreSQL Awareness From Runtime
+## 1. Distributed Worker Coordination
+Build:
+- replay workers
+- deterministic lease ownership
+- distributed replay execution
+- lease failover handling
 
-Move:
-- transaction ownership
-- transaction orchestration
-- client lifecycle
+## 2. Replay Partitioning
+Build:
+- projection partitioning
+- replay concurrency controls
+- namespace-aware replay distribution
 
-into:
-- @phantombot/database
+## 3. Recovery Orchestration
+Build:
+- checkpoint repair
+- worker recovery flows
+- lease expiration recovery
+- replay continuation semantics
 
-Runtime should consume:
-- transaction abstractions
-- deterministic repositories
-- execution boundaries only
-
----
-
-## 2. Introduce Canonical Transaction Interfaces
-
-Need abstractions for:
-- replay transactions
-- projection transactions
-- checkpoint advancement
-- idempotency writes
-
-Likely files:
-
-```txt
-packages/database/src/transactions/
-packages/database/src/repositories/
-```
-
----
-
-## 3. Refactor Runtime Services
-
-Targets:
-
-```txt
-packages/runtime/src/projection-runtime.ts
-packages/runtime/src/idempotency/projection-idempotency.service.ts
-packages/runtime/src/dead-letter/dead-letter.service.ts
-```
-
-Goal:
-- remove PoolClient imports entirely
-- replace with deterministic repository interfaces
-
----
-
-# IMPORTANT ARCHITECTURE RULES
-
-Critical constraints:
-
-- projections remain deterministic
-- runtime remains side-effect free
-- runtime must not own infrastructure
-- repositories own persistence semantics
-- database package owns transactions
-- apps compose infrastructure only
+## 4. Operational Replay Tooling
+Expand:
+- replay verification
+- replay diagnostics
+- dead-letter recovery
+- replay observability
 
 ---
 
@@ -184,16 +200,12 @@ Critical constraints:
 
 First inspect:
 
-```bash
-sed -n '1,320p' packages/runtime/src/projection-runtime.ts
+sed -n '1,320p' packages/runtime/src/leases/worker-lease.service.ts
 
-sed -n '1,260p' packages/runtime/src/idempotency/projection-idempotency.service.ts
+sed -n '1,320p' packages/runtime/src/leases/lease-heartbeat.ts
 
-sed -n '1,260p' packages/database/src/transactions.ts
+tree packages/runtime/src -L 4
 
-tree packages/database/src -L 4
-```
+cat packages/runtime/package.json
 
-Need a full transaction ownership audit before introducing runtime abstraction boundaries.
-
-Continue from there.
+Need a full distributed coordination audit before introducing worker orchestration.

@@ -30,8 +30,9 @@
  * - projection mutation + checkpoint advancement must remain atomic
  */
 
-import { sql }
-from "@phantombot/database";
+import {
+  behaviorSessionRepository,
+} from "@phantombot/database";
 
 import { ProjectionRuntime }
 from "../projection-runtime";
@@ -59,12 +60,10 @@ namespace=${namespace}`
   /**
    * Reset namespace-owned projection state.
    */
-  await sql`
-    DELETE FROM behavior_sessions
-
-    WHERE projection_namespace =
-      ${namespace}
-  `;
+await behaviorSessionRepository
+  .resetNamespaceProjectionState(
+    namespace
+  );
 
   console.log(
     `[NAMESPACE RESET]

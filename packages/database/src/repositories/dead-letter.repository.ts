@@ -8,11 +8,21 @@
  * - dead-letter persistence
  * - replay diagnostics durability
  * - poison event storage
+ * - retry exhaustion persistence
+ * - operational recovery durability
  *
  * Does NOT Own:
  * - runtime orchestration
  * - retry coordination
  * - projection mutation
+ * - worker lifecycle management
+ * - replay execution
+ *
+ * Critical Rules:
+ * - repository owns all SQL mutation
+ * - dead-letter persistence must remain atomic
+ * - quarantine durability must remain deterministic
+ * - persistence semantics must remain centralized
  */
 
 import {
