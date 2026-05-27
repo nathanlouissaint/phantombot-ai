@@ -2,43 +2,66 @@
  * lease-heartbeat.ts
  *
  * Responsibility:
- * Maintain deterministic worker lease ownership.
+ * Provide lifecycle-controlled lease heartbeat execution.
  *
  * Owns:
- * - heartbeat scheduling
- * - lease renewal progression
- * - ownership continuity
- * - worker lease durability
+ * - heartbeat interval scheduling
+ * - lease renewal attempts
+ * - semantic lease-loss notification
+ * - heartbeat cancellation
  *
  * Does NOT Own:
- * - projection processing
- * - event mutation
- * - replay orchestration
- * - runtime coordination
+ * - worker lifecycle transitions
+ * - process termination
+ * - replay execution
+ * - projection mutation
+ * - SQL persistence
+ *
+ * Critical Rules:
+ * - heartbeat must NEVER call process.exit
+ * - heartbeat must be stoppable
+ * - lease loss must be reported semantically
+ * - lifecycle coordinator decides what happens next
  */
 
-import { workerLeaseService }
-from "./worker-lease.service";
+import { workerLeaseService } from "./worker-lease.service";
 
-export function startLeaseHeartbeat(
-  projectionName: string
-) {
-  const interval = setInterval(
-    async () => {
-      const renewed =
-        await workerLeaseService
-          .renewLease(projectionName);
+export interface LeaseHeartbeatController {
+  stop(): void;
+}
 
-      if (!renewed) {
-        console.error(
-          `[LEASE LOST] ${projectionName}`
-        );
+export function startLeaseHeartbeat({
+  projectionName,
+  onLeaseLost,
+  intervalMs = 10000,
+}: {
+  projectionName: string;
+  onLeaseLost: () => Promise<void> | void;
+  intervalMs?: number;
+}): LeaseHeartbeatController {
+  let stopped = false;
 
-        process.exit(1);
-      }
+  const interval = setInterval(async () => {
+    if (stopped) {
+      return;
+    }
+
+    const renewed = await workerLeaseService.renewLease(
+      projectionName
+    );
+
+    if (!renewed) {
+      stopped = true;
+      clearInterval(interval);
+
+      await onLeaseLost();
+    }
+  }, intervalMs);
+
+  return {
+    stop() {
+      stopped = true;
+      clearInterval(interval);
     },
-    10000
-  );
-
-  return interval;
+  };
 }
