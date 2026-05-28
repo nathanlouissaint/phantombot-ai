@@ -2,25 +2,26 @@
  * lease-coordinator.ts
  *
  * Responsibility:
- * Coordinate lease acquisition, heartbeat ownership, and graceful lease loss.
+ * Coordinate lease ownership and replay-safe lease loss handling.
  *
  * Owns:
  * - lease acquisition orchestration
- * - lifecycle-controlled heartbeat startup
- * - lease-loss signaling
- * - heartbeat cancellation
- * - lease release orchestration
+ * - lifecycle-aware heartbeat ownership
+ * - replay-safe lease-loss signaling
+ * - graceful heartbeat cancellation
+ * - lease release coordination
  *
  * Does NOT Own:
- * - SQL persistence
  * - replay execution
- * - projection mutation
- * - checkpoint advancement
+ * - checkpoint durability
+ * - SQL persistence
+ * - worker lifecycle authority
  *
  * Critical Rules:
- * - coordinator must never call process.exit
- * - heartbeat must only run while worker is active
- * - lease loss must transition through lifecycle semantics
+ * - lease ownership must match replay ownership
+ * - lease loss must interrupt replay deterministically
+ * - heartbeat must never own execution semantics
+ * - coordinator must never terminate processes
  */
 
 import {
@@ -28,57 +29,78 @@ import {
   LeaseHeartbeatController,
 } from "../../leases/lease-heartbeat";
 
-import { workerLeaseService } from "../../leases/worker-lease.service";
-import { WorkerLifecycle } from "../state/worker-lifecycle";
+import {
+  workerLeaseService,
+} from "../../leases/worker-lease.service";
+
+import {
+  WorkerLifecycle,
+} from "../state/worker-lifecycle";
 
 export class LeaseCoordinator {
-  private heartbeat: LeaseHeartbeatController | null = null;
+  private heartbeat:
+    LeaseHeartbeatController | null = null;
 
   constructor(
-    private readonly lifecycle: WorkerLifecycle
+    private readonly lifecycle:
+      WorkerLifecycle,
+
+    private readonly onLeaseLost:
+      () => void
   ) {}
 
-  async acquire(projectionName: string): Promise<boolean> {
-    this.lifecycle.transitionTo("ACQUIRING");
+  async acquire(
+    projectionName: string
+  ): Promise<boolean> {
+    this.lifecycle
+      .transitionTo("ACQUIRING");
 
     const acquired =
-      await workerLeaseService.acquireLease(projectionName);
+      await workerLeaseService.acquireLease(
+        projectionName
+      );
 
     if (!acquired) {
-      this.lifecycle.transitionTo("IDLE");
+      this.lifecycle
+        .transitionTo("IDLE");
+
       return false;
     }
 
-    this.lifecycle.transitionTo("ACTIVE");
+    this.lifecycle
+      .transitionTo("ACTIVE");
 
-    this.heartbeat = startLeaseHeartbeat({
-      projectionName,
-      onLeaseLost: async () => {
-        if (!this.lifecycle.isShutdown()) {
-          this.lifecycle.transitionTo("LOST");
-        }
-      },
-    });
+    this.heartbeat =
+      startLeaseHeartbeat({
+        projectionName,
+
+        onLeaseLost: async () => {
+          if (
+            !this.lifecycle.isShutdown()
+          ) {
+            this.lifecycle
+              .transitionTo("LOST");
+          }
+
+          this.onLeaseLost();
+        },
+      });
 
     return true;
   }
 
   async drain(): Promise<void> {
-    if (this.lifecycle.isActive()) {
-      this.lifecycle.transitionTo("DRAINING");
-    }
-
     this.stopHeartbeat();
   }
 
-  async release(projectionName: string): Promise<void> {
+  async release(
+    projectionName: string
+  ): Promise<void> {
     this.stopHeartbeat();
 
-    await workerLeaseService.releaseLease(projectionName);
-
-    if (!this.lifecycle.isShutdown()) {
-      this.lifecycle.transitionTo("SHUTDOWN");
-    }
+    await workerLeaseService.releaseLease(
+      projectionName
+    );
   }
 
   private stopHeartbeat(): void {
@@ -87,6 +109,7 @@ export class LeaseCoordinator {
     }
 
     this.heartbeat.stop();
+
     this.heartbeat = null;
   }
 }

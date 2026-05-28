@@ -2,40 +2,66 @@
  * runtime-worker.ts
  *
  * Responsibility:
- * Provide the canonical deterministic runtime worker coordinator.
+ * Provide canonical deterministic worker orchestration.
  *
  * Owns:
- * - worker lifecycle orchestration
- * - lease acquisition coordination
- * - graceful drain handling
- * - shutdown coordination
+ * - lifecycle coordination
+ * - lease coordination
+ * - replay runtime coordination
+ * - graceful drain orchestration
+ * - deterministic shutdown sequencing
  *
  * Does NOT Own:
- * - replay mutation logic
- * - projection mutation
  * - SQL persistence
- * - transaction lifecycle
- * - checkpoint semantics
+ * - projection mutation
+ * - checkpoint durability
+ * - replay transaction ownership
  *
  * Critical Rules:
- * - worker must never call process.exit
- * - worker must coordinate through lifecycle state
- * - replay execution must remain separate from lease coordination
- * - distributed ownership must be explicit
+ * - worker lifecycle must control execution reality
+ * - replay execution must stop deterministically
+ * - lease ownership must match replay ownership
+ * - workers must never hard-exit
  */
 
-import { WorkerLifecycle } from "./state/worker-lifecycle";
-import { LeaseCoordinator } from "./controllers/lease-coordinator";
+import {
+  ProjectionNamespace,
+} from "@phantombot/contracts";
+
+import {
+  WorkerLifecycle,
+} from "./state/worker-lifecycle";
+
+import {
+  LeaseCoordinator,
+} from "./controllers/lease-coordinator";
+
+import {
+  ReplayExecutionRuntime,
+} from "./runtime/replay-execution-runtime";
 
 export class RuntimeWorker {
   private readonly lifecycle =
     new WorkerLifecycle();
 
+  private readonly replayRuntime =
+    new ReplayExecutionRuntime();
+
   private readonly leaseCoordinator =
-    new LeaseCoordinator(this.lifecycle);
+    new LeaseCoordinator(
+      this.lifecycle,
+
+      () => {
+        this.replayRuntime.interrupt();
+      }
+    );
 
   constructor(
-    private readonly projectionName: string
+    private readonly namespace:
+      ProjectionNamespace,
+
+    private readonly projectionName:
+      string
   ) {}
 
   getState() {
@@ -52,16 +78,38 @@ export class RuntimeWorker {
       return false;
     }
 
+    await this.replayRuntime.start({
+      namespace: this.namespace,
+    });
+
     return true;
   }
 
   async drain(): Promise<void> {
+    if (
+      !this.lifecycle.isDraining()
+    ) {
+      this.lifecycle
+        .transitionTo("DRAINING");
+    }
+
+    this.replayRuntime.interrupt();
+
     await this.leaseCoordinator.drain();
   }
 
   async shutdown(): Promise<void> {
+    await this.drain();
+
     await this.leaseCoordinator.release(
       this.projectionName
     );
+
+    if (
+      !this.lifecycle.isShutdown()
+    ) {
+      this.lifecycle
+        .transitionTo("SHUTDOWN");
+    }
   }
 }
