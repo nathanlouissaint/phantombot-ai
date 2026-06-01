@@ -1,6 +1,6 @@
-# CURRENT.STATE.MD — PHASE 4B RUNTIME EXECUTION UPDATE
+# CURRENT.STATE.MD — PHASE 4B RECOVERY HARDENING UPDATE
 
-## Date: 2026-05-28
+## Date: 2026-06-01
 
 ## Branch: architecture/core-system
 
@@ -14,148 +14,268 @@ Completed:
 ✓ Phase 2 — Deterministic Runtime Foundation
 ✓ Phase 3 — Infrastructure Isolation
 ✓ Phase 4A — Runtime Coordination Foundation
+✓ Phase 4B — Deterministic Worker Runtime Foundation
+✓ Phase 4B — Recovery Ownership Hardening
 
 Current active phase:
 
-→ Phase 4B — Deterministic Worker Runtime
+→ Phase 4B Final Verification — Runtime Failure Simulation
 
 ---
 
-# TODAY'S MAJOR ARCHITECTURAL WORK
+# MAJOR ARCHITECTURAL WORK COMPLETED
 
-Today focused on introducing canonical replay execution authority and removing hidden replay lifetime ownership from replay orchestration.
+## 1. Runtime SQL Ownership Removed
 
-Primary goal:
+`ProjectionRuntime` no longer imports or owns SQL.
+
+Previous violation:
 
 ```txt
-Separate replay execution progression from replay execution lifetime ownership.
+packages/runtime/src/projection-runtime.ts
+→ imported sql
+→ queried behavior_events directly
 ```
 
-This phase introduced the foundational runtime execution model required for safe distributed replay coordination.
+Corrected architecture:
+
+```txt
+ProjectionRuntime
+  -> behaviorEventRepository
+    -> SQL
+```
+
+Runtime now consumes repository contracts only.
+
+Verified:
+
+```bash
+grep -R "sql<" packages/runtime/src -n
+```
+
+Result:
+
+```txt
+No runtime SQL ownership remains.
+```
 
 ---
 
-# MAJOR ARCHITECTURAL CORRECTIONS COMPLETED
+## 2. Behavior Event Repository Expanded
 
-# 1. Replay Lifetime Ownership Removed From Replay Execution
+`behavior-event.repository.ts` now owns deterministic behavior event reads and writes.
 
-Previously:
+Repository owns:
 
-```txt
-rebuildProjection()
-```
+* behavior_events insert semantics
+* behavior_events read semantics
+* deterministic replay event loading
+* sequence_id ordering
+* schema-to-contract mapping
 
-owned:
-
-* replay execution loop
-* replay continuation
-* replay lifetime ownership
-* replay progression orchestration
-
-This created a critical coordination flaw.
-
-Old architecture:
+Critical guarantee:
 
 ```txt
-rebuildProjection()
-  -> owns replay execution lifetime
+Replay event ordering is repository-owned and sequence_id ASC.
 ```
-
-This prevented:
-
-* deterministic interruption
-* graceful replay drain semantics
-* replay continuation coordination
-* lifecycle-aware replay execution
-* safe distributed failover handling
 
 ---
 
-# 2. Replay Execution Unit Extracted
+## 3. Replay Runtime Resume Support Added
+
+`ReplayExecutionRuntime.start()` now accepts a durable replay checkpoint.
+
+New capability:
+
+```ts
+runtime.start({
+  namespace,
+  checkpoint,
+});
+```
+
+This allows replay recovery to resume from a durable checkpoint instead of always starting from zero.
+
+---
+
+## 4. Lease Fencing Hook Added
+
+`ReplayExecutionRuntime.start()` now supports an optional lease verification hook:
+
+```ts
+verifyLeaseOwnership?: () => Promise<boolean>;
+```
+
+Before each replay batch, runtime can verify lease ownership.
+
+If ownership is lost:
+
+```txt
+lease mismatch
+→ runtime interrupt
+→ DRAINING
+→ INTERRUPTED
+```
+
+This prevents zombie workers from continuing replay after lease loss.
+
+---
+
+## 5. Recovery Planning Introduced
 
 Created:
 
 ```txt
-packages/runtime/src/replay/process-replay-batch.ts
+packages/runtime/src/recovery/replay-recovery.types.ts
+packages/runtime/src/recovery/replay-recovery.ts
 ```
 
-This introduced:
+`ReplayRecovery` now owns deterministic recovery planning.
+
+It produces:
 
 ```txt
-deterministic replay execution unit ownership
+ReplayRecoveryPlan
 ```
 
-Replay batch execution now owns ONLY:
+Recovery plan supports:
 
-* deterministic replay sequencing
-* atomic replay progression
-* replay checkpoint advancement
-* replay continuation advancement
+* no checkpoint
+* checkpoint found
+* lease not owned
 
-Replay batch execution explicitly does NOT own:
-
-* replay lifetime
-* interruption semantics
-* worker coordination
-* lease coordination
-
-This established:
-
-```txt
-deterministic replay yield boundaries
-```
-
-which are now the canonical interruption points for replay execution.
+Recovery does not execute replay. It only produces a plan.
 
 ---
 
-# 3. Canonical Replay Execution Runtime Introduced
+## 6. Restart Coordination Introduced
+
+Implemented:
+
+```txt
+packages/runtime/src/recovery/replay-restart-coordinator.ts
+```
+
+`ReplayRestartCoordinator` now owns restart authority.
+
+It:
+
+* consumes `ReplayRecoveryPlan`
+* refuses unsafe restart
+* starts `ReplayExecutionRuntime` from the recovered checkpoint
+
+This separates:
+
+```txt
+Recovery planning
+```
+
+from:
+
+```txt
+Runtime restart execution
+```
+
+---
+
+# CURRENT VERIFIED TEST COVERAGE
 
 Created:
 
 ```txt
-packages/runtime/src/workers/runtime/replay-execution-runtime.ts
+packages/runtime/src/recovery/__tests__/replay-recovery.test.ts
+packages/runtime/src/recovery/__tests__/replay-restart-coordinator.test.ts
+packages/runtime/src/workers/runtime/__tests__/replay-runtime-state.test.ts
 ```
 
-This is now the authoritative replay execution coordinator.
+Verified:
 
-Replay execution runtime owns:
+```bash
+pnpm --filter @phantombot/runtime test
+```
 
-* replay execution lifecycle
-* replay interruption semantics
-* replay continuation ownership
-* deterministic replay execution authority
-* replay drain coordination
-* replay execution supervision
-
-Replay execution runtime explicitly does NOT own:
-
-* SQL persistence
-* projection mutation
-* checkpoint durability
-* lease ownership
-* worker lifecycle authority
-
-This established:
+Result:
 
 ```txt
-runtime-governed replay execution
+Test Files  3 passed
+Tests       5 passed
 ```
 
-instead of replay-script-owned execution.
+Coverage now proves:
+
+* recovery resumes from checkpoint
+* recovery blocks without lease ownership
+* restart coordinator rejects unsafe restart
+* runtime state allows valid transitions
+* runtime state rejects invalid transitions
 
 ---
 
-# 4. Replay Runtime State Model Introduced
+# CURRENT TYPECHECK STATUS
 
-Created:
+Verified:
 
-```txt
-packages/runtime/src/workers/runtime/replay-runtime.types.ts
-packages/runtime/src/workers/runtime/replay-runtime-state.ts
+```bash
+pnpm turbo run typecheck --force
 ```
 
-Replay runtime now supports explicit execution state semantics:
+Result:
+
+```txt
+Tasks: 5 successful, 5 total
+Cached: 0 cached, 5 total
+```
+
+Full uncached typecheck passes.
+
+---
+
+# CURRENT ARCHITECTURE STATUS
+
+```txt
+Runtime isolation            PASS
+Repository ownership         PASS
+Replay execution lifecycle   PASS
+Replay progression ownership PASS
+Checkpoint resume support    PASS
+Lease fencing hook           PASS
+Recovery planning            PASS
+Restart coordination         PASS
+State transition tests       PASS
+Recovery tests               PASS
+Typecheck                    PASS
+```
+
+---
+
+# REMAINING PHASE 4B WORK
+
+Phase 4B is architecturally complete but still requires failure verification before formal exit.
+
+Remaining:
+
+## 1. Runtime Failure Simulation
+
+Build tests for:
+
+* crash before checkpoint commit
+* crash after checkpoint commit
+* lease loss before batch
+* lease loss during replay
+* worker restart from checkpoint
+* dual worker startup protection
+
+## 2. Recovery State Modeling
+
+Consider adding:
+
+```txt
+RECOVERING
+```
+
+to replay runtime states so fresh startup and recovery startup are operationally distinguishable.
+
+Current states:
 
 ```txt
 IDLE
@@ -165,380 +285,74 @@ INTERRUPTED
 STOPPED
 ```
 
-Replay runtime state now acts as the canonical replay execution coordination layer.
-
-Replay interruption semantics are now explicit and observable.
-
----
-
-# 5. Runtime Worker Upgraded Into Canonical Coordination Authority
-
-Updated:
+Potential future states:
 
 ```txt
-packages/runtime/src/workers/runtime-worker.ts
+IDLE
+RECOVERING
+RUNNING
+DRAINING
+INTERRUPTED
+STOPPED
 ```
 
-Runtime worker now owns:
+## 3. Lease Ownership Proof
 
-* worker lifecycle coordination
-* lease coordination
-* replay runtime coordination
-* deterministic shutdown ordering
-* graceful replay drain orchestration
+Current lease fencing hook exists, but needs deeper tests proving zombie worker prevention.
 
-Runtime worker now acts as:
+---
+
+# PHASE 4B EXIT CRITERIA
+
+Phase 4B can be formally closed when:
 
 ```txt
-canonical deterministic worker orchestrator
+✓ Runtime has no SQL ownership
+✓ Runtime has no PoolClient usage
+✓ Runtime has no pg imports
+✓ Replay resumes from checkpoint
+✓ Recovery plan generation is deterministic
+✓ Restart coordinator refuses unsafe restart
+✓ Runtime interrupts on lease loss
+✓ State transition tests pass
+✓ Recovery tests pass
+✓ Failure simulation tests pass
+✓ Full uncached typecheck passes
 ```
 
-instead of simple lease coordination wrapper.
-
----
-
-# 6. Lease Coordination Aligned With Replay Execution
-
-Updated:
+Current status:
 
 ```txt
-packages/runtime/src/workers/controllers/lease-coordinator.ts
+Phase 4B architecture: COMPLETE
+Phase 4B verification: IN PROGRESS
 ```
 
-Lease coordination now supports:
-
-* replay-safe lease-loss handling
-* replay interruption signaling
-* lifecycle-aware lease coordination
-* graceful heartbeat cancellation
-* deterministic lease-loss coordination
-
-New coordination flow:
+Estimated completion:
 
 ```txt
-lease lost
-→ lifecycle LOST
-→ replay interruption
-→ deterministic replay drain
-→ coordinated shutdown
+98%
 ```
-
-This replaced the previous unsafe architecture where replay execution and lease ownership could diverge.
 
 ---
 
-# 7. Replay Orchestration Refactored
+# NEXT ENGINEERING MOVE
 
-Updated:
+Do not start Behavioral Intelligence yet.
+
+Next checkpoint:
 
 ```txt
-packages/runtime/src/replay/rebuild-projection.ts
+Phase 4B Final Verification — Failure Simulation
 ```
 
-Replay orchestration now owns ONLY:
-
-* namespace projection reset
-* replay runtime bootstrap
-* replay execution initialization
-
-Replay orchestration no longer owns:
-
-* replay execution loop
-* replay lifetime ownership
-* replay continuation progression
-* interruption semantics
-
-This eliminated hidden replay lifetime ownership from orchestration layers.
-
----
-
-# CURRENT WORKER ARCHITECTURE
+Build deterministic tests for:
 
 ```txt
-packages/runtime/src/workers/
-├── controllers
-│   └── lease-coordinator.ts
-├── runtime
-│   ├── replay-execution-runtime.ts
-│   ├── replay-runtime-state.ts
-│   └── replay-runtime.types.ts
-├── runtime-worker.ts
-├── state
-│   └── worker-lifecycle.ts
-└── types
-    └── worker-state.types.ts
+lease loss
+worker restart
+checkpoint recovery
+invalid state transitions
+zombie replay prevention
 ```
 
----
-
-# CURRENT REPLAY ARCHITECTURE
-
-```txt
-packages/runtime/src/replay/
-├── process-replay-batch.ts
-├── projection-reset.ts
-├── rebuild-projection.ts
-├── rebuild-runtime.ts
-├── replay-controller.ts
-└── run-replay.ts
-```
-
----
-
-# CURRENT RECOVERY ARCHITECTURE
-
-```txt
-packages/runtime/src/recovery/
-├── replay-recovery.ts
-└── replay-restart-coordinator.ts
-```
-
-Recovery coordination foundations now exist structurally but are not fully implemented yet.
-
----
-
-# CURRENT SYSTEM GUARANTEES
-
-System now guarantees:
-
-* deterministic replay ordering
-* replay-safe checkpoint advancement
-* replay-safe transaction boundaries
-* runtime-owned replay execution lifetime
-* deterministic replay interruption boundaries
-* lifecycle-controlled replay execution
-* replay-safe lease-loss handling
-* infrastructure-isolated runtime orchestration
-* repository-owned persistence semantics
-* graceful replay drain foundations
-* deterministic replay yield boundaries
-* replay continuation ownership separation
-* explicit replay execution state semantics
-
----
-
-# VERIFIED SAFETY CHECKS
-
-Verification completed successfully:
-
-```bash
-grep -R "while (true)" packages/runtime/src -n
-grep -R "PoolClient" packages/runtime/src -n
-grep -R "import { sql }" packages/runtime/src -n
-grep -R "pg" packages/runtime/src -n
-```
-
-Results:
-
-* no infinite replay loops remain
-* runtime infrastructure leakage removed
-* runtime SQL ownership removed
-* postgres ownership remains isolated
-
-Remaining `process.exit()` usage exists ONLY in:
-
-```txt
-packages/runtime/src/replay/run-replay.ts
-packages/runtime/src/verification/run-verification.ts
-```
-
-These are currently CLI bootstrap scripts only.
-
-Operational runtime coordination no longer hard exits.
-
----
-
-# CURRENT REPLAY EXECUTION MODEL
-
-Replay execution now behaves as:
-
-```txt
-ReplayExecutionRuntime
-  -> owns replay execution lifetime
-
-processReplayBatch
-  -> owns deterministic replay progression unit
-```
-
-Replay interruption now occurs ONLY at deterministic replay yield boundaries:
-
-```txt
-atomic replay progression
-→ checkpoint commit
-→ interruption observation
-→ graceful execution stop
-```
-
-This establishes replay-safe interruption coordination.
-
----
-
-# CURRENT MAJOR REMAINING RISKS
-
-The primary remaining coordination risks are now:
-
-* replay continuation recovery correctness
-* runtime state transition enforcement
-* deterministic recovery sequencing
-* replay restart semantics
-* zombie replay prevention
-* dual replay ownership prevention
-* failover continuation correctness
-
-These are now distributed coordination risks, not application-level risks.
-
----
-
-# IMPORTANT ARCHITECTURAL RULES
-
-DO NOT introduce yet:
-
-* replay partitioning
-* distributed replay concurrency
-* replay sharding
-* worker balancing
-* parallel replay execution
-
-until:
-
-* replay interruption semantics are fully hardened
-* recovery coordination exists
-* continuation recovery is deterministic
-* runtime state transitions are fully enforced
-* replay failover semantics are stable
-
-Correctness > throughput.
-
----
-
-# NEXT PHASE OBJECTIVES
-
-# Remaining Phase 4B Objectives
-
-## 1. Replay Runtime State Hardening
-
-Build:
-
-* deterministic replay runtime transitions
-* invalid transition enforcement
-* replay-safe state semantics
-
----
-
-## 2. Recovery Coordination
-
-Build:
-
-* replay continuation recovery
-* deterministic replay restart handling
-* checkpoint repair coordination
-* replay-safe failover recovery
-
----
-
-## 3. Graceful Shutdown Coordination
-
-Build:
-
-* deterministic drain completion
-* replay completion ordering
-* lease release sequencing
-* runtime-safe worker termination
-
----
-
-## 4. Replay Recovery Infrastructure
-
-Implement:
-
-```txt
-packages/runtime/src/recovery/
-```
-
-Build:
-
-* replay recovery orchestration
-* deterministic restart semantics
-* interruption continuation recovery
-* replay-safe worker failover handling
-
----
-
-# CURRENT ENGINEERING POSITION
-
-The platform has now transitioned from:
-
-```txt
-advanced deterministic application architecture
-```
-
-into:
-
-```txt
-distributed runtime systems engineering
-```
-
-The platform now contains:
-
-* deterministic replay runtime ownership
-* explicit replay interruption semantics
-* lifecycle-aware replay coordination
-* replay-safe execution boundaries
-* infrastructure-grade orchestration layering
-
-The remaining complexity is now primarily:
-
-```txt
-distributed coordination correctness
-```
-
-rather than feature implementation.
-
----
-
-# PLATFORM POSITIONING
-
-PhantomBot AI is NOT being built as:
-
-* a Shopify chatbot
-* a GPT wrapper
-* a support automation app
-* a workflow scripting tool
-
-The platform is being architected as:
-
-```txt
-deterministic AI commerce infrastructure
-```
-
-Target company profile:
-
-```txt
-Stripe + Datadog + OpenAI
-for commerce operations
-```
-
-Core infrastructure differentiators:
-
-* replay-safe behavioral intelligence
-* deterministic AI execution
-* infrastructure-grade orchestration
-* distributed replay coordination
-* operational AI durability
-* replay-safe recovery semantics
-
----
-
-# CURRENT DEVELOPMENT OPERATING MODEL
-
-Rules:
-
-* commit after every coordination checkpoint
-* preserve deterministic replay guarantees
-* maintain runtime/database isolation
-* keep persistence repository-owned
-* enforce explicit ownership boundaries
-* prevent hidden execution lifetime ownership
-* prioritize correctness over scaling
-* enforce lifecycle-controlled coordination
-* prevent replay ownership divergence
+Only after that should Phase 5 begin.

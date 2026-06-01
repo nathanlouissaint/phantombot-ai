@@ -6,7 +6,9 @@
  *
  * Owns:
  * - behavior_events insert semantics
- * - camelCase contract to snake_case schema translation
+ * - behavior_events read semantics
+ * - deterministic event ordering queries
+ * - camelCase contract ↔ snake_case schema translation
  * - deterministic sequence ownership handoff
  * - persisted event result mapping
  *
@@ -14,10 +16,12 @@
  * - HTTP request validation
  * - Redis transport publishing
  * - projection runtime execution
+ * - replay orchestration
  * - AI orchestration
  *
  * Critical Rules:
  * - sequence_id is database-owned and monotonic
+ * - event ordering must always be sequence_id ASC
  * - eventType is canonical; event_name must never be used
  * - apps must never write behavior_events directly
  * - persistence schema must not leak into application code
@@ -28,11 +32,18 @@ import crypto from "crypto";
 import {
   IngestionEventInput,
   PersistedBehaviorEvent,
+  ProjectionEvent,
 } from "@phantombot/contracts";
 
 import { sql } from "../postgres";
 
 export class BehaviorEventRepository {
+  /**
+   * persist
+   *
+   * Responsibility:
+   * Persist canonical behavior events.
+   */
   async persist<TPayload>(
     event: IngestionEventInput<TPayload>
   ): Promise<PersistedBehaviorEvent<TPayload>> {
@@ -81,6 +92,51 @@ export class BehaviorEventRepository {
       `;
 
     return result[0];
+  }
+
+  /**
+   * loadEvents
+   *
+   * Responsibility:
+   * Load deterministic replay events.
+   *
+   * Critical Rules:
+   * - ordering must always be sequence_id ASC
+   * - replay must remain deterministic
+   * - repository owns SQL semantics
+   */
+  async loadEvents<TPayload>({
+    lastSequence,
+    batchSize,
+  }: {
+    lastSequence: number;
+    batchSize: number;
+  }): Promise<ProjectionEvent<TPayload>[]> {
+    return sql<
+      ProjectionEvent<TPayload>[]
+    >`
+      SELECT
+        sequence_id as "sequence",
+
+        event_id as "id",
+
+        event_type as "type",
+
+        shop_id as "shopId",
+
+        occurred_at as "occurredAt",
+
+        payload
+
+      FROM behavior_events
+
+      WHERE sequence_id >
+        ${lastSequence}
+
+      ORDER BY sequence_id ASC
+
+      LIMIT ${batchSize}
+    `;
   }
 }
 

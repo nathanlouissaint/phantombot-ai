@@ -12,17 +12,12 @@
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
-
     "dev:dashboard": "pnpm --filter app dev",
     "dev:ingestion": "pnpm --filter ingestion-api dev",
     "dev:worker": "pnpm --filter worker-runtime dev",
-
     "worker:session": "tsx apps/session-projection-worker/src/index.ts",
-
     "replay:reset": "tsx apps/replay-controller/src/index.ts",
-
     "db:migrate:projection": "docker exec -i phantom-postgres psql -U postgres -d phantom < infrastructure/postgres/migrations/002_projection_runtime.sql",
-
     "infra:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "infra:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
     "infra:logs": "docker compose -f infrastructure/docker/docker-compose.yml logs -f"
@@ -35,8 +30,10 @@
   },
   "devDependencies": {
     "@types/node": "24.12.4",
+    "@vitest/coverage-v8": "^4.1.8",
     "tsx": "4.22.3",
     "turbo": "2.9.14",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.1.8"
   }
 }

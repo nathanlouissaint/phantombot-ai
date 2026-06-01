@@ -47,14 +47,20 @@ export class ReplayExecutionRuntime {
 
   async start({
     namespace,
+    checkpoint = 0,
+    verifyLeaseOwnership,
   }: {
     namespace: ProjectionNamespace;
+
+    checkpoint?: number;
+
+    verifyLeaseOwnership?: () => Promise<boolean>;
   }): Promise<void> {
     this.runtimeState
       .transitionTo("RUNNING");
 
     let continuation: ReplayContinuation = {
-      checkpoint: 0,
+      checkpoint,
       completed: false,
     };
 
@@ -62,6 +68,17 @@ export class ReplayExecutionRuntime {
       !continuation.completed &&
       !this.runtimeState.isInterrupted()
     ) {
+      if (verifyLeaseOwnership) {
+        const ownsLease =
+          await verifyLeaseOwnership();
+
+        if (!ownsLease) {
+          this.interrupt();
+
+          break;
+        }
+      }
+
       continuation =
         await processReplayBatch({
           namespace,
@@ -85,6 +102,12 @@ export class ReplayExecutionRuntime {
   }
 
   interrupt(): void {
+    if (
+      this.runtimeState.isInterrupted()
+    ) {
+      return;
+    }
+
     this.runtimeState.interrupt();
 
     this.runtimeState

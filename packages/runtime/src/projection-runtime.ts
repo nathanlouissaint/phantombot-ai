@@ -28,7 +28,7 @@
  */
 
 import {
-  sql,
+  behaviorEventRepository,
   projectionCheckpointRepository,
   projectionIdempotencyRepository,
   runInTransaction,
@@ -88,31 +88,12 @@ export class ProjectionRuntime {
   ): Promise<
     ProjectionEvent<TPayload>[]
   > {
-    return sql<
-      ProjectionEvent<TPayload>[]
-    >`
-      SELECT
-        sequence_id as "sequence",
+    return behaviorEventRepository
+      .loadEvents<TPayload>({
+        lastSequence,
 
-        event_id as "id",
-
-        event_type as "type",
-
-        shop_id as "shopId",
-
-        occurred_at as "occurredAt",
-
-        payload
-
-      FROM behavior_events
-
-      WHERE sequence_id >
-        ${lastSequence}
-
-      ORDER BY sequence_id ASC
-
-      LIMIT ${batchSize}
-    `;
+        batchSize,
+      });
   }
 
   /**
