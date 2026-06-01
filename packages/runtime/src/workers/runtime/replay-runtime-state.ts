@@ -7,22 +7,29 @@
  * Owns:
  * - replay runtime state
  * - interruption state
- * - drain state
+ * - transition enforcement
+ * - runtime execution status
  *
  * Does NOT Own:
  * - replay execution logic
- * - lifecycle coordination
  * - checkpoint persistence
- * - lease coordination
+ * - lifecycle coordination
+ * - recovery orchestration
  *
  * Critical Rules:
- * - runtime state must remain explicit
- * - interruption must be observable
- * - state holder must not execute replay work
+ * - invalid transitions must fail
+ * - runtime state must remain deterministic
+ * - interruption must remain observable
+ * - terminal states must remain protected
  */
 
-import { ReplayRuntimeState }
-from "./replay-runtime.types";
+import {
+  ReplayRuntimeState,
+} from "./replay-runtime.types";
+
+import {
+  REPLAY_RUNTIME_TRANSITIONS,
+} from "./replay-runtime-transition-map";
 
 export class ReplayRuntimeStateStore {
   private state: ReplayRuntimeState =
@@ -41,6 +48,23 @@ export class ReplayRuntimeStateStore {
   transitionTo(
     nextState: ReplayRuntimeState
   ): void {
+    const allowed =
+      REPLAY_RUNTIME_TRANSITIONS[
+        this.state
+      ];
+
+    if (
+      !allowed.includes(
+        nextState
+      )
+    ) {
+      throw new Error(
+        `[INVALID REPLAY TRANSITION]
+from=${this.state}
+to=${nextState}`
+      );
+    }
+
     this.state = nextState;
   }
 

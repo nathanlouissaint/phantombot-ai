@@ -1,211 +1,360 @@
-# PHANTOMBOT AI — PHASE 4 CONTINUATION PROMPT
+# PHANTOMBOT AI — PHASE 4B CONTINUATION PROMPT
 
-We are continuing the ONEMOGO / PhantomBot AI infrastructure build.
+We are continuing the  PhantomBot AI infrastructure build.
 
 Current branch:
 
 architecture/core-system
 
-Phase 3D has been fully completed.
+---
+
+# CURRENT STATUS
+
+Completed:
+
+✓ Phase 1 — Product Foundation
+✓ Phase 2 — Deterministic Runtime Foundation
+✓ Phase 3 — Infrastructure Isolation
+✓ Phase 4A — Runtime Coordination Foundation
+
+Current active phase:
+
+→ Phase 4B — Deterministic Worker Runtime
 
 ---
 
-# PHASE 3D COMPLETED
+# MAJOR ARCHITECTURAL CORRECTIONS COMPLETED
 
-Major completed work:
+## 1. Runtime Infrastructure Isolation
 
-## Runtime Infrastructure Isolation
+Runtime no longer owns:
 
-Removed all runtime ownership of:
-- pg
-- PoolClient
-- raw SQL mutation
-- transaction lifecycle management
+* pg
+* PoolClient
+* raw SQL mutation
+* transaction lifecycle
+* infrastructure durability semantics
 
-Runtime is now fully infrastructure-agnostic.
+Verification passes:
 
-Verification:
+```bash
+grep -R "import { sql }" packages/runtime/src -n
+grep -R "PoolClient" packages/runtime/src -n
+grep -R "pg" packages/runtime/src -n
+```
 
-grep -R "from \"pg\"\|PoolClient\|client.query" packages/runtime/src -n
-
-returns empty output.
-
----
-
-## Canonical Transaction Architecture
-
-Created:
-
-packages/database/src/transactions/
-
-Introduced:
-- TransactionContext
-- runInTransaction
-- deterministic transaction boundaries
-
-Database package now owns:
-- transaction lifecycle
-- rollback orchestration
-- commit orchestration
-- deterministic durability semantics
+All return empty output.
 
 ---
 
-## Repository-Oriented Persistence
+## 2. Repository-Owned Persistence Architecture
 
-Created repositories:
+Repositories now own ALL persistence semantics:
 
+```txt
 packages/database/src/repositories/
 ├── behavior-event.repository.ts
 ├── behavior-session.repository.ts
+├── dead-letter.repository.ts
 ├── projection-checkpoint.repository.ts
 ├── projection-idempotency.repository.ts
-└── dead-letter.repository.ts
+└── worker-lease.repository.ts
+```
 
-Repositories now own:
-- replay durability
-- checkpoint persistence
-- idempotency persistence
-- dead-letter persistence
-- projection persistence semantics
+Repositories own:
+
+* replay durability
+* checkpoint persistence
+* idempotency
+* namespace reset
+* verification query persistence
+* worker lease durability
+
+Runtime owns ONLY:
+
+* orchestration
+* replay sequencing
+* lifecycle coordination
+* distributed coordination
 
 ---
 
-## Transactional Replay Execution
+## 3. Transactional Replay Guarantees
 
-Replay execution now operates atomically:
+Replay progression is atomic:
 
 BEGIN
-  projection mutation
-  idempotency write
-  checkpoint advancement
+projection mutation
+idempotency persistence
+checkpoint advancement
 COMMIT
 
-Replay is now:
-- deterministic
-- atomic
-- replay-safe
-- namespace-isolated
+Guarantees:
+
+* deterministic replay progression
+* replay-safe checkpoint advancement
+* crash-safe replay recovery
+* deterministic replay ordering
 
 ---
 
-## Namespace-Aware Replay Isolation
+## 4. Critical Lease Coordination Fix Completed
 
-Projection checkpoints now use:
+REMOVED:
 
-(projection_name, projection_namespace)
+```ts
+process.exit(1)
+```
 
-instead of:
+from:
 
-(projection_name)
+```txt
+packages/runtime/src/leases/lease-heartbeat.ts
+```
 
-This corrected replay namespace collision risk.
+Lease loss no longer hard-crashes workers.
+
+Previous unsafe flow:
+
+```txt
+lease lost
+→ process.exit(1)
+→ replay ownership instability
+```
+
+Current safe flow:
+
+```txt
+lease lost
+→ lifecycle transition
+→ graceful drain
+→ coordinated shutdown
+```
+
+This fixed:
+
+* replay ownership storms
+* unsafe failover
+* crash-loop instability
+* non-deterministic shutdown behavior
 
 ---
 
-## PostgreSQL Migration Consolidation
+# CURRENT WORKER COORDINATION ARCHITECTURE
 
-All runtime infrastructure migrations now live under:
+Current runtime worker systems:
 
-infrastructure/postgres/migrations/
+```txt
+packages/runtime/src/workers/
+├── controllers
+│   └── lease-coordinator.ts
+├── runtime-worker.ts
+├── state
+│   └── worker-lifecycle.ts
+└── types
+    └── worker-state.types.ts
+```
 
-Removed fragmented:
-- infrastructure/sql
-- split schema ownership
+Worker lifecycle states:
 
----
-
-# CURRENT ARCHITECTURE
-
-contracts
-    ↓
-database
-    ├── repositories
-    ├── transaction boundaries
-    ├── replay durability
-    └── infrastructure ownership
-    ↓
-runtime
-    ├── deterministic orchestration
-    ├── replay sequencing
-    ├── transaction coordination
-    └── infrastructure-agnostic execution
-    ↓
-workers/apps
+```txt
+IDLE
+ACQUIRING
+ACTIVE
+DRAINING
+LOST
+SHUTDOWN
+```
 
 ---
 
 # CURRENT SYSTEM GUARANTEES
 
 System now guarantees:
-- deterministic replay ordering
-- atomic replay progression
-- namespace-safe checkpoints
-- repository-owned persistence
-- infrastructure-isolated runtime orchestration
-- replay-safe idempotency
-- deterministic transaction boundaries
+
+* deterministic replay ordering
+* infrastructure-isolated runtime orchestration
+* repository-owned persistence semantics
+* replay-safe checkpoint advancement
+* lifecycle-controlled lease coordination
+* graceful ownership foundations
+* replay-safe transaction boundaries
+* deterministic worker lifecycle authority
 
 ---
 
-# REMAINING WORK
+# CURRENT REPLAY ARCHITECTURE
 
-Replay verification runner still exists:
+Replay systems:
 
-packages/runtime/src/verification/
+```txt
+packages/runtime/src/replay/
+├── projection-reset.ts
+├── rebuild-projection.ts
+├── rebuild-runtime.ts
+├── replay-controller.ts
+└── run-replay.ts
+```
 
-But package.json script:
-- verify:replay
+Current replay execution:
 
-needs restoration.
+* sequential
+* deterministic
+* transactionally atomic
+* namespace-isolated
+
+Replay rebuild currently works correctly.
+
+---
+
+# IMPORTANT CURRENT STATE
+
+Replay controller orchestration is NOT fully implemented yet.
+
+Still missing:
+
+* canonical replay worker execution loop
+* replay continuation runtime
+* graceful replay interruption
+* deterministic shutdown ordering
+* lifecycle-aware replay execution
+* recovery coordination
+* replay drain semantics
+
+DO NOT introduce:
+
+* replay partitioning
+* parallel replay
+* distributed concurrency
+* worker balancing
+* replay sharding
+
+until:
+
+* worker lifecycle coordination is stable
+* replay interruption is deterministic
+* graceful drain semantics exist
+* replay continuation is correct
+
+Correctness > throughput.
 
 ---
 
 # NEXT PHASE
 
-# Phase 4 — Distributed Runtime Coordination
+# Phase 4B — Replay Worker Execution Runtime
 
 Objectives:
 
-## 1. Distributed Worker Coordination
-Build:
-- replay workers
-- deterministic lease ownership
-- distributed replay execution
-- lease failover handling
+## 1. Canonical Runtime Worker Loop
 
-## 2. Replay Partitioning
 Build:
-- projection partitioning
-- replay concurrency controls
-- namespace-aware replay distribution
 
-## 3. Recovery Orchestration
-Build:
-- checkpoint repair
-- worker recovery flows
-- lease expiration recovery
-- replay continuation semantics
-
-## 4. Operational Replay Tooling
-Expand:
-- replay verification
-- replay diagnostics
-- dead-letter recovery
-- replay observability
+* deterministic replay execution loop
+* lifecycle-aware replay progression
+* replay interruption handling
+* coordinated drain semantics
 
 ---
 
-# BEFORE WRITING CODE
+## 2. Replay Continuation Semantics
+
+Build:
+
+* checkpoint-aware continuation
+* replay recovery progression
+* deterministic replay resume behavior
+* replay-safe interruption recovery
+
+---
+
+## 3. Graceful Shutdown Coordination
+
+Build:
+
+* replay drain ordering
+* heartbeat shutdown ordering
+* lease release coordination
+* lifecycle-safe worker termination
+
+---
+
+## 4. Recovery Coordination
+
+Build:
+
+* replay continuation recovery
+* worker failover recovery
+* checkpoint repair coordination
+* deterministic replay restart semantics
+
+---
+
+# IMPORTANT ENGINEERING RULES
+
+### Determinism First
+
+Replay correctness over throughput.
+
+### Runtime Never Owns Infrastructure
+
+No SQL inside runtime.
+
+### Lifecycle Owns Coordination
+
+Heartbeat cannot self-govern.
+
+### Replay Must Remain Sequential
+
+No concurrency yet.
+
+### Correctness Before Scale
+
+Do not optimize throughput before recovery correctness exists.
+
+---
+
+# BEFORE WRITING NEW CODE
 
 First inspect:
 
-sed -n '1,320p' packages/runtime/src/leases/worker-lease.service.ts
+```bash
+tree packages/runtime/src/workers -L 4
+
+sed -n '1,320p' packages/runtime/src/workers/runtime-worker.ts
+
+sed -n '1,320p' packages/runtime/src/workers/controllers/lease-coordinator.ts
 
 sed -n '1,320p' packages/runtime/src/leases/lease-heartbeat.ts
 
-tree packages/runtime/src -L 4
+tree packages/runtime/src/replay -L 5
 
-cat packages/runtime/package.json
+sed -n '1,320p' packages/runtime/src/replay/rebuild-projection.ts
+```
 
-Need a full distributed coordination audit before introducing worker orchestration.
+Need full coordination audit before implementing replay execution runtime.
+
+---
+
+# CURRENT POSITIONING
+
+We are NOT building:
+
+* a chatbot
+* a Shopify plugin
+* a GPT wrapper
+
+We are building:
+
+```txt
+deterministic AI commerce infrastructure
+```
+
+Target company profile:
+
+```txt
+Stripe + Datadog + OpenAI
+for commerce operations
+```
+
+This is now distributed systems engineering, not application development.
