@@ -1,8 +1,10 @@
-# CURRENT.STATE.MD — PHASE 4B RECOVERY HARDENING UPDATE
+# CURRENT.STATE.MD — PHASE 5A BEHAVIORAL INTELLIGENCE CHECKPOINT
 
 ## Date: 2026-06-01
 
-## Branch: architecture/core-system
+## Branch
+
+architecture/core-system
 
 ---
 
@@ -10,349 +12,327 @@
 
 Completed:
 
-✓ Phase 1 — Product Foundation
-✓ Phase 2 — Deterministic Runtime Foundation
-✓ Phase 3 — Infrastructure Isolation
-✓ Phase 4A — Runtime Coordination Foundation
-✓ Phase 4B — Deterministic Worker Runtime Foundation
-✓ Phase 4B — Recovery Ownership Hardening
+* Phase 1 — Product Foundation
+* Phase 2 — Deterministic Runtime Foundation
+* Phase 3 — Infrastructure Isolation
+* Phase 4A — Runtime Coordination Foundation
+* Phase 4B — Deterministic Worker Runtime Foundation
+* Phase 4B — Recovery Ownership Hardening
+* Phase 4B — Runtime Failure Verification
 
 Current active phase:
 
-→ Phase 4B Final Verification — Runtime Failure Simulation
+* Phase 5A — Behavioral Intelligence Foundation
 
 ---
 
-# MAJOR ARCHITECTURAL WORK COMPLETED
+# PHASE 4B FINAL STATUS
 
-## 1. Runtime SQL Ownership Removed
-
-`ProjectionRuntime` no longer imports or owns SQL.
-
-Previous violation:
-
-```txt
-packages/runtime/src/projection-runtime.ts
-→ imported sql
-→ queried behavior_events directly
-```
-
-Corrected architecture:
-
-```txt
-ProjectionRuntime
-  -> behaviorEventRepository
-    -> SQL
-```
-
-Runtime now consumes repository contracts only.
+Phase 4B is complete.
 
 Verified:
 
-```bash
-grep -R "sql<" packages/runtime/src -n
-```
-
-Result:
-
 ```txt
-No runtime SQL ownership remains.
+ReplayExecutionRuntime lifecycle
+Replay interruption behavior
+Lease-loss interruption
+Zombie replay prevention
+Checkpoint resume support
+ReplayRecovery deterministic planning
+ReplayRestartCoordinator restart control
+Runtime state transition enforcement
 ```
 
----
-
-## 2. Behavior Event Repository Expanded
-
-`behavior-event.repository.ts` now owns deterministic behavior event reads and writes.
-
-Repository owns:
-
-* behavior_events insert semantics
-* behavior_events read semantics
-* deterministic replay event loading
-* sequence_id ordering
-* schema-to-contract mapping
-
-Critical guarantee:
-
-```txt
-Replay event ordering is repository-owned and sequence_id ASC.
-```
-
----
-
-## 3. Replay Runtime Resume Support Added
-
-`ReplayExecutionRuntime.start()` now accepts a durable replay checkpoint.
-
-New capability:
-
-```ts
-runtime.start({
-  namespace,
-  checkpoint,
-});
-```
-
-This allows replay recovery to resume from a durable checkpoint instead of always starting from zero.
-
----
-
-## 4. Lease Fencing Hook Added
-
-`ReplayExecutionRuntime.start()` now supports an optional lease verification hook:
-
-```ts
-verifyLeaseOwnership?: () => Promise<boolean>;
-```
-
-Before each replay batch, runtime can verify lease ownership.
-
-If ownership is lost:
-
-```txt
-lease mismatch
-→ runtime interrupt
-→ DRAINING
-→ INTERRUPTED
-```
-
-This prevents zombie workers from continuing replay after lease loss.
-
----
-
-## 5. Recovery Planning Introduced
-
-Created:
-
-```txt
-packages/runtime/src/recovery/replay-recovery.types.ts
-packages/runtime/src/recovery/replay-recovery.ts
-```
-
-`ReplayRecovery` now owns deterministic recovery planning.
-
-It produces:
-
-```txt
-ReplayRecoveryPlan
-```
-
-Recovery plan supports:
-
-* no checkpoint
-* checkpoint found
-* lease not owned
-
-Recovery does not execute replay. It only produces a plan.
-
----
-
-## 6. Restart Coordination Introduced
-
-Implemented:
-
-```txt
-packages/runtime/src/recovery/replay-restart-coordinator.ts
-```
-
-`ReplayRestartCoordinator` now owns restart authority.
-
-It:
-
-* consumes `ReplayRecoveryPlan`
-* refuses unsafe restart
-* starts `ReplayExecutionRuntime` from the recovered checkpoint
-
-This separates:
-
-```txt
-Recovery planning
-```
-
-from:
-
-```txt
-Runtime restart execution
-```
-
----
-
-# CURRENT VERIFIED TEST COVERAGE
-
-Created:
-
-```txt
-packages/runtime/src/recovery/__tests__/replay-recovery.test.ts
-packages/runtime/src/recovery/__tests__/replay-restart-coordinator.test.ts
-packages/runtime/src/workers/runtime/__tests__/replay-runtime-state.test.ts
-```
-
-Verified:
+Final Phase 4B verification:
 
 ```bash
+pnpm turbo run typecheck --force
 pnpm --filter @phantombot/runtime test
 ```
 
 Result:
 
 ```txt
-Test Files  3 passed
-Tests       5 passed
+PASS
 ```
-
-Coverage now proves:
-
-* recovery resumes from checkpoint
-* recovery blocks without lease ownership
-* restart coordinator rejects unsafe restart
-* runtime state allows valid transitions
-* runtime state rejects invalid transitions
 
 ---
 
-# CURRENT TYPECHECK STATUS
+# PHASE 5A WORK COMPLETED
 
-Verified:
+## 1. Session Intelligence Projection Audited
+
+Existing module:
+
+```txt
+packages/runtime/src/projections/session-intelligence
+```
+
+Files:
+
+```txt
+index.ts
+session-intelligence.helpers.ts
+session-intelligence.projection.ts
+session-intelligence.reducer.ts
+session-intelligence.types.ts
+```
+
+Purpose:
+
+```txt
+Raw commerce events
+→ deterministic session intelligence state
+```
+
+---
+
+## 2. Removed Wall-Clock Determinism Violation
+
+Previous issue:
+
+```ts
+startedAt: new Date().toISOString()
+lastActivityAt: new Date().toISOString()
+```
+
+This violated replay determinism.
+
+Fixed by changing projection initialization to accept deterministic input:
+
+```ts
+createInitialState({
+  shopId,
+  sessionId,
+  startedAt,
+})
+```
+
+Projection no longer generates timestamps.
+
+---
+
+## 3. Added Session Intelligence Tests
+
+Created:
+
+```txt
+packages/runtime/src/projections/session-intelligence/__tests__/session-intelligence.projection.test.ts
+packages/runtime/src/projections/session-intelligence/__tests__/session-intelligence.reducer.test.ts
+packages/runtime/src/projections/session-intelligence/__tests__/session-intelligence.helpers.test.ts
+packages/runtime/src/projections/session-intelligence/__tests__/session-intelligence.replay.test.ts
+```
+
+Coverage:
+
+```txt
+Projection initialization
+Reducer mutation
+Purchase intent classification
+Hesitation score classification
+Friction classification
+Replay reconstruction determinism
+```
+
+---
+
+## 4. Added Opportunity Detection Layer
+
+Created:
+
+```txt
+packages/runtime/src/opportunities
+```
+
+Files:
+
+```txt
+opportunity.types.ts
+opportunity-score.ts
+recovery-opportunity.types.ts
+recovery-opportunity.detector.ts
+```
+
+Tests:
+
+```txt
+packages/runtime/src/opportunities/__tests__/opportunity-contract.test.ts
+packages/runtime/src/opportunities/__tests__/opportunity-score.test.ts
+packages/runtime/src/opportunities/__tests__/recovery-opportunity.detector.test.ts
+```
+
+Purpose:
+
+```txt
+ShopperSessionState
+→ deterministic business opportunities
+```
+
+Current supported recovery opportunities:
+
+```txt
+ABANDONED_CHECKOUT
+HIGH_HESITATION
+HIGH_INTENT_ABANDONMENT
+```
+
+---
+
+## 5. Added Unified Opportunity Contract
+
+Created canonical opportunity shape:
+
+```ts
+export interface Opportunity {
+  id: string;
+  category: OpportunityCategory;
+  type: string;
+  confidence: number;
+  detectedAt: string;
+}
+```
+
+Categories:
+
+```txt
+recovery
+conversion
+upsell
+retention
+```
+
+Recovery opportunities now extend the shared contract.
+
+---
+
+## 6. Added Opportunity Scoring Layer
+
+Created:
+
+```txt
+packages/runtime/src/opportunities/opportunity-score.ts
+```
+
+Purpose:
+
+```txt
+Separate opportunity detection from confidence scoring.
+```
+
+Current scoring functions:
+
+```ts
+scoreAbandonment()
+scoreHesitation()
+```
+
+This keeps detection logic clean and prepares the system for future conversion, upsell, retention, and winback opportunities.
+
+---
+
+# CURRENT VERIFIED COMMANDS
 
 ```bash
 pnpm turbo run typecheck --force
+pnpm --filter @phantombot/runtime test
 ```
 
-Result:
+Latest verified result:
 
 ```txt
-Tasks: 5 successful, 5 total
-Cached: 0 cached, 5 total
-```
+Typecheck: PASS
 
-Full uncached typecheck passes.
-
----
-
-# CURRENT ARCHITECTURE STATUS
-
-```txt
-Runtime isolation            PASS
-Repository ownership         PASS
-Replay execution lifecycle   PASS
-Replay progression ownership PASS
-Checkpoint resume support    PASS
-Lease fencing hook           PASS
-Recovery planning            PASS
-Restart coordination         PASS
-State transition tests       PASS
-Recovery tests               PASS
-Typecheck                    PASS
+Test Files: 11 passed
+Tests: 28 passed
 ```
 
 ---
 
-# REMAINING PHASE 4B WORK
-
-Phase 4B is architecturally complete but still requires failure verification before formal exit.
-
-Remaining:
-
-## 1. Runtime Failure Simulation
-
-Build tests for:
-
-* crash before checkpoint commit
-* crash after checkpoint commit
-* lease loss before batch
-* lease loss during replay
-* worker restart from checkpoint
-* dual worker startup protection
-
-## 2. Recovery State Modeling
-
-Consider adding:
+# CURRENT ARCHITECTURE
 
 ```txt
-RECOVERING
+Raw Commerce Events
+        ↓
+Session Intelligence Projection
+        ↓
+Deterministic Behavioral State
+        ↓
+Opportunity Detection
+        ↓
+Opportunity Scoring
+        ↓
+Unified Opportunity Contract
+        ↓
+Future Decision Engine
 ```
-
-to replay runtime states so fresh startup and recovery startup are operationally distinguishable.
-
-Current states:
-
-```txt
-IDLE
-RUNNING
-DRAINING
-INTERRUPTED
-STOPPED
-```
-
-Potential future states:
-
-```txt
-IDLE
-RECOVERING
-RUNNING
-DRAINING
-INTERRUPTED
-STOPPED
-```
-
-## 3. Lease Ownership Proof
-
-Current lease fencing hook exists, but needs deeper tests proving zombie worker prevention.
 
 ---
 
-# PHASE 4B EXIT CRITERIA
-
-Phase 4B can be formally closed when:
+# CURRENT INVARIANTS
 
 ```txt
-✓ Runtime has no SQL ownership
-✓ Runtime has no PoolClient usage
-✓ Runtime has no pg imports
-✓ Replay resumes from checkpoint
-✓ Recovery plan generation is deterministic
-✓ Restart coordinator refuses unsafe restart
-✓ Runtime interrupts on lease loss
-✓ State transition tests pass
-✓ Recovery tests pass
-✓ Failure simulation tests pass
-✓ Full uncached typecheck passes
-```
-
-Current status:
-
-```txt
-Phase 4B architecture: COMPLETE
-Phase 4B verification: IN PROGRESS
-```
-
-Estimated completion:
-
-```txt
-98%
+No wall-clock timestamps inside projections
+No AI inside intelligence calculations
+No workflows inside opportunity detection
+No persistence inside detectors
+No runtime orchestration inside projections
+No SQL inside runtime
+Replay remains deterministic
+Opportunity generation remains replay-safe
+Confidence scoring remains deterministic
 ```
 
 ---
 
 # NEXT ENGINEERING MOVE
 
-Do not start Behavioral Intelligence yet.
+Continue Phase 5A.
 
-Next checkpoint:
-
-```txt
-Phase 4B Final Verification — Failure Simulation
-```
-
-Build deterministic tests for:
+Next target:
 
 ```txt
-lease loss
-worker restart
-checkpoint recovery
-invalid state transitions
-zombie replay prevention
+Conversion Opportunity Detection
 ```
 
-Only after that should Phase 5 begin.
+Build:
+
+```txt
+conversion-opportunity.types.ts
+conversion-opportunity.detector.ts
+conversion-opportunity.detector.test.ts
+```
+
+Goal:
+
+```txt
+ShopperSessionState
+→ deterministic conversion opportunities
+```
+
+Example signals:
+
+```txt
+High purchase intent
+High cart value
+Checkout started
+Not converted
+Not abandoned
+```
+
+Do not build OpenAI yet.
+
+Do not build agents yet.
+
+Do not build workflow execution yet.
+
+Next architecture checkpoint:
+
+```txt
+RecoveryOpportunity
+ConversionOpportunity
+UpsellOpportunity
+RetentionOpportunity
+→ all extend Opportunity
+→ all deterministic
+→ all tested
+```
