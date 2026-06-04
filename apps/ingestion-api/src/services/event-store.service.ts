@@ -1,34 +1,39 @@
-import crypto from "crypto";
+/**
+ * event-store.service.ts
+ *
+ * Responsibility:
+ * Compose canonical behavior event persistence for ingestion-api.
+ *
+ * Owns:
+ * - application-level persistence orchestration
+ * - ingestion service boundary
+ *
+ * Does NOT Own:
+ * - PostgreSQL clients
+ * - SQL query construction
+ * - Redis clients
+ * - deterministic sequence ownership
+ * - database schema translation
+ *
+ * Critical Rules:
+ * - apps must consume @phantombot/database repositories
+ * - apps must not import raw database clients
+ * - eventType is canonical; event_name must never be used
+ */
 
-import { sql } from "../lib/postgres";
+import {
+  IngestionEventInput,
+  PersistedBehaviorEvent,
+} from "@phantombot/contracts";
+
+import {
+  behaviorEventRepository,
+} from "@phantombot/database";
 
 export class EventStoreService {
-  async persist(event: any) {
-    const eventId =
-      crypto.randomUUID();
-
-    const result = await sql`
-      INSERT INTO behavior_events (
-        event_id,
-        event_name,
-        shop_id,
-        session_id,
-        payload,
-        occurred_at
-      )
-
-      VALUES (
-        ${eventId},
-        ${event.event_name},
-        ${event.shop_id},
-        ${event.session_id},
-        ${JSON.stringify(event)},
-        ${event.timestamp}
-      )
-
-      RETURNING *
-    `;
-
-    return result[0];
+  async persist<TPayload>(
+    event: IngestionEventInput<TPayload>
+  ): Promise<PersistedBehaviorEvent<TPayload>> {
+    return behaviorEventRepository.persist(event);
   }
 }

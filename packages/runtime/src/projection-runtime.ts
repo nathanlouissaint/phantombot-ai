@@ -8,42 +8,35 @@
  * - checkpoint loading
  * - ordered event loading
  * - replay-safe progression
- * - checkpoint advancement
- * - transactional projection execution
- * - replay-safe idempotency enforcement
+ * - transactional projection orchestration
  * - deterministic event sequencing
+ * - persistence-to-runtime contract translation
  *
  * Does NOT Own:
- * - business logic
- * - orchestration
- * - projections
- * - intelligence systems
- * - AI adaptation
+ * - SQL ownership
+ * - transaction lifecycle ownership
+ * - repository mutation semantics
+ * - infrastructure orchestration
+ * - postgres awareness
  *
  * Critical Rules:
- * - event ordering must remain deterministic
- * - replay progression must remain sequential
- * - workers advance only after successful processing
- * - idempotency checks must occur inside transaction boundaries
- * - projection mutation + checkpoint advancement must remain atomic
- * - runtime contracts must remain canonical
- * - runtime systems must translate persistence schema to runtime contracts
+ * - runtime must remain infrastructure-agnostic
+ * - replay progression must remain deterministic
+ * - event ordering must remain sequential
+ * - runtime systems consume repositories only
+ * - runtime must NEVER import postgres directly
  */
 
-import { PoolClient } from "pg";
-
-import { projectionIdempotencyService }
-from "./idempotency/projection-idempotency.service";
-
-import { sql }
-from "@phantombot/database";
+import {
+  behaviorEventRepository,
+  projectionCheckpointRepository,
+  projectionIdempotencyRepository,
+  runInTransaction,
+  TransactionContext,
+} from "@phantombot/database";
 
 import {
-  ProjectionCheckpoint,
   ProjectionEvent,
-} from "@phantombot/contracts";
-
-import {
   ProjectionNamespace,
 } from "@phantombot/contracts";
 
@@ -66,88 +59,75 @@ export class ProjectionRuntime {
       namespace;
   }
 
+  /**
+   * loadCheckpoint
+   *
+   * Responsibility:
+   * Load deterministic replay checkpoint state.
+   */
   async loadCheckpoint(): Promise<number> {
-    const result =
-      await sql<ProjectionCheckpoint[]>`
-        SELECT
-          projection_name as "projectionName",
+    return projectionCheckpointRepository
+      .loadCheckpoint({
+        projectionName:
+          this.projectionName,
 
-          projection_namespace as "namespace",
-
-          last_processed_sequence as "lastProcessedSequence",
-
-          updated_at as "updatedAt"
-
-        FROM projection_checkpoints
-
-        WHERE projection_name =
-          ${this.projectionName}
-
-        AND projection_namespace =
-          ${this.namespace}
-      `;
-
-    if (result.length === 0) {
-      await sql`
-        INSERT INTO projection_checkpoints (
-          projection_name,
-          projection_namespace,
-          last_processed_sequence
-        )
-
-        VALUES (
-          ${this.projectionName},
-          ${this.namespace},
-          0
-        )
-      `;
-
-      return 0;
-    }
-
-    return result[0]
-      .lastProcessedSequence;
+        namespace:
+          this.namespace,
+      });
   }
 
-  async loadEvents(
+  /**
+   * loadEvents
+   *
+   * Responsibility:
+   * Load ordered deterministic replay events.
+   */
+  async loadEvents<TPayload>(
     lastSequence: number,
     batchSize = 100
-  ): Promise<ProjectionEvent[]> {
-    return sql<ProjectionEvent[]>`
-      SELECT
-        sequence_id as "sequence",
+  ): Promise<
+    ProjectionEvent<TPayload>[]
+  > {
+    return behaviorEventRepository
+      .loadEvents<TPayload>({
+        lastSequence,
 
-        event_id as "id",
-
-        event_type as "type",
-
-        shop_id as "shopId",
-
-        occurred_at as "occurredAt",
-
-        payload
-
-      FROM behavior_events
-
-      WHERE sequence_id >
-        ${lastSequence}
-
-      ORDER BY sequence_id ASC
-
-      LIMIT ${batchSize}
-    `;
+        batchSize,
+      });
   }
 
+  /**
+   * runTransaction
+   *
+   * Responsibility:
+   * Execute deterministic replay transaction boundaries.
+   */
+  async runTransaction<T>(
+    operation: (
+      transaction: TransactionContext
+    ) => Promise<T>
+  ): Promise<T> {
+    return runInTransaction(
+      operation
+    );
+  }
+
+  /**
+   * hasEventBeenApplied
+   *
+   * Responsibility:
+   * Verify deterministic replay idempotency state.
+   */
   async hasEventBeenApplied({
-    client,
+    transaction,
     eventSequenceId,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     eventSequenceId: number;
   }): Promise<boolean> {
-    return projectionIdempotencyService
+    return projectionIdempotencyRepository
       .hasEventBeenApplied({
-        client,
+        transaction,
 
         projectionName:
           this.projectionName,
@@ -156,16 +136,22 @@ export class ProjectionRuntime {
       });
   }
 
+  /**
+   * markEventApplied
+   *
+   * Responsibility:
+   * Persist deterministic replay progression.
+   */
   async markEventApplied({
-    client,
+    transaction,
     eventSequenceId,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     eventSequenceId: number;
   }): Promise<void> {
-    await projectionIdempotencyService
+    await projectionIdempotencyRepository
       .markEventApplied({
-        client,
+        transaction,
 
         projectionName:
           this.projectionName,
@@ -174,30 +160,30 @@ export class ProjectionRuntime {
       });
   }
 
+  /**
+   * updateCheckpoint
+   *
+   * Responsibility:
+   * Advance deterministic replay checkpoint state.
+   */
   async updateCheckpoint({
-    client,
+    transaction,
     sequence,
   }: {
-    client: PoolClient;
+    transaction: TransactionContext;
     sequence: number;
-  }) {
-    await client.query(
-      `
-        UPDATE projection_checkpoints
+  }): Promise<void> {
+    await projectionCheckpointRepository
+      .advanceCheckpoint({
+        transaction,
 
-        SET
-          last_processed_sequence = $1,
-          updated_at = NOW()
+        projectionName:
+          this.projectionName,
 
-        WHERE projection_name = $2
+        namespace:
+          this.namespace,
 
-        AND projection_namespace = $3
-      `,
-      [
         sequence,
-        this.projectionName,
-        this.namespace,
-      ]
-    );
+      });
   }
 }

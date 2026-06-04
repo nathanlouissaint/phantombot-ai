@@ -15,6 +15,12 @@
  * - AI generation
  * - database ownership
  * - runtime leasing
+ * - wall clock ownership
+ *
+ * Critical Rules:
+ * - projection state must remain deterministic
+ * - projection initialization must remain replay-safe
+ * - projections must never generate timestamps
  */
 
 import {
@@ -27,16 +33,21 @@ import {
 } from "./session-intelligence.reducer";
 
 export class SessionIntelligenceProjection {
-  createInitialState(
-    shopId: string,
-    sessionId: string
-  ): ShopperSessionState {
+  createInitialState({
+    shopId,
+    sessionId,
+    startedAt,
+  }: {
+    shopId: string;
+    sessionId: string;
+    startedAt: string;
+  }): ShopperSessionState {
     return {
       shopId,
       sessionId,
 
-      startedAt: new Date().toISOString(),
-      lastActivityAt: new Date().toISOString(),
+      startedAt,
+      lastActivityAt: startedAt,
 
       productViewCount: 0,
       addToCartCount: 0,
@@ -61,6 +72,9 @@ export class SessionIntelligenceProjection {
     current: ShopperSessionState,
     event: CommerceEventEnvelope<Record<string, unknown>>
   ): ShopperSessionState {
-    return reduceSessionState(current, event);
+    return reduceSessionState(
+      current,
+      event
+    );
   }
 }

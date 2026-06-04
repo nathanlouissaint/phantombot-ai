@@ -16,40 +16,38 @@
  * - runtime orchestration
  * - replay execution
  * - checkpoint ownership
+ * - SQL persistence
  *
  * Critical Rules:
  * - verification must compare semantic state
  * - infrastructure metadata must NOT affect hashes
  * - serialization must remain deterministic
  * - replay verification must remain namespace-agnostic
+ * - runtime must remain infrastructure-agnostic
  */
 
 import crypto from "crypto";
 
-import { sql }
-from "@phantombot/database";
+import {
+  behaviorSessionRepository,
+} from "@phantombot/database";
+
+import {
+  ProjectionNamespace,
+} from "@phantombot/contracts";
 
 export class ProjectionVerifier {
   async loadProjectionState(
-    namespace: string
+    namespace: ProjectionNamespace
   ) {
-    return sql`
-      SELECT
-        projection_namespace,
-        session_id,
-        shop_id,
-        started_at,
-        last_activity_at,
-        event_count
-      FROM behavior_sessions
-      WHERE projection_namespace =
-        ${namespace}
-      ORDER BY session_id ASC
-    `;
+    return behaviorSessionRepository
+      .loadProjectionState(
+        namespace
+      );
   }
 
   async generateProjectionHash(
-    namespace: string
+    namespace: ProjectionNamespace
   ) {
     const rows =
       await this.loadProjectionState(

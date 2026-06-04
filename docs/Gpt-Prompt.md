@@ -1,238 +1,100 @@
-We are continuing work on PhantomBotAI.
+We are continuing work on PhantomBot AI.
 
-Project identity:
+Project: PhantomBot AI
+Branch: architecture/core-system
+Current phase: Phase 4B Final Verification — Runtime Failure Simulation
 
-PhantomBotAI is NOT:
-- a chatbot SaaS
-- a Shopify AI wrapper
-- a trigger-action automation platform
-- a support automation system
+We are not building a chatbot, Shopify plugin, or GPT wrapper. We are building deterministic AI commerce infrastructure: Stripe + Datadog + OpenAI for commerce operations.
 
-PhantomBotAI is evolving into:
+Current architecture:
 
-AI-native deterministic behavioral orchestration infrastructure.
+ReplayExecutionRuntime
+-> owns replay execution lifecycle
 
-The platform direction is converging toward:
+processReplayBatch
+-> owns deterministic replay progression
 
-behavioral operating system for commerce.
+ProjectionRuntime
+-> owns runtime/repository contract translation only
 
-Core flow:
+Repositories
+-> own persistence semantics and SQL
 
-shopper interaction
-→ behavioral signal collection
-→ deterministic event ingestion
-→ session intelligence accumulation
-→ hesitation analysis
-→ recovery opportunity generation
-→ orchestration coordination
-→ intervention execution
-→ outcome tracking
-→ adaptive rendering
+Database
+-> owns durability and transactions
 
-Current architecture principle:
+ReplayRecovery
+-> owns deterministic recovery planning
 
-Deterministic infrastructure owns truth.
+ReplayRestartCoordinator
+-> owns restart authority from recovery plans
 
-AI systems do NOT own:
-- behavioral truth
-- event ordering
-- replay semantics
-- deterministic scoring
-- checkpoint ownership
-- orchestration state
+Critical invariants:
 
-AI systems will later own:
-- persuasion adaptation
-- intervention personalization
-- merchant summaries
-- conversational rendering
-- adaptive messaging
-- optimization suggestions
+* No SQL inside runtime
+* No PoolClient inside runtime
+* No pg ownership inside runtime
+* Runtime consumes repositories only
+* Replay remains sequential
+* Checkpoint advancement remains atomic
+* Lease ownership must match replay ownership
+* Recovery must remain deterministic
+* Correctness over throughput
+* Determinism over scale
+* Recovery over features
 
-Current phase:
+Recent completed work:
 
-Phase 3A — Canonical Runtime Contract Migration.
+* Removed runtime SQL ownership from projection-runtime.ts
+* Moved behavior_events replay loading into behaviorEventRepository
+* Added checkpoint resume support to ReplayExecutionRuntime
+* Added optional lease ownership verification hook to ReplayExecutionRuntime
+* Added ReplayRecoveryPlan and ReplayRecoveryReason types
+* Implemented ReplayRecovery
+* Implemented ReplayRestartCoordinator
+* Added Vitest
+* Added tests for recovery planning, restart blocking, and runtime state transitions
+* Full uncached typecheck passes
+* Runtime tests pass: 3 files, 5 tests
 
-We already completed:
+Current verified commands:
 
-1. Runtime contract system creation under:
+pnpm turbo run typecheck --force
+pnpm --filter @phantombot/runtime test
 
-packages/contracts/src/runtime
+Current status:
 
-Files:
-- deterministic-time.types.ts
-- execution-result.types.ts
-- projection-checkpoint.types.ts
-- projection-event.types.ts
-- projection-runtime.types.ts
-- replay.types.ts
-- runtime-state.types.ts
-- worker-lease.types.ts
-- index.ts
+Phase 4B architecture: complete
+Phase 4B verification: in progress
+Estimated completion: 98%
 
-2. Removed fake architecture packages:
-- packages/event-schema
-- packages/recovery-engine
-- packages/session-engine
-- packages/shared-types
-- packages/workflow-core
+Next goal:
 
-3. Removed empty runtime folders:
-- packages/runtime/src/checkpoints
-- packages/runtime/src/transactions
-- packages/runtime/src/batching
-- packages/runtime/src/shutdown
+Build final Phase 4B failure verification before entering Phase 5.
 
-4. Removed duplicate replay file:
-- packages/runtime/src/rebuild-runtime.ts
+Focus areas:
 
-Replay ownership is now consolidated under:
-- packages/runtime/src/replay
+1. Failure simulation tests
+2. Lease-loss behavior
+3. Restart-from-checkpoint verification
+4. Zombie replay prevention
+5. Runtime interruption correctness
+6. Optional RECOVERING runtime state
 
-5. Updated:
-- packages/contracts/src/projection.types.ts
-- packages/contracts/src/index.ts
-- packages/runtime/src/projection-runtime.ts
-- packages/runtime/src/projections/session/session.projection.ts
-- packages/runtime/src/replay/rebuild-projection.ts
+Do not write product features. Do not start Behavioral Intelligence yet. Audit first, then implement deterministic failure verification.
 
-6. Established rule:
+Start by asking me for the latest file contents of:
 
-Database schema uses snake_case.
-Runtime contracts use camelCase.
-Runtime layer translates between them.
+packages/runtime/src/workers/runtime/replay-execution-runtime.ts
+packages/runtime/src/workers/runtime/replay-runtime-state.ts
+packages/runtime/src/workers/runtime/replay-runtime-transition-map.ts
+packages/runtime/src/workers/runtime/replay-runtime.types.ts
+packages/runtime/src/recovery/replay-recovery.ts
+packages/runtime/src/recovery/replay-recovery.types.ts
+packages/runtime/src/recovery/replay-restart-coordinator.ts
+packages/runtime/src/replay/process-replay-batch.ts
+packages/runtime/src/recovery/**tests**/replay-recovery.test.ts
+packages/runtime/src/recovery/**tests**/replay-restart-coordinator.test.ts
+packages/runtime/src/workers/runtime/**tests**/replay-runtime-state.test.ts
 
-Allowed:
-SQL strings may use:
-- sequence_id
-- shop_id
-- occurred_at
-- last_processed_sequence
 
-NOT allowed in runtime TypeScript:
-- event.sequence_id
-- event.shop_id
-- event.occurred_at
-- checkpoint.last_processed_sequence
-
-7. Session projection now uses:
-- ProjectionEvent<TPayload>
-- event.payload.sessionId
-- event.shopId
-- event.occurredAt
-
-8. Replay rebuild now uses:
-- projection.apply(event)
-- event.sequence
-- typed replay event loading
-
-Current likely next step:
-
-Run:
-
-pnpm turbo run typecheck
-
-If errors appear:
-fix ONLY canonical runtime contract migration issues.
-
-Then run:
-
-grep -R "sequence_id\|shop_id\|occurred_at\|session_id\|last_processed_sequence" packages/runtime/src
-
-Goal:
-No snake_case runtime object access in TypeScript logic.
-
-Current runtime structure:
-
-packages/runtime/src
-├── batch-loader.ts
-├── checkpoint-manager.ts
-├── dead-letter
-│   └── dead-letter.service.ts
-├── graceful-shutdown.ts
-├── idempotency
-│   └── projection-idempotency.service.ts
-├── index.ts
-├── leases
-│   ├── lease-heartbeat.ts
-│   └── worker-lease.service.ts
-├── projection-registry.ts
-├── projection-runtime.ts
-├── projections
-│   ├── session
-│   │   └── session.projection.ts
-│   └── session-intelligence
-│       ├── index.ts
-│       ├── session-intelligence.helpers.ts
-│       ├── session-intelligence.projection.ts
-│       ├── session-intelligence.reducer.ts
-│       └── session-intelligence.types.ts
-├── replay
-│   ├── projection-reset.ts
-│   ├── rebuild-projection.ts
-│   ├── rebuild-runtime.ts
-│   ├── replay-controller.ts
-│   └── run-replay.ts
-├── runtime
-│   └── retry-policy.ts
-├── transactional-runner.ts
-├── verification
-│   ├── projection-verifier.ts
-│   └── run-verification.ts
-└── worker-state.ts
-
-Current architectural rules:
-
-DO NOT build:
-- frontend systems
-- merchant UX
-- AI orchestration
-- automation DSLs
-- agent frameworks
-- generic workflow engines
-- LangChain abstractions
-- trigger-action systems
-
-Focus ONLY on:
-- deterministic runtime correctness
-- replay-safe infrastructure
-- governed runtime contracts
-- orchestration primitives
-- behavioral intelligence accumulation
-- projection execution infrastructure
-- distributed runtime foundations
-
-After runtime typecheck fully passes:
-
-Next phase:
-Phase 3B — Event Transport Abstraction.
-
-Goal:
-Stop apps from owning infrastructure clients.
-
-Current violations:
-- apps/ingestion-api/src/lib/postgres.ts
-- apps/ingestion-api/src/lib/redis.ts
-
-Correct architecture:
-Apps compose packages.
-Packages own infrastructure primitives.
-
-Next likely work:
-- inspect ingestion-api
-- inspect packages/event-bus
-- create minimal event transport contracts
-- move Redis ownership into packages/event-bus
-- keep Postgres ownership inside packages/database
-- keep ingestion-api as HTTP composition layer only
-
-When responding:
-- give CLI commands
-- give full files
-- include detailed responsibility comments at top of every file
-- preserve deterministic replay guarantees
-- maintain strict package ownership
-- avoid architectural drift
-- challenge premature frontend or AI work
-- optimize for distributed orchestration infrastructure
-```

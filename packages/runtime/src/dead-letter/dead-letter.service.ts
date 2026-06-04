@@ -2,24 +2,31 @@
  * dead-letter.service.ts
  *
  * Responsibility:
- * Provide poison event quarantine infrastructure.
+ * Provide poison event quarantine orchestration.
  *
  * Owns:
- * - failed event quarantine
- * - replay diagnostics
- * - poison event persistence
- * - retry exhaustion tracking
- * - operational recovery durability
+ * - failed event quarantine coordination
+ * - replay diagnostics orchestration
+ * - retry exhaustion coordination
+ * - operational recovery orchestration
  *
  * Does NOT Own:
+ * - SQL persistence
+ * - dead-letter mutation storage
  * - projection mutations
  * - checkpoint ownership
- * - runtime orchestration
- * - event ingestion
+ * - infrastructure durability
+ *
+ * Critical Rules:
+ * - runtime must remain infrastructure-agnostic
+ * - runtime must never own SQL mutation
+ * - persistence semantics belong to repositories only
+ * - dead-letter coordination must remain deterministic
  */
 
-import { sql }
-from "@phantombot/database";
+import {
+  deadLetterRepository,
+} from "@phantombot/database";
 
 export class DeadLetterService {
   async quarantineEvent({
@@ -37,24 +44,15 @@ export class DeadLetterService {
     stackTrace?: string;
     retryCount: number;
   }): Promise<void> {
-    await sql`
-      INSERT INTO dead_letter_events (
-        projection_name,
-        event_sequence_id,
-        event_payload,
-        failure_reason,
-        stack_trace,
-        retry_count
-      )
-      VALUES (
-        ${projectionName},
-        ${eventSequenceId},
-        ${JSON.stringify(eventPayload)},
-        ${failureReason},
-        ${stackTrace ?? null},
-        ${retryCount}
-      )
-    `;
+    await deadLetterRepository
+      .quarantineEvent({
+        projectionName,
+        eventSequenceId,
+        eventPayload,
+        failureReason,
+        stackTrace,
+        retryCount,
+      });
   }
 }
 
