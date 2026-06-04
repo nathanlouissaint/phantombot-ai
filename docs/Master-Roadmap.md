@@ -2,7 +2,7 @@
 
 ## Infrastructure-First AI Commerce Platform
 
-### Version 2.1
+### Version 2.2
 
 ### Updated: June 2026
 
@@ -163,7 +163,9 @@ Completed:
 
 ✓ Phase 5A — Behavioral Intelligence Foundation
 
-→ Phase 6A — Decision Engine Foundation
+✓ Phase 6A — Decision Engine Foundation
+
+→ Phase 6B — Workflow Runtime
 ```
 
 ---
@@ -173,8 +175,8 @@ Completed:
 ```txt
 Typecheck: PASS
 
-Test Files: 16 Passed
-Tests: 49 Passed
+Test Files: 18 Passed
+Tests: 55 Passed
 ```
 
 Verified Commands:
@@ -214,11 +216,11 @@ Opportunity Engine
 
         ↓
 
-Decision Engine (Next)
+Decision Engine
 
         ↓
 
-Workflow Runtime
+Workflow Runtime (Next)
 
         ↓
 
@@ -480,7 +482,7 @@ Platform becomes predictive.
 ## Status
 
 ```txt
-ACTIVE
+COMPLETE
 ```
 
 ## Goal
@@ -495,16 +497,50 @@ Transform opportunities into deterministic decisions.
 packages/runtime/src/decision-engine
 ```
 
-Deliverables:
+Delivered:
 
 ```txt
 decision.types.ts
 
-decision-policy.ts
+decision-eligibility.ts
+decision-priority.ts
+decision-conflicts.ts
 
+decision-policy.ts
 decision-engine.ts
 
 decision-engine.test.ts
+decision-engine.replay.test.ts
+```
+
+---
+
+## Delivered Capabilities
+
+### Decision Contracts
+
+```txt
+Decision Categories
+Decision Actions
+Decision Priorities
+Deterministic Decision Contracts
+```
+
+### Decision Evaluation
+
+```txt
+Eligibility Evaluation
+Action Selection
+Priority Assignment
+Conflict Resolution
+```
+
+### Replay Guarantees
+
+```txt
+Deterministic Ordering
+Replay Verification
+Replay-Safe Decision Generation
 ```
 
 Pipeline:
@@ -512,7 +548,13 @@ Pipeline:
 ```txt
 Opportunity[]
         ↓
-Policy Evaluation
+Eligibility Evaluation
+        ↓
+Action Selection
+        ↓
+Priority Assignment
+        ↓
+Conflict Resolution
         ↓
 Decision[]
 ```
@@ -528,6 +570,7 @@ Decision Evaluation
 Decision Policies
 Priority Assignment
 Action Selection
+Conflict Resolution
 Decision Contracts
 ```
 
@@ -542,12 +585,38 @@ Runtime Coordination
 
 ---
 
+## Phase 6A Completion Criteria
+
+Completed:
+
+```txt
+✓ Decision Categories
+
+✓ Decision Actions
+
+✓ Eligibility Evaluation
+
+✓ Deterministic Priority Assignment
+
+✓ Conflict Resolution
+
+✓ Replay Verification
+
+✓ Deterministic Ordering
+
+✓ Replay-Safe Decision Generation
+
+✓ Fully Tested
+```
+
+---
+
 # PHASE 6B — WORKFLOW RUNTIME
 
 ## Status
 
 ```txt
-PLANNED
+ACTIVE NEXT
 ```
 
 ## Goal
@@ -562,10 +631,13 @@ Execute deterministic decisions.
 Workflow Contracts
 Execution Plans
 Workflow Runtime
+
+Decision → Execution Translation
+
 Recovery Workflows
+Conversion Workflows
 Upsell Workflows
 Retention Workflows
-Merchant Automation
 ```
 
 Pipeline:
@@ -576,6 +648,30 @@ Decision
 Execution Plan
         ↓
 Workflow Runtime
+```
+
+---
+
+## Rules
+
+Workflow Runtime may own:
+
+```txt
+Execution Plans
+Workflow Contracts
+Workflow State
+Workflow Evaluation
+Workflow Coordination
+```
+
+Workflow Runtime may NOT own:
+
+```txt
+Opportunity Detection
+Behavioral Intelligence
+Decision Evaluation
+OpenAI Reasoning
+Persistence Ownership
 ```
 
 ---

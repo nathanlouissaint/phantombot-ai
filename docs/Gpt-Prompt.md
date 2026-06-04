@@ -2,7 +2,11 @@
 
 You are continuing work on PhantomBot AI.
 
-Project: PhantomBot AI
+Project:
+
+```txt
+PhantomBot AI
+```
 
 Branch:
 
@@ -10,10 +14,16 @@ Branch:
 architecture/core-system
 ```
 
+Roadmap Version:
+
+```txt
+v2.2
+```
+
 Current Phase:
 
 ```txt
-Phase 6A — Decision Engine Foundation
+Phase 6B — Workflow Runtime
 ```
 
 ---
@@ -30,14 +40,16 @@ Not:
 
 ```txt
 Chatbot
-Shopify Plugin
+Shopify Widget
 GPT Wrapper
 Agent Framework
-AI Support Tool
+Support Bot
 Workflow Builder
 ```
 
-Target architecture:
+PhantomBot AI is infrastructure.
+
+Core platform pipeline:
 
 ```txt
 Commerce Events
@@ -59,6 +71,36 @@ Merchant Outcomes
 
 ---
 
+# PLATFORM THESIS
+
+Most AI commerce systems are built around:
+
+```txt
+Prompt
+→ Model
+→ Response
+```
+
+PhantomBot AI is built around:
+
+```txt
+Commerce Events
+        ↓
+Deterministic Replay
+        ↓
+Behavioral Intelligence
+        ↓
+Opportunity Detection
+        ↓
+Decision Engine
+        ↓
+Workflow Runtime
+        ↓
+Merchant Outcomes
+```
+
+---
+
 # CRITICAL ENGINEERING RULES
 
 Never violate:
@@ -73,30 +115,33 @@ No crypto.randomUUID()
 inside:
 
 ```txt
+Replay
 Projections
 Behavioral Intelligence
 Opportunity Detection
 Opportunity Scoring
-Decision Engines
+Decision Engine
+Workflow Runtime
 ```
 
-Never add:
+Never introduce:
 
 ```txt
 OpenAI
 Anthropic
 Agents
-Workflow Execution
 Persistence
 SQL
+Database Access
 ```
 
 inside:
 
 ```txt
-Decision Engine
-Opportunity Engine
 Behavioral Intelligence
+Opportunity Engine
+Decision Engine
+Workflow Runtime
 ```
 
 Replay must remain:
@@ -107,9 +152,25 @@ Replay Safe
 Reconstructable
 ```
 
+Required invariant:
+
+```txt
+Events
+        ↓
+Replay
+        ↓
+Same State
+        ↓
+Same Opportunities
+        ↓
+Same Decisions
+        ↓
+Same Execution Plans
+```
+
 ---
 
-# VERIFIED STATUS
+# CURRENT VERIFIED STATUS
 
 Completed:
 
@@ -125,19 +186,21 @@ Completed:
 ✓ Phase 4B — Deterministic Worker Runtime
 
 ✓ Phase 5A — Behavioral Intelligence Foundation
+
+✓ Phase 6A — Decision Engine Foundation
 ```
 
 Current Phase:
 
 ```txt
-→ Phase 6A — Decision Engine Foundation
+→ Phase 6B — Workflow Runtime
 ```
 
 ---
 
-# VERIFIED TEST STATUS
+# CURRENT VERIFIED BASELINE
 
-Latest verified commands:
+Verified Commands:
 
 ```bash
 pnpm turbo run typecheck --force
@@ -145,18 +208,21 @@ pnpm turbo run typecheck --force
 pnpm --filter @phantombot/runtime test
 ```
 
-Result:
+Current verified results:
 
 ```txt
 Typecheck: PASS
 
-Test Files: 17 passed
-Tests: 50 passed
+Test Files: 18 Passed
+
+Tests: 55 Passed
 ```
+
+These values must never decrease.
 
 ---
 
-# CURRENT ARCHITECTURE
+# CURRENT SYSTEM ARCHITECTURE
 
 ```txt
 Raw Commerce Events
@@ -187,150 +253,501 @@ Decision Engine
 
         ↓
 
-(Future)
-Workflow Runtime
+Workflow Runtime (Current Phase)
 
         ↓
 
-(Future)
-OpenAI Integration
+AI Orchestration (Future)
+
+        ↓
+
+Merchant Outcomes
 ```
 
 ---
 
-# CURRENT DIRECTORY STRUCTURE
+# CURRENT RUNTIME STRUCTURE
 
 ```txt
-packages/runtime/src/opportunities
-```
+packages/runtime/src
 
-Implemented:
+├── projections
+│   ├── session
+│   └── session-intelligence
 
-```txt
-opportunity.types.ts
+├── opportunities
+│   ├── conversion
+│   ├── recovery
+│   ├── retention
+│   ├── upsell
+│   └── opportunity-engine
 
-recovery-opportunity.detector.ts
-conversion-opportunity.detector.ts
-upsell-opportunity.detector.ts
-retention-opportunity.detector.ts
+├── decision-engine
+│   ├── decision.types.ts
+│   ├── decision-eligibility.ts
+│   ├── decision-priority.ts
+│   ├── decision-conflicts.ts
+│   ├── decision-policy.ts
+│   └── decision-engine.ts
 
-opportunity-score.ts
-
-opportunity-engine.ts
-```
-
-Implemented tests:
-
-```txt
-conversion-opportunity.detector.test.ts
-retention-opportunity.detector.test.ts
-upsell-opportunity.detector.test.ts
-recovery-opportunity.detector.test.ts
-opportunity-engine.test.ts
-opportunity-engine.replay.test.ts
+├── replay
+├── recovery
+├── workers
+└── verification
 ```
 
 ---
 
-Decision Engine:
+# PHASE 6A DELIVERED
+
+Directory:
 
 ```txt
 packages/runtime/src/decision-engine
 ```
 
-Current files:
+Implemented:
 
 ```txt
 decision.types.ts
+
+decision-eligibility.ts
+decision-priority.ts
+decision-conflicts.ts
+
 decision-policy.ts
 decision-engine.ts
 
-__tests__/decision-engine.test.ts
+decision-engine.test.ts
+decision-engine.replay.test.ts
 ```
 
-Current capability:
-
-```txt
-Opportunity[]
-        ↓
-Decision[]
-```
-
----
-
-# CURRENT DECISION CONTRACT
-
-Decision Engine exists but is only a foundation.
-
-Current responsibilities:
-
-```txt
-Deterministic Decision Creation
-Priority Assignment
-Policy Evaluation Foundation
-```
-
-Still missing:
+Capabilities:
 
 ```txt
 Decision Categories
+
 Decision Actions
-Decision Prioritization
-Decision Eligibility Rules
-Decision Conflict Resolution
-Decision Replay Verification
+
+Eligibility Evaluation
+
+Priority Assignment
+
+Conflict Resolution
+
+Replay Verification
+
+Deterministic Ordering
+
+Replay-Safe Decision Generation
 ```
 
 ---
 
-# NEXT TASK
+# DECISION ENGINE OUTPUT CONTRACT
 
-Continue Phase 6A.
+Current output:
 
-First inspect:
-
-```bash
-cat packages/runtime/src/decision-engine/decision.types.ts
-
-cat packages/runtime/src/decision-engine/decision-policy.ts
-
-cat packages/runtime/src/decision-engine/decision-engine.ts
-
-cat packages/runtime/src/decision-engine/__tests__/decision-engine.test.ts
+```txt
+Decision
 ```
 
-Then evolve the Decision Engine into a real deterministic policy layer.
+Shape:
 
-Goals:
+```ts
+{
+  id: string;
+
+  opportunityId: string;
+
+  category:
+    "recovery"
+    | "conversion"
+    | "upsell"
+    | "retention";
+
+  action:
+    | "recover_session"
+    | "advance_conversion"
+    | "present_upsell"
+    | "protect_retention";
+
+  type: string;
+
+  priority:
+    | "low"
+    | "medium"
+    | "high"
+    | "critical";
+
+  rationale: string;
+}
+```
+
+Pipeline:
 
 ```txt
 Opportunity[]
         ↓
-Policy Evaluation
+Eligibility Evaluation
+        ↓
+Action Selection
+        ↓
+Priority Assignment
+        ↓
+Conflict Resolution
         ↓
 Decision[]
 ```
+
+---
+
+# CURRENT CONFLICT POLICY
+
+Current suppression rule:
+
+```txt
+critical recovery
+
+suppresses
+
+upsell decisions
+```
+
+Priority ranking:
+
+```txt
+critical
+high
+medium
+low
+```
+
+Category ranking:
+
+```txt
+recovery
+retention
+conversion
+upsell
+```
+
+---
+
+# ARCHITECTURAL RULE
+
+Each phase may consume outputs from the previous phase.
+
+Each phase may NOT redesign previous phases.
+
+Phase 6B consumes:
+
+```txt
+Decision[]
+```
+
+Phase 6B does NOT redesign:
+
+```txt
+Behavioral Intelligence
+
+Opportunity Engine
+
+Decision Engine
+```
+
+---
+
+# PHASE 6B — WORKFLOW RUNTIME
+
+Goal:
+
+```txt
+Transform Decisions into deterministic execution plans.
+```
+
+Pipeline:
+
+```txt
+Decision[]
+        ↓
+Workflow Planner
+        ↓
+ExecutionPlan[]
+        ↓
+Workflow Runtime
+```
+
+---
+
+# PHASE 6B NON-GOALS
+
+Do NOT build:
+
+```txt
+Workflow Execution
+
+Email Sending
+
+SMS Sending
+
+Shopify Actions
+
+OpenAI Calls
+
+Anthropic Calls
+
+Background Jobs
+
+Persistence
+
+API Integrations
+
+External APIs
+
+Automation
+```
+
+Phase 6B is planning only.
+
+---
+
+# PHASE 6B TARGET CONTRACT
+
+Input:
+
+```txt
+Decision[]
+```
+
+Output:
+
+```txt
+ExecutionPlan[]
+```
+
+ExecutionPlan:
+
+```ts
+{
+  id: string;
+
+  decisionId: string;
+
+  workflowType: string;
+
+  steps: string[];
+
+  priority:
+    | "low"
+    | "medium"
+    | "high"
+    | "critical";
+}
+```
+
+Example:
+
+```txt
+Decision
+
+recover_session
+
+↓
+
+ExecutionPlan
+
+workflowType:
+recovery
+
+steps:
+
+[
+  "identify_shopper",
+  "prepare_recovery_action"
+]
+```
+
+No execution.
+
+Only planning.
+
+Execution plans must remain:
+
+```txt
+Deterministic
+Replay Safe
+Serializable
+```
+
+---
+
+# PHASE 6B DELIVERABLES
 
 Build:
 
 ```txt
-Decision Categories
-Decision Actions
-Decision Priorities
-Eligibility Rules
-Conflict Resolution
-Additional Tests
+Workflow Contracts
+
+Execution Plan Contracts
+
+Decision → Execution Translation
+
+Workflow Policy Layer
+
+Workflow Runtime
+
+Replay Verification
 ```
 
-Do NOT start:
+---
+
+# PHASE 6B TARGET STRUCTURE
+
+Create under:
 
 ```txt
-Workflow Runtime
-OpenAI
-Agents
-Automation
-Execution Plans
-Recommendations
+packages/runtime/src/workflow-runtime
 ```
 
-Maintain all determinism and replay-safety invariants.
+Expected foundation:
+
+```txt
+workflow.types.ts
+
+execution-plan.ts
+
+workflow-policy.ts
+
+workflow-runtime.ts
+
+__tests__/
+workflow-runtime.test.ts
+workflow-runtime.replay.test.ts
+```
+
+---
+
+# WORKFLOW RUNTIME MAY OWN
+
+```txt
+Execution Plans
+
+Workflow Policies
+
+Workflow Evaluation
+
+Workflow State
+
+Workflow Coordination
+```
+
+---
+
+# WORKFLOW RUNTIME MAY NOT OWN
+
+```txt
+Opportunity Detection
+
+Behavioral Intelligence
+
+Decision Evaluation
+
+OpenAI
+
+Anthropic
+
+Persistence
+
+SQL
+
+Database Access
+
+External APIs
+```
+
+---
+
+# FIRST TASK
+
+Before implementing Phase 6B:
+
+1. Inspect the current repository state.
+
+Run:
+
+```bash
+find packages/runtime/src -type f | sort
+
+tree packages/runtime/src -L 4
+
+pnpm turbo run typecheck --force
+
+pnpm --filter @phantombot/runtime test
+```
+
+2. Inspect Decision Engine contracts.
+
+Run:
+
+```bash
+cat packages/runtime/src/decision-engine/decision.types.ts
+
+cat packages/runtime/src/decision-engine/decision-engine.ts
+
+cat packages/runtime/src/decision-engine/decision-policy.ts
+```
+
+3. If workflow-runtime does not exist:
+
+Create only the minimal foundation.
+
+Design:
+
+```txt
+workflow.types.ts
+
+execution-plan.ts
+
+workflow-policy.ts
+
+workflow-runtime.ts
+
+workflow-runtime.test.ts
+
+workflow-runtime.replay.test.ts
+```
+
+4. Maintain:
+
+```txt
+Determinism
+
+Replay Safety
+
+Serializable Contracts
+```
+
+5. Run:
+
+```bash
+pnpm turbo run typecheck --force
+
+pnpm --filter @phantombot/runtime test
+```
+
+6. Report:
+
+```txt
+Files Added
+
+Contracts Added
+
+Tests Added
+
+Updated Test Count
+```
+
+Do not redesign completed phases.
+
+Extend the architecture forward from the current verified state only.
