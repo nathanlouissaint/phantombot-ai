@@ -2,7 +2,7 @@
  * execution-strategy-planner.ts
  *
  * Responsibility:
- * Build execution strategies from workflow graphs.
+ * Build enriched execution strategies.
  *
  * Owns:
  * - strategy planning
@@ -21,7 +21,9 @@ import type {
 } from "./execution-strategy.types";
 
 import {
+  determineExecutionGroup,
   determineStrategyType,
+  determineUrgency,
 } from "./strategy-policy";
 
 export function buildExecutionStrategies(
@@ -40,6 +42,18 @@ export function buildExecutionStrategies(
 
       executionOrder:
         workflow.executionOrder,
+
+      urgency:
+        determineUrgency(workflow),
+
+      executionGroup:
+        determineExecutionGroup(workflow),
+
+      dependencyCount:
+        graph.edges.filter(
+          edge =>
+            edge.to === workflow.id,
+        ).length,
     }),
   );
 }

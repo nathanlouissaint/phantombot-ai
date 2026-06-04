@@ -13,6 +13,16 @@
  * - delivery channels
  */
 
+export type StrategyUrgency =
+  | "immediate"
+  | "scheduled";
+
+export type ExecutionGroup =
+  | "customer_recovery"
+  | "customer_conversion"
+  | "customer_retention"
+  | "customer_growth";
+
 export interface ExecutionStrategy {
   id: string;
 
@@ -25,4 +35,10 @@ export interface ExecutionStrategy {
     | "retention";
 
   executionOrder: number;
+
+  urgency: StrategyUrgency;
+
+  executionGroup: ExecutionGroup;
+
+  dependencyCount: number;
 }

@@ -5,7 +5,7 @@ import {
 } from "../execution-strategy-planner";
 
 describe("execution strategy planner", () => {
-  it("creates recovery strategy", () => {
+  it("creates enriched recovery strategy", () => {
     const result =
       buildExecutionStrategies({
         nodes: [],
@@ -27,6 +27,9 @@ describe("execution strategy planner", () => {
       workflowId: "recovery",
       strategyType: "recovery",
       executionOrder: 0,
+      urgency: "immediate",
+      executionGroup: "customer_recovery",
+      dependencyCount: 0,
     });
   });
 });
