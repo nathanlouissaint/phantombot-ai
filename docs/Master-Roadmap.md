@@ -1,650 +1,749 @@
 # PHANTOMBOT AI — MASTER ROADMAP
-## Platform Infrastructure & Product Execution Plan
-### Version 1.0
-### Target: YC-Grade AI Commerce Infrastructure Platform
+
+## Infrastructure-First AI Commerce Platform
+
+### Version 2.1
+
+### Updated: June 2026
 
 ---
 
-# Vision
+# VISION
 
-PhantomBot AI is being architected as:
+PhantomBot AI is being built as:
 
 ```txt
 The deterministic AI operating system for commerce.
 ```
 
-NOT:
-- a Shopify chatbot
-- a simple support app
-- a customer service wrapper
-- an OpenAI frontend
-
-The goal is to build:
-- a distributed AI commerce infrastructure layer
-- replay-safe behavioral intelligence architecture
-- deterministic operational AI systems
-- real-time commerce orchestration infrastructure
-
-This system is being designed for:
-- enterprise-grade durability
-- distributed execution
-- multi-tenant replay infrastructure
-- operational AI reliability
-- YC-scale technical defensibility
-
----
-
-# Long-Term Platform Outcome
-
-Final product capabilities:
-
-## Merchant Intelligence Layer
-- AI commerce command center
-- behavioral intelligence engine
-- live shopper session intelligence
-- abandonment prediction
-- conversion opportunity scoring
-- operational anomaly detection
-
----
-
-## AI Commerce Runtime
-- deterministic AI memory
-- replay-safe behavioral context
-- distributed AI execution
-- real-time event processing
-- adaptive commerce orchestration
-
----
-
-## Distributed Replay Infrastructure
-- replay-safe AI systems
-- deterministic behavioral reconstruction
-- fault-tolerant recovery
-- atomic event processing
-- namespace-isolated experimentation
-
----
-
-## Commerce Automation Engine
-- AI-driven recovery workflows
-- intelligent upsell orchestration
-- dynamic checkout intervention
-- post-purchase automation
-- adaptive merchandising intelligence
-
----
-
-## Merchant Operating System
-- unified inbox
-- AI support agents
-- operational analytics
-- AI decision systems
-- automated revenue optimization
-
----
-
-# TARGET COMPANY PROFILE
-
-Target outcome:
+Not:
 
 ```txt
-Infrastructure-first AI commerce platform.
+Chatbot
+Shopify Widget
+GPT Wrapper
+Support Bot
+Workflow Builder
 ```
 
-Comparable future positioning:
-- Stripe-level infrastructure credibility
-- Shopify ecosystem dominance
-- OpenAI-native operational intelligence
-- Datadog-style observability depth
-- Segment-style behavioral pipelines
+PhantomBot AI is infrastructure.
+
+The platform exists to provide:
+
+```txt
+Deterministic Behavioral Intelligence
+Distributed Runtime Coordination
+Replay-Safe AI Execution
+Commerce Opportunity Detection
+Operational Commerce Automation
+```
 
 ---
 
-# YC POSITIONING
+# PLATFORM THESIS
 
-## Why This Is Defensible
+Most AI commerce systems are built around:
 
-Most AI commerce apps:
-- wrap GPT APIs
-- lack deterministic infrastructure
-- lack replay systems
-- lack operational reliability
-- cannot scale safely
+```txt
+Prompt
+→ Model
+→ Response
+```
 
-PhantomBot AI is different because:
-- replay-safe architecture
-- deterministic behavioral intelligence
-- infrastructure-first layering
-- distributed runtime coordination
-- operational AI durability
+PhantomBot AI is built around:
 
-This creates:
-- deep technical moat
-- infrastructure defensibility
-- enterprise readiness
-- scalability credibility
-
----
-
-# MASTER BUILD ROADMAP
-
----
-
-# PHASE 1 — Product Foundation
-## Status: COMPLETE
-
-### Goals
-Build initial merchant-facing AI interface foundation.
-
-### Completed
-- command center UX
-- dashboard system
-- AI workspace shell
-- inbox architecture
-- AI commerce UI system
-- design system foundation
-- merchant operational layouts
-
-### Outcome
-Merchant-facing interface foundation completed.
+```txt
+Commerce Events
+        ↓
+Deterministic Replay
+        ↓
+Behavioral Intelligence
+        ↓
+Opportunity Detection
+        ↓
+Decision Engine
+        ↓
+Workflow Execution
+        ↓
+Merchant Outcomes
+```
 
 ---
 
-# PHASE 2 — Deterministic Runtime Foundation
-## Status: COMPLETE
+# CORE ENGINEERING PRINCIPLES
 
-### Goals
-Build replay-safe behavioral infrastructure.
+## Determinism First
 
-### Completed
-- event persistence
-- deterministic replay ordering
-- canonical ingestion contracts
-- event sequencing
-- replay-safe runtime architecture
-- namespace-aware replay systems
-- projection architecture
-- replay verification foundation
+Replay correctness over convenience.
 
-### Outcome
-Deterministic replay infrastructure established.
+Forbidden inside:
+
+```txt
+projections
+intelligence
+scoring
+opportunity detection
+decision engines
+```
+
+Forbidden APIs:
+
+```txt
+Date.now()
+new Date()
+Math.random()
+crypto.randomUUID()
+```
 
 ---
 
-# PHASE 3 — Infrastructure Isolation
-## Status: COMPLETE
+## Replay Safety
 
-### Goals
-Remove infrastructure leakage from runtime systems.
+Every behavioral state must be reconstructable.
 
-### Completed
+```txt
+Events
+→ Replay
+→ Same State
+→ Same Opportunities
+→ Same Decisions
+```
 
-## Runtime Infrastructure Isolation
-- removed postgres ownership from runtime
-- removed PoolClient usage
-- removed raw SQL execution from runtime
-- introduced transaction abstractions
+---
 
-## Repository Architecture
-- canonical repositories
-- replay-safe persistence semantics
-- deterministic transaction ownership
+## Infrastructure Ownership
 
-## Transaction Architecture
-- runInTransaction
-- TransactionContext
-- atomic replay progression
-- database-owned durability
+Runtime never owns:
+
+```txt
+SQL
+Database Connections
+Pool Clients
+Persistence Semantics
+```
+
+Repositories own persistence.
+
+---
+
+## Atomic Progression
+
+Checkpoint progression must remain atomic.
+
+---
 
 ## Namespace Isolation
-- namespace-aware checkpoints
-- replay-safe concurrency foundation
-- deterministic replay partitioning
 
-## Migration Consolidation
-- unified postgres migration ownership
-- deterministic schema evolution
-
-### Outcome
-Platform-grade infrastructure layering completed.
+Replay execution must remain isolated.
 
 ---
 
-# PHASE 4 — Distributed Runtime Coordination
-## Status: NEXT
+## Operational Reliability
 
-## Timeline
-2–3 weeks
+AI systems must behave like infrastructure.
+
+Not demos.
 
 ---
 
-## Objectives
+# CURRENT VERIFIED STATUS
 
-### 1. Distributed Worker Coordination
-Build:
-- replay workers
-- deterministic lease ownership
-- distributed replay execution
-- worker failover handling
+Completed:
 
-### 2. Lease Infrastructure
-Expand:
-- worker leases
-- heartbeat ownership
-- lease expiration recovery
-- replay continuation guarantees
+```txt
+✓ Phase 1 — Product Foundation
 
-### 3. Replay Partitioning
-Build:
-- replay concurrency controls
-- namespace-aware replay distribution
-- projection partitioning
-- replay scheduling
+✓ Phase 2 — Deterministic Runtime Foundation
 
-### 4. Recovery Infrastructure
-Build:
-- checkpoint repair
-- worker recovery orchestration
-- distributed replay continuation
-- operational failover systems
+✓ Phase 3 — Infrastructure Isolation
+
+✓ Phase 4A — Runtime Coordination Foundation
+
+✓ Phase 4B — Deterministic Worker Runtime
+
+✓ Phase 5A — Behavioral Intelligence Foundation
+
+→ Phase 6A — Decision Engine Foundation
+```
+
+---
+
+# CURRENT VERIFIED TEST STATUS
+
+```txt
+Typecheck: PASS
+
+Test Files: 16 Passed
+Tests: 49 Passed
+```
+
+Verified Commands:
+
+```bash
+pnpm turbo run typecheck --force
+
+pnpm --filter @phantombot/runtime test
+```
+
+---
+
+# CURRENT SYSTEM ARCHITECTURE
+
+```txt
+Raw Commerce Events
+        ↓
+Replay Infrastructure
+        ↓
+Session Intelligence Projection
+        ↓
+Deterministic Shopper State
+        ↓
+
+Recovery Opportunities
+Conversion Opportunities
+Upsell Opportunities
+Retention Opportunities
+
+        ↓
+
+Opportunity Scoring
+
+        ↓
+
+Opportunity Engine
+
+        ↓
+
+Decision Engine (Next)
+
+        ↓
+
+Workflow Runtime
+
+        ↓
+
+OpenAI / Anthropic
+
+        ↓
+
+Merchant Outcomes
+```
+
+---
+
+# PHASE 1 — PRODUCT FOUNDATION
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Outcome
+
+Merchant-facing product shell established.
+
+Completed:
+
+```txt
+Merchant Dashboard
+Command Center
+Operational Workspace
+Inbox Foundation
+Design System Foundation
+```
+
+---
+
+# PHASE 2 — DETERMINISTIC RUNTIME FOUNDATION
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Outcome
+
+Replay-safe runtime established.
+
+Completed:
+
+```txt
+Event Ingestion Contracts
+Replay Ordering
+Event Sequencing
+Replay Verification
+Projection Architecture
+Deterministic Runtime Foundation
+```
+
+---
+
+# PHASE 3 — INFRASTRUCTURE ISOLATION
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Outcome
+
+Runtime no longer owns infrastructure.
+
+Completed:
+
+```txt
+Repository Ownership
+Transaction Isolation
+Namespace Isolation
+Persistence Abstractions
+Migration Consolidation
+Infrastructure Boundary Enforcement
+```
+
+---
+
+# PHASE 4A — RUNTIME COORDINATION FOUNDATION
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Outcome
+
+Replay execution became coordinated.
+
+Completed:
+
+```txt
+Runtime Coordination
+Replay Lifecycle Management
+Checkpoint Coordination
+Replay Ownership Foundation
+```
+
+---
+
+# PHASE 4B — DETERMINISTIC WORKER RUNTIME
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Outcome
+
+Distributed replay execution became durable.
+
+Completed:
+
+```txt
+ReplayExecutionRuntime
+ReplayRestartCoordinator
+Worker Leases
+Lease Recovery
+Replay Interruption Handling
+Checkpoint Resume
+Runtime State Enforcement
+Zombie Replay Prevention
+```
+
+---
+
+# PHASE 5A — BEHAVIORAL INTELLIGENCE FOUNDATION
+
+## Status
+
+```txt
+COMPLETE
+```
+
+## Goal
+
+Transform replayed commerce behavior into deterministic business intelligence.
+
+---
+
+## Delivered
+
+### Session Intelligence
+
+```txt
+Intent Classification
+Hesitation Classification
+Friction Classification
+Replay Reconstruction
+Deterministic State Generation
+```
+
+Directory:
+
+```txt
+packages/runtime/src/projections/session-intelligence
+```
+
+---
+
+### Opportunity Layer
+
+Directory:
+
+```txt
+packages/runtime/src/opportunities
+```
+
+Delivered:
+
+```txt
+Opportunity Contract
+Opportunity Scoring Layer
+
+Recovery Opportunities
+Conversion Opportunities
+Upsell Opportunities
+Retention Opportunities
+
+Opportunity Aggregation Engine
+Replay Determinism Verification
+```
+
+---
+
+## Phase 5A Completion Criteria
+
+Completed:
+
+```txt
+✓ Recovery Opportunities
+
+✓ Conversion Opportunities
+
+✓ Upsell Opportunities
+
+✓ Retention Opportunities
+
+✓ Deterministic
+
+✓ Replay Safe
+
+✓ Fully Tested
+```
+
+---
+
+# PHASE 5B — PREDICTIVE INTELLIGENCE
+
+## Status
+
+```txt
+PLANNED
+```
+
+## Goal
+
+Move beyond classification into prediction.
 
 ---
 
 ## Deliverables
 
-### Runtime
+### Predictive Systems
+
 ```txt
-packages/runtime/src/workers/
-packages/runtime/src/leases/
-packages/runtime/src/recovery/
+Abandonment Prediction
+Conversion Probability
+Revenue Forecasting
+Behavioral Trend Analysis
 ```
 
-### Infrastructure
-- distributed replay safety
-- deterministic worker coordination
-- replay ownership guarantees
+### Operational Intelligence
 
----
+```txt
+Anomaly Detection
+Behavioral Drift Detection
+Merchant Health Signals
+```
 
 ## Outcome
-Platform becomes distributed-system capable.
+
+Platform becomes predictive.
 
 ---
 
-# PHASE 5 — Behavioral Intelligence Engine
-## Status: PLANNED
+# PHASE 6A — DECISION ENGINE FOUNDATION
 
-## Timeline
-3–4 weeks
+## Status
+
+```txt
+ACTIVE
+```
+
+## Goal
+
+Transform opportunities into deterministic decisions.
 
 ---
 
-## Objectives
+## Build
 
-### Shopper Intelligence
-Build:
-- hesitation detection
-- abandonment prediction
-- intent scoring
-- behavioral state machines
+```txt
+packages/runtime/src/decision-engine
+```
 
-### AI Context Engine
-Build:
-- replay-safe memory systems
-- behavioral context accumulation
-- deterministic shopper intelligence
+Deliverables:
 
-### Commerce Intelligence
-Build:
-- revenue opportunity scoring
-- churn prediction
-- conversion probability systems
-- operational anomaly detection
+```txt
+decision.types.ts
+
+decision-policy.ts
+
+decision-engine.ts
+
+decision-engine.test.ts
+```
+
+Pipeline:
+
+```txt
+Opportunity[]
+        ↓
+Policy Evaluation
+        ↓
+Decision[]
+```
+
+---
+
+## Rules
+
+Decision Engine may own:
+
+```txt
+Decision Evaluation
+Decision Policies
+Priority Assignment
+Action Selection
+Decision Contracts
+```
+
+Decision Engine may NOT own:
+
+```txt
+Workflow Execution
+OpenAI
+Persistence
+Runtime Coordination
+```
+
+---
+
+# PHASE 6B — WORKFLOW RUNTIME
+
+## Status
+
+```txt
+PLANNED
+```
+
+## Goal
+
+Execute deterministic decisions.
 
 ---
 
 ## Deliverables
 
-### Intelligence Layer
 ```txt
-packages/runtime/src/intelligence/
-packages/runtime/src/scoring/
-packages/runtime/src/behavioral-state/
+Workflow Contracts
+Execution Plans
+Workflow Runtime
+Recovery Workflows
+Upsell Workflows
+Retention Workflows
+Merchant Automation
 ```
 
-### AI Systems
-- real-time behavioral intelligence
-- predictive commerce systems
-- deterministic AI memory
+Pipeline:
 
----
-
-## Outcome
-Platform becomes behaviorally intelligent.
-
----
-
-# PHASE 6 — AI Commerce Orchestration
-## Status: PLANNED
-
-## Timeline
-3–5 weeks
-
----
-
-## Objectives
-
-### AI Workflow Engine
-Build:
-- AI recovery workflows
-- intelligent upsell orchestration
-- checkout intervention systems
-- dynamic support escalation
-
-### AI Decision Runtime
-Build:
-- deterministic AI execution
-- AI action policies
-- commerce automation rules
-- replay-safe AI decisions
-
-### Merchant Automation
-Build:
-- autonomous recovery flows
-- AI-driven conversion systems
-- intelligent product recommendations
-
----
-
-## Deliverables
-
-### Workflow Systems
 ```txt
-packages/runtime/src/workflows/
-packages/runtime/src/agents/
-packages/runtime/src/automation/
+Decision
+        ↓
+Execution Plan
+        ↓
+Workflow Runtime
 ```
 
-### AI Infrastructure
-- deterministic AI orchestration
-- operational AI coordination
-- replay-safe AI execution
-
 ---
 
-## Outcome
-Platform becomes operationally autonomous.
+# PHASE 6C — AI ORCHESTRATION
 
----
+## Status
 
-# PHASE 7 — Multi-Tenant Platform Scaling
-## Status: PLANNED
-
-## Timeline
-2–4 weeks
-
----
-
-## Objectives
-
-### Tenant Isolation
-Build:
-- multi-shop replay isolation
-- tenant-aware orchestration
-- tenant durability guarantees
-
-### Distributed Infrastructure
-Build:
-- queue partitioning
-- horizontal replay scaling
-- distributed projection execution
-
-### Operational Scalability
-Build:
-- replay observability
-- operational telemetry
-- infrastructure monitoring
-- replay diagnostics
-
----
-
-## Deliverables
-
-### Scalability Systems
 ```txt
-packages/runtime/src/telemetry/
-packages/runtime/src/monitoring/
-packages/runtime/src/partitioning/
+PLANNED
 ```
 
-### Infrastructure
-- horizontally scalable runtime
-- operational observability
-- enterprise-grade infrastructure
+## Goal
+
+Introduce LLM assistance after deterministic systems exist.
 
 ---
 
-## Outcome
-Platform becomes commercially scalable.
+## Integrations
 
----
-
-# PHASE 8 — Merchant Productization
-## Status: PLANNED
-
-## Timeline
-4–6 weeks
-
----
-
-## Objectives
-
-### Shopify Production Integration
-Build:
-- Shopify app infrastructure
-- OAuth systems
-- webhook orchestration
-- merchant onboarding
-
-### Merchant Command Center
-Build:
-- operational dashboards
-- AI conversation center
-- live intelligence monitoring
-- workflow management
-
-### AI Merchant UX
-Build:
-- merchant copilots
-- AI operational assistants
-- AI commerce recommendations
-
----
-
-## Deliverables
-
-### Merchant Systems
 ```txt
-apps/dashboard/
-apps/merchant-runtime/
+OpenAI
+Anthropic
+Future Models
 ```
 
-### Product Systems
-- production Shopify deployment
-- merchant-facing operational systems
-- AI commerce workspace
+Used for:
+
+```txt
+Content Generation
+Reasoning Assistance
+Communication
+```
+
+Never for:
+
+```txt
+Replay Logic
+Deterministic State
+Opportunity Detection
+Decision Determination
+```
 
 ---
 
-## Outcome
-Commercial MVP becomes deployable.
+# PHASE 7 — MULTI-TENANT PLATFORM SCALING
+
+## Status
+
+```txt
+PLANNED
+```
+
+Deliverables:
+
+```txt
+Tenant Isolation
+Replay Partitioning
+Distributed Execution
+Telemetry
+Observability
+Monitoring
+Operational Diagnostics
+```
+
+---
+
+# PHASE 8 — MERCHANT PRODUCTIZATION
+
+## Status
+
+```txt
+PLANNED
+```
+
+Deliverables:
+
+```txt
+Shopify Integration
+OAuth
+Merchant Onboarding
+Operational Dashboards
+AI Command Center
+Merchant Workspace
+```
 
 ---
 
 # PHASE 9 — YC READINESS
-## Status: PLANNED
 
-## Timeline
-2–3 weeks
-
----
-
-## Objectives
-
-### Technical Credibility
-Finalize:
-- infrastructure diagrams
-- replay architecture visuals
-- deterministic runtime documentation
-- scalability benchmarks
-
-### Operational Readiness
-Finalize:
-- onboarding systems
-- deployment infrastructure
-- monitoring systems
-- incident recovery tooling
-
-### Growth Narrative
-Build:
-- infrastructure moat narrative
-- deterministic AI positioning
-- operational AI thesis
-- enterprise readiness story
-
----
-
-## Deliverables
-
-### YC Assets
-- architecture diagrams
-- technical deck
-- infrastructure whitepaper
-- demo environment
-- deterministic replay demos
-
-### Business Assets
-- merchant onboarding
-- pricing systems
-- go-to-market strategy
-- ecosystem positioning
-
----
-
-## Outcome
-YC-ready infrastructure company.
-
----
-
-# TARGET TIMELINE
-
-| Phase | Timeline |
-|---|---|
-| Phase 4 | 2–3 weeks |
-| Phase 5 | 3–4 weeks |
-| Phase 6 | 3–5 weeks |
-| Phase 7 | 2–4 weeks |
-| Phase 8 | 4–6 weeks |
-| Phase 9 | 2–3 weeks |
-
-Estimated full platform maturity:
+## Status
 
 ```txt
-4–6 months
+PLANNED
 ```
 
-with disciplined execution.
+Deliverables:
+
+```txt
+Architecture Documentation
+Infrastructure Diagrams
+Replay Demonstrations
+Scalability Benchmarks
+Investor Narrative
+Technical Whitepaper
+Demo Environment
+```
 
 ---
 
-# ENGINEERING PRINCIPLES
+# INFRASTRUCTURE ROADMAP
 
-## Non-Negotiable Rules
+Terraform remains intentionally excluded from current implementation phases.
 
-### Determinism First
-Replay correctness over convenience.
+Terraform enters after platform architecture stabilizes.
 
-### Infrastructure Ownership
-Runtime never owns infrastructure primitives.
+Future ownership:
 
-### Atomic Progression
-Checkpoint advancement must remain atomic.
+```txt
+Infrastructure Provisioning
+Cloud Resources
+Networking
+Secrets
+Deployment Pipelines
+Environment Management
+```
 
-### Replay Safety
-All AI systems must support deterministic rebuilds.
+Terraform is NOT part of:
 
-### Namespace Isolation
-All experimentation must remain isolated.
-
-### Repository Ownership
-Persistence semantics belong to repositories only.
-
-### Operational Reliability
-AI systems must behave like infrastructure, not demos.
-
----
-
-# COMPETITIVE ADVANTAGE
-
-## Most AI Apps
-- prompt wrappers
-- fragile workflows
-- stateless execution
-- non-deterministic systems
-
-## PhantomBot AI
-- replay-safe infrastructure
-- deterministic AI execution
-- distributed behavioral runtime
-- operational AI durability
-- infrastructure-grade architecture
+```txt
+Replay Runtime
+Behavioral Intelligence
+Opportunity Detection
+Decision Systems
+```
 
 ---
 
 # FINAL TARGET
 
-The final system should feel like:
+Build:
 
 ```txt
 Stripe + Datadog + OpenAI
 for commerce operations.
 ```
 
-NOT:
-- a chatbot plugin
-- a support widget
-- a GPT wrapper
-- a simple Shopify extension
-
-This is an AI infrastructure company.
-
----
-
-# DEVELOPMENT OPERATING MODEL
-
-Rules:
-- commit after every phase
-- maintain deterministic architecture
-- update current.state.md continuously
-- preserve infrastructure ownership boundaries
-- enforce compiler-layered package architecture
-- never introduce hidden infrastructure coupling
-
----
-
-# CURRENT STATUS
-
-Current completed phases:
+Not:
 
 ```txt
-✓ Phase 1
-✓ Phase 2
-✓ Phase 3
+Chatbot
+Support Widget
+GPT Wrapper
+Shopify Plugin
 ```
 
-Current active phase:
+Execution order:
 
 ```txt
-→ Phase 4 — Distributed Runtime Coordination
+Infrastructure First
+
+Behavioral Intelligence Second
+
+Decision Systems Third
+
+Workflow Runtime Fourth
+
+AI Orchestration Fifth
+
+Scale Last
 ```

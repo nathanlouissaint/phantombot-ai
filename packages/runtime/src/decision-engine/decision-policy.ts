@@ -1,52 +1,25 @@
-/**
- * decision-policy.ts
- *
- * Responsibility:
- * Evaluate opportunities using
- * deterministic business rules.
- *
- * Owns:
- * - priority assignment
- * - policy evaluation
- *
- * Does NOT Own:
- * - workflow execution
- * - AI reasoning
- * - persistence
- *
- * Critical Rules:
- * - deterministic only
- * - replay-safe
- */
-
-import {
+import type {
   Opportunity,
 } from "../opportunities/opportunity.types";
 
-import {
-  DecisionPriority,
+import type {
+  DecisionAction,
 } from "./decision.types";
 
-/**
- * Determine decision priority
- * from opportunity confidence.
- */
-export function determinePriority(
+export function determineAction(
   opportunity: Opportunity,
-): DecisionPriority {
-  if (
-    opportunity.confidence >=
-    0.8
-  ) {
-    return "high";
+): DecisionAction {
+  if (opportunity.category === "recovery") {
+    return "recover_session";
   }
 
-  if (
-    opportunity.confidence >=
-    0.5
-  ) {
-    return "medium";
+  if (opportunity.category === "conversion") {
+    return "advance_conversion";
   }
 
-  return "low";
+  if (opportunity.category === "upsell") {
+    return "present_upsell";
+  }
+
+  return "protect_retention";
 }

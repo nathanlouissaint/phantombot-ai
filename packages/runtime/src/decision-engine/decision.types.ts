@@ -6,48 +6,41 @@
  *
  * Owns:
  * - decision shape
+ * - decision category
+ * - decision action
  * - decision priority
- * - decision metadata
  *
  * Does NOT Own:
- * - decision evaluation
  * - workflow execution
  * - AI reasoning
  * - persistence
- *
- * Critical Rules:
- * - deterministic only
- * - replay-safe
  */
+
+import type {
+  OpportunityCategory,
+} from "../opportunities/opportunity.types";
+
+export type DecisionCategory =
+  OpportunityCategory;
+
+export type DecisionAction =
+  | "recover_session"
+  | "advance_conversion"
+  | "present_upsell"
+  | "protect_retention";
 
 export type DecisionPriority =
   | "low"
   | "medium"
-  | "high";
+  | "high"
+  | "critical";
 
 export interface Decision {
-  /**
-   * Deterministic decision identifier.
-   */
   id: string;
-
-  /**
-   * Source opportunity.
-   */
   opportunityId: string;
-
-  /**
-   * Decision classification.
-   */
+  category: DecisionCategory;
+  action: DecisionAction;
   type: string;
-
-  /**
-   * Deterministic priority.
-   */
   priority: DecisionPriority;
-
-  /**
-   * Human-readable explanation.
-   */
   rationale: string;
 }

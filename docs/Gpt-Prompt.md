@@ -1,100 +1,336 @@
-We are continuing work on PhantomBot AI.
+# PHANTOMBOT AI CONTINUATION PROMPT
+
+You are continuing work on PhantomBot AI.
 
 Project: PhantomBot AI
-Branch: architecture/core-system
-Current phase: Phase 4B Final Verification — Runtime Failure Simulation
 
-We are not building a chatbot, Shopify plugin, or GPT wrapper. We are building deterministic AI commerce infrastructure: Stripe + Datadog + OpenAI for commerce operations.
+Branch:
 
-Current architecture:
+```txt
+architecture/core-system
+```
 
-ReplayExecutionRuntime
--> owns replay execution lifecycle
+Current Phase:
 
-processReplayBatch
--> owns deterministic replay progression
+```txt
+Phase 6A — Decision Engine Foundation
+```
 
-ProjectionRuntime
--> owns runtime/repository contract translation only
+---
 
-Repositories
--> own persistence semantics and SQL
+# PROJECT VISION
 
-Database
--> owns durability and transactions
+PhantomBot AI is being built as:
 
-ReplayRecovery
--> owns deterministic recovery planning
+```txt
+The deterministic AI operating system for commerce.
+```
 
-ReplayRestartCoordinator
--> owns restart authority from recovery plans
+Not:
 
-Critical invariants:
+```txt
+Chatbot
+Shopify Plugin
+GPT Wrapper
+Agent Framework
+AI Support Tool
+Workflow Builder
+```
 
-* No SQL inside runtime
-* No PoolClient inside runtime
-* No pg ownership inside runtime
-* Runtime consumes repositories only
-* Replay remains sequential
-* Checkpoint advancement remains atomic
-* Lease ownership must match replay ownership
-* Recovery must remain deterministic
-* Correctness over throughput
-* Determinism over scale
-* Recovery over features
+Target architecture:
 
-Recent completed work:
+```txt
+Commerce Events
+        ↓
+Replay Infrastructure
+        ↓
+Behavioral Intelligence
+        ↓
+Opportunity Detection
+        ↓
+Decision Engine
+        ↓
+Workflow Runtime
+        ↓
+AI Orchestration
+        ↓
+Merchant Outcomes
+```
 
-* Removed runtime SQL ownership from projection-runtime.ts
-* Moved behavior_events replay loading into behaviorEventRepository
-* Added checkpoint resume support to ReplayExecutionRuntime
-* Added optional lease ownership verification hook to ReplayExecutionRuntime
-* Added ReplayRecoveryPlan and ReplayRecoveryReason types
-* Implemented ReplayRecovery
-* Implemented ReplayRestartCoordinator
-* Added Vitest
-* Added tests for recovery planning, restart blocking, and runtime state transitions
-* Full uncached typecheck passes
-* Runtime tests pass: 3 files, 5 tests
+---
 
-Current verified commands:
+# CRITICAL ENGINEERING RULES
 
+Never violate:
+
+```txt
+No Date.now()
+No new Date()
+No Math.random()
+No crypto.randomUUID()
+```
+
+inside:
+
+```txt
+Projections
+Behavioral Intelligence
+Opportunity Detection
+Opportunity Scoring
+Decision Engines
+```
+
+Never add:
+
+```txt
+OpenAI
+Anthropic
+Agents
+Workflow Execution
+Persistence
+SQL
+```
+
+inside:
+
+```txt
+Decision Engine
+Opportunity Engine
+Behavioral Intelligence
+```
+
+Replay must remain:
+
+```txt
+Deterministic
+Replay Safe
+Reconstructable
+```
+
+---
+
+# VERIFIED STATUS
+
+Completed:
+
+```txt
+✓ Phase 1 — Product Foundation
+
+✓ Phase 2 — Deterministic Runtime Foundation
+
+✓ Phase 3 — Infrastructure Isolation
+
+✓ Phase 4A — Runtime Coordination Foundation
+
+✓ Phase 4B — Deterministic Worker Runtime
+
+✓ Phase 5A — Behavioral Intelligence Foundation
+```
+
+Current Phase:
+
+```txt
+→ Phase 6A — Decision Engine Foundation
+```
+
+---
+
+# VERIFIED TEST STATUS
+
+Latest verified commands:
+
+```bash
 pnpm turbo run typecheck --force
+
 pnpm --filter @phantombot/runtime test
+```
 
-Current status:
+Result:
 
-Phase 4B architecture: complete
-Phase 4B verification: in progress
-Estimated completion: 98%
+```txt
+Typecheck: PASS
 
-Next goal:
+Test Files: 17 passed
+Tests: 50 passed
+```
 
-Build final Phase 4B failure verification before entering Phase 5.
+---
 
-Focus areas:
+# CURRENT ARCHITECTURE
 
-1. Failure simulation tests
-2. Lease-loss behavior
-3. Restart-from-checkpoint verification
-4. Zombie replay prevention
-5. Runtime interruption correctness
-6. Optional RECOVERING runtime state
+```txt
+Raw Commerce Events
+        ↓
+Replay Infrastructure
+        ↓
+Session Intelligence Projection
+        ↓
+Deterministic Shopper State
+        ↓
 
-Do not write product features. Do not start Behavioral Intelligence yet. Audit first, then implement deterministic failure verification.
+Recovery Opportunities
+Conversion Opportunities
+Upsell Opportunities
+Retention Opportunities
 
-Start by asking me for the latest file contents of:
+        ↓
 
-packages/runtime/src/workers/runtime/replay-execution-runtime.ts
-packages/runtime/src/workers/runtime/replay-runtime-state.ts
-packages/runtime/src/workers/runtime/replay-runtime-transition-map.ts
-packages/runtime/src/workers/runtime/replay-runtime.types.ts
-packages/runtime/src/recovery/replay-recovery.ts
-packages/runtime/src/recovery/replay-recovery.types.ts
-packages/runtime/src/recovery/replay-restart-coordinator.ts
-packages/runtime/src/replay/process-replay-batch.ts
-packages/runtime/src/recovery/**tests**/replay-recovery.test.ts
-packages/runtime/src/recovery/**tests**/replay-restart-coordinator.test.ts
-packages/runtime/src/workers/runtime/**tests**/replay-runtime-state.test.ts
+Opportunity Scoring
 
+        ↓
 
+Opportunity Engine
+
+        ↓
+
+Decision Engine
+
+        ↓
+
+(Future)
+Workflow Runtime
+
+        ↓
+
+(Future)
+OpenAI Integration
+```
+
+---
+
+# CURRENT DIRECTORY STRUCTURE
+
+```txt
+packages/runtime/src/opportunities
+```
+
+Implemented:
+
+```txt
+opportunity.types.ts
+
+recovery-opportunity.detector.ts
+conversion-opportunity.detector.ts
+upsell-opportunity.detector.ts
+retention-opportunity.detector.ts
+
+opportunity-score.ts
+
+opportunity-engine.ts
+```
+
+Implemented tests:
+
+```txt
+conversion-opportunity.detector.test.ts
+retention-opportunity.detector.test.ts
+upsell-opportunity.detector.test.ts
+recovery-opportunity.detector.test.ts
+opportunity-engine.test.ts
+opportunity-engine.replay.test.ts
+```
+
+---
+
+Decision Engine:
+
+```txt
+packages/runtime/src/decision-engine
+```
+
+Current files:
+
+```txt
+decision.types.ts
+decision-policy.ts
+decision-engine.ts
+
+__tests__/decision-engine.test.ts
+```
+
+Current capability:
+
+```txt
+Opportunity[]
+        ↓
+Decision[]
+```
+
+---
+
+# CURRENT DECISION CONTRACT
+
+Decision Engine exists but is only a foundation.
+
+Current responsibilities:
+
+```txt
+Deterministic Decision Creation
+Priority Assignment
+Policy Evaluation Foundation
+```
+
+Still missing:
+
+```txt
+Decision Categories
+Decision Actions
+Decision Prioritization
+Decision Eligibility Rules
+Decision Conflict Resolution
+Decision Replay Verification
+```
+
+---
+
+# NEXT TASK
+
+Continue Phase 6A.
+
+First inspect:
+
+```bash
+cat packages/runtime/src/decision-engine/decision.types.ts
+
+cat packages/runtime/src/decision-engine/decision-policy.ts
+
+cat packages/runtime/src/decision-engine/decision-engine.ts
+
+cat packages/runtime/src/decision-engine/__tests__/decision-engine.test.ts
+```
+
+Then evolve the Decision Engine into a real deterministic policy layer.
+
+Goals:
+
+```txt
+Opportunity[]
+        ↓
+Policy Evaluation
+        ↓
+Decision[]
+```
+
+Build:
+
+```txt
+Decision Categories
+Decision Actions
+Decision Priorities
+Eligibility Rules
+Conflict Resolution
+Additional Tests
+```
+
+Do NOT start:
+
+```txt
+Workflow Runtime
+OpenAI
+Agents
+Automation
+Execution Plans
+Recommendations
+```
+
+Maintain all determinism and replay-safety invariants.
