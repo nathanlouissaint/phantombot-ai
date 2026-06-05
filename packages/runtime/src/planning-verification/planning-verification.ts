@@ -30,6 +30,10 @@ import {
   validateDependencies,
 } from "./dependency-validator";
 
+import {
+  validateOrphans,
+} from "./orphan-validator";
+
 export function verifyPlanningIntegrity(
   input: {
     decisions: any[];
@@ -57,6 +61,13 @@ export function verifyPlanningIntegrity(
 
     ...validateDependencies(
       input.graph,
+    ),
+
+    ...validateOrphans(
+      input.decisions,
+      input.plans,
+      input.workflows,
+      input.strategies,
     ),
   ];
 
