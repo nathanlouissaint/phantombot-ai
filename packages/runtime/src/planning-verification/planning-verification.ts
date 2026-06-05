@@ -1,17 +1,35 @@
 /**
- * Root Planning Integrity Runtime.
+ * planning-verification.ts
  *
- * Aggregates all validators.
+ * Responsibility:
+ * Aggregate all deterministic planning validators.
+ *
+ * Validation Chain:
  *
  * Decision
  *      ↓
- * Plan
+ * ExecutionPlan
  *      ↓
- * Workflow
+ * CoordinatedWorkflow
  *      ↓
- * Strategy
+ * ExecutionStrategy
  *
- * Produces deterministic verification results.
+ * Owns:
+ * - planning integrity verification
+ * - validator aggregation
+ * - deterministic validation orchestration
+ *
+ * Does NOT Own:
+ * - workflow generation
+ * - strategy generation
+ * - orchestration
+ * - execution
+ *
+ * Critical Rules:
+ * - validation must remain deterministic
+ * - validation must remain replay-safe
+ * - validators must remain side-effect free
+ * - validators must not perform persistence
  */
 
 import {
@@ -33,6 +51,10 @@ import {
 import {
   validateOrphans,
 } from "./orphan-validator";
+
+import {
+  validateCrossLayerConsistency,
+} from "./cross-layer-validator";
 
 export function verifyPlanningIntegrity(
   input: {
@@ -64,6 +86,13 @@ export function verifyPlanningIntegrity(
     ),
 
     ...validateOrphans(
+      input.decisions,
+      input.plans,
+      input.workflows,
+      input.strategies,
+    ),
+
+    ...validateCrossLayerConsistency(
       input.decisions,
       input.plans,
       input.workflows,
