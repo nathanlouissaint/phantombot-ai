@@ -1,8 +1,6 @@
-# PHANTOMBOT AI — MASTER ROADMAP
+# PHANTOMBOT AI — MASTER ROADMAP v3.0
 
 ## Infrastructure-First AI Commerce Platform
-
-### Version 2.2
 
 ### Updated: June 2026
 
@@ -32,9 +30,13 @@ The platform exists to provide:
 
 ```txt
 Deterministic Behavioral Intelligence
+
 Distributed Runtime Coordination
+
 Replay-Safe AI Execution
+
 Commerce Opportunity Detection
+
 Operational Commerce Automation
 ```
 
@@ -46,8 +48,10 @@ Most AI commerce systems are built around:
 
 ```txt
 Prompt
-→ Model
-→ Response
+        ↓
+Model
+        ↓
+Response
 ```
 
 PhantomBot AI is built around:
@@ -63,7 +67,17 @@ Opportunity Detection
         ↓
 Decision Engine
         ↓
-Workflow Execution
+Workflow Runtime
+        ↓
+Workflow Coordination
+        ↓
+Workflow Graph
+        ↓
+Execution Strategy
+        ↓
+Planning Verification
+        ↓
+AI Orchestration
         ↓
 Merchant Outcomes
 ```
@@ -79,11 +93,17 @@ Replay correctness over convenience.
 Forbidden inside:
 
 ```txt
-projections
-intelligence
-scoring
-opportunity detection
-decision engines
+Replay
+Projections
+Behavioral Intelligence
+Opportunity Detection
+Opportunity Scoring
+Decision Engine
+Workflow Runtime
+Workflow Coordinator
+Workflow Graph
+Execution Strategy
+Planning Verification
 ```
 
 Forbidden APIs:
@@ -101,12 +121,22 @@ crypto.randomUUID()
 
 Every behavioral state must be reconstructable.
 
+Required invariant:
+
 ```txt
 Events
-→ Replay
-→ Same State
-→ Same Opportunities
-→ Same Decisions
+        ↓
+Replay
+        ↓
+Same State
+        ↓
+Same Opportunities
+        ↓
+Same Decisions
+        ↓
+Same Plans
+        ↓
+Same Strategies
 ```
 
 ---
@@ -157,78 +187,33 @@ Completed:
 
 ✓ Phase 3 — Infrastructure Isolation
 
-✓ Phase 4A — Runtime Coordination Foundation
+✓ Phase 4 — Distributed Runtime
 
-✓ Phase 4B — Deterministic Worker Runtime
+✓ Phase 5A — Behavioral Intelligence
 
-✓ Phase 5A — Behavioral Intelligence Foundation
+✓ Phase 6A — Decision Engine
 
-✓ Phase 6A — Decision Engine Foundation
-
-→ Phase 6B — Workflow Runtime
+✓ Phase 6B — Workflow Runtime
 ```
 
----
-
-# CURRENT VERIFIED TEST STATUS
+Current Repository State:
 
 ```txt
-Typecheck: PASS
+99 Runtime Files
 
-Test Files: 18 Passed
-Tests: 55 Passed
-```
-
-Verified Commands:
-
-```bash
-pnpm turbo run typecheck --force
-
-pnpm --filter @phantombot/runtime test
-```
-
----
-
-# CURRENT SYSTEM ARCHITECTURE
-
-```txt
-Raw Commerce Events
-        ↓
-Replay Infrastructure
-        ↓
-Session Intelligence Projection
-        ↓
-Deterministic Shopper State
-        ↓
-
-Recovery Opportunities
-Conversion Opportunities
-Upsell Opportunities
-Retention Opportunities
-
-        ↓
-
-Opportunity Scoring
-
-        ↓
-
-Opportunity Engine
-
-        ↓
+33 Runtime Directories
 
 Decision Engine
 
-        ↓
+Workflow Runtime
 
-Workflow Runtime (Next)
+Workflow Coordinator
 
-        ↓
+Workflow Graph
 
-OpenAI / Anthropic
+Execution Strategy
 
-        ↓
-
-Merchant Outcomes
+Strategy Verification
 ```
 
 ---
@@ -241,17 +226,17 @@ Merchant Outcomes
 COMPLETE
 ```
 
-## Outcome
-
-Merchant-facing product shell established.
-
-Completed:
+### Delivered
 
 ```txt
 Merchant Dashboard
+
 Command Center
+
 Operational Workspace
+
 Inbox Foundation
+
 Design System Foundation
 ```
 
@@ -265,18 +250,19 @@ Design System Foundation
 COMPLETE
 ```
 
-## Outcome
-
-Replay-safe runtime established.
-
-Completed:
+### Delivered
 
 ```txt
 Event Ingestion Contracts
+
 Replay Ordering
+
 Event Sequencing
+
 Replay Verification
+
 Projection Architecture
+
 Deterministic Runtime Foundation
 ```
 
@@ -290,24 +276,23 @@ Deterministic Runtime Foundation
 COMPLETE
 ```
 
-## Outcome
-
-Runtime no longer owns infrastructure.
-
-Completed:
+### Delivered
 
 ```txt
 Repository Ownership
+
 Transaction Isolation
+
 Namespace Isolation
+
 Persistence Abstractions
-Migration Consolidation
+
 Infrastructure Boundary Enforcement
 ```
 
 ---
 
-# PHASE 4A — RUNTIME COORDINATION FOUNDATION
+# PHASE 4 — DISTRIBUTED RUNTIME
 
 ## Status
 
@@ -315,49 +300,31 @@ Infrastructure Boundary Enforcement
 COMPLETE
 ```
 
-## Outcome
-
-Replay execution became coordinated.
-
-Completed:
-
-```txt
-Runtime Coordination
-Replay Lifecycle Management
-Checkpoint Coordination
-Replay Ownership Foundation
-```
-
----
-
-# PHASE 4B — DETERMINISTIC WORKER RUNTIME
-
-## Status
-
-```txt
-COMPLETE
-```
-
-## Outcome
-
-Distributed replay execution became durable.
-
-Completed:
+### Delivered
 
 ```txt
 ReplayExecutionRuntime
+
 ReplayRestartCoordinator
+
 Worker Leases
+
 Lease Recovery
+
 Replay Interruption Handling
+
 Checkpoint Resume
+
 Runtime State Enforcement
+
 Zombie Replay Prevention
+
+Distributed Coordination
 ```
 
 ---
 
-# PHASE 5A — BEHAVIORAL INTELLIGENCE FOUNDATION
+# PHASE 5A — BEHAVIORAL INTELLIGENCE
 
 ## Status
 
@@ -365,75 +332,38 @@ Zombie Replay Prevention
 COMPLETE
 ```
 
-## Goal
-
-Transform replayed commerce behavior into deterministic business intelligence.
-
----
-
-## Delivered
-
-### Session Intelligence
+### Delivered
 
 ```txt
+Session Intelligence
+
 Intent Classification
+
 Hesitation Classification
+
 Friction Classification
+
 Replay Reconstruction
-Deterministic State Generation
+
+Deterministic Shopper State
 ```
 
-Directory:
+### Opportunity Engine
 
 ```txt
-packages/runtime/src/projections/session-intelligence
-```
-
----
-
-### Opportunity Layer
-
-Directory:
-
-```txt
-packages/runtime/src/opportunities
-```
-
-Delivered:
-
-```txt
-Opportunity Contract
-Opportunity Scoring Layer
-
 Recovery Opportunities
+
 Conversion Opportunities
+
 Upsell Opportunities
+
 Retention Opportunities
 
-Opportunity Aggregation Engine
-Replay Determinism Verification
-```
+Opportunity Scoring
 
----
+Opportunity Aggregation
 
-## Phase 5A Completion Criteria
-
-Completed:
-
-```txt
-✓ Recovery Opportunities
-
-✓ Conversion Opportunities
-
-✓ Upsell Opportunities
-
-✓ Retention Opportunities
-
-✓ Deterministic
-
-✓ Replay Safe
-
-✓ Fully Tested
+Replay Verification
 ```
 
 ---
@@ -448,18 +378,19 @@ PLANNED
 
 ## Goal
 
-Move beyond classification into prediction.
-
----
-
-## Deliverables
+Move from classification to prediction.
 
 ### Predictive Systems
 
 ```txt
 Abandonment Prediction
+
 Conversion Probability
+
+Retention Risk
+
 Revenue Forecasting
+
 Behavioral Trend Analysis
 ```
 
@@ -467,17 +398,35 @@ Behavioral Trend Analysis
 
 ```txt
 Anomaly Detection
+
 Behavioral Drift Detection
+
 Merchant Health Signals
 ```
 
-## Outcome
+### Output
 
-Platform becomes predictive.
+```ts
+interface PredictiveSignal {
+  id: string;
+
+  shopperId: string;
+
+  type:
+    | "abandonment_risk"
+    | "conversion_probability"
+    | "retention_risk"
+    | "revenue_forecast";
+
+  confidence: number;
+
+  rationale: string;
+}
+```
 
 ---
 
-# PHASE 6A — DECISION ENGINE FOUNDATION
+# PHASE 6A — DECISION ENGINE
 
 ## Status
 
@@ -485,62 +434,22 @@ Platform becomes predictive.
 COMPLETE
 ```
 
-## Goal
-
-Transform opportunities into deterministic decisions.
-
----
-
-## Build
-
-```txt
-packages/runtime/src/decision-engine
-```
-
-Delivered:
-
-```txt
-decision.types.ts
-
-decision-eligibility.ts
-decision-priority.ts
-decision-conflicts.ts
-
-decision-policy.ts
-decision-engine.ts
-
-decision-engine.test.ts
-decision-engine.replay.test.ts
-```
-
----
-
-## Delivered Capabilities
-
-### Decision Contracts
+### Delivered
 
 ```txt
 Decision Categories
+
 Decision Actions
-Decision Priorities
-Deterministic Decision Contracts
-```
 
-### Decision Evaluation
-
-```txt
 Eligibility Evaluation
-Action Selection
+
 Priority Assignment
+
 Conflict Resolution
-```
 
-### Replay Guarantees
-
-```txt
-Deterministic Ordering
 Replay Verification
-Replay-Safe Decision Generation
+
+Deterministic Ordering
 ```
 
 Pipeline:
@@ -561,122 +470,203 @@ Decision[]
 
 ---
 
-## Rules
-
-Decision Engine may own:
-
-```txt
-Decision Evaluation
-Decision Policies
-Priority Assignment
-Action Selection
-Conflict Resolution
-Decision Contracts
-```
-
-Decision Engine may NOT own:
-
-```txt
-Workflow Execution
-OpenAI
-Persistence
-Runtime Coordination
-```
-
----
-
-## Phase 6A Completion Criteria
-
-Completed:
-
-```txt
-✓ Decision Categories
-
-✓ Decision Actions
-
-✓ Eligibility Evaluation
-
-✓ Deterministic Priority Assignment
-
-✓ Conflict Resolution
-
-✓ Replay Verification
-
-✓ Deterministic Ordering
-
-✓ Replay-Safe Decision Generation
-
-✓ Fully Tested
-```
-
----
-
 # PHASE 6B — WORKFLOW RUNTIME
 
 ## Status
 
 ```txt
-ACTIVE NEXT
+COMPLETE
 ```
 
-## Goal
+### Delivered
 
-Execute deterministic decisions.
-
----
-
-## Deliverables
+#### Workflow Runtime
 
 ```txt
-Workflow Contracts
-Execution Plans
-Workflow Runtime
-
 Decision → Execution Translation
 
-Recovery Workflows
-Conversion Workflows
-Upsell Workflows
-Retention Workflows
+Execution Plans
+
+Workflow Policies
+
+Workflow Runtime
+```
+
+#### Workflow Coordinator
+
+```txt
+Workflow Ordering
+
+Workflow Suppression
+
+Workflow Prioritization
+
+Execution Order Assignment
+```
+
+#### Workflow Graph
+
+```txt
+Workflow Dependencies
+
+Dependency Relationships
+
+Graph Construction
+```
+
+#### Execution Strategy
+
+```txt
+Urgency Assignment
+
+Execution Group Assignment
+
+Dependency Enrichment
+
+Strategy Metadata
+```
+
+#### Strategy Verification
+
+```txt
+Strategy Validation
+
+Replay Verification
+
+Deterministic Strategy Guarantees
 ```
 
 Pipeline:
 
 ```txt
-Decision
+Decision[]
         ↓
-Execution Plan
+ExecutionPlan[]
         ↓
-Workflow Runtime
+CoordinatedWorkflow[]
+        ↓
+WorkflowGraph
+        ↓
+ExecutionStrategy[]
 ```
 
 ---
 
-## Rules
+# PHASE 6C — PLANNING INTEGRITY
 
-Workflow Runtime may own:
+## Status
 
 ```txt
-Execution Plans
-Workflow Contracts
-Workflow State
-Workflow Evaluation
-Workflow Coordination
+NEXT
 ```
 
-Workflow Runtime may NOT own:
+## Goal
+
+Verify every planning layer before AI orchestration begins.
+
+---
+
+## Deliverables
+
+### Planning Verification
 
 ```txt
-Opportunity Detection
-Behavioral Intelligence
-Decision Evaluation
-OpenAI Reasoning
-Persistence Ownership
+Decision → Plan Validation
+
+Plan → Workflow Validation
+
+Workflow → Strategy Validation
+```
+
+### Dependency Verification
+
+```txt
+Graph Consistency
+
+Dependency Validation
+
+Cycle Detection
+
+Missing Node Detection
+```
+
+### Replay Verification Expansion
+
+```txt
+Same Events
+
+Same Opportunities
+
+Same Decisions
+
+Same Plans
+
+Same Strategies
+```
+
+### Deterministic Audit Layer
+
+```txt
+Unstable Sort Detection
+
+Orphan Plans
+
+Orphan Workflows
+
+Orphan Strategies
+
+Invalid Dependencies
 ```
 
 ---
 
-# PHASE 6C — AI ORCHESTRATION
+## Directory
+
+```txt
+packages/runtime/src/planning-verification
+```
+
+---
+
+## Contracts
+
+### PlanningVerificationResult
+
+```ts
+interface PlanningVerificationResult {
+  valid: boolean;
+
+  violations: string[];
+}
+```
+
+---
+
+## Target Structure
+
+```txt
+planning-verification/
+
+├── planning-verification.types.ts
+
+├── decision-plan-validator.ts
+
+├── workflow-validator.ts
+
+├── strategy-validator.ts
+
+├── dependency-validator.ts
+
+├── planning-verification.ts
+
+└── __tests__
+    ├── planning-verification.test.ts
+    └── planning-verification.replay.test.ts
+```
+
+---
+
+# PHASE 7 — AI ORCHESTRATION
 
 ## Status
 
@@ -686,38 +676,59 @@ PLANNED
 
 ## Goal
 
-Introduce LLM assistance after deterministic systems exist.
+Introduce AI only after deterministic systems are complete.
 
 ---
 
-## Integrations
+## Owns
 
 ```txt
 OpenAI
+
 Anthropic
+
 Future Models
-```
 
-Used for:
+Model Routing
 
-```txt
+Prompt Construction
+
 Content Generation
-Reasoning Assistance
-Communication
-```
-
-Never for:
-
-```txt
-Replay Logic
-Deterministic State
-Opportunity Detection
-Decision Determination
 ```
 
 ---
 
-# PHASE 7 — MULTI-TENANT PLATFORM SCALING
+## Does NOT Own
+
+```txt
+Replay
+
+Behavioral Intelligence
+
+Opportunity Detection
+
+Decision Evaluation
+
+Workflow Planning
+```
+
+---
+
+## Pipeline
+
+```txt
+ExecutionStrategy[]
+        ↓
+OrchestrationRequest[]
+        ↓
+Model Runtime
+        ↓
+Generated Content
+```
+
+---
+
+# PHASE 8 — MULTI-TENANT PLATFORM SCALING
 
 ## Status
 
@@ -725,21 +736,27 @@ Decision Determination
 PLANNED
 ```
 
-Deliverables:
+### Deliverables
 
 ```txt
 Tenant Isolation
+
 Replay Partitioning
-Distributed Execution
-Telemetry
+
+Distributed Scheduling
+
 Observability
-Monitoring
+
+Telemetry
+
 Operational Diagnostics
+
+Monitoring
 ```
 
 ---
 
-# PHASE 8 — MERCHANT PRODUCTIZATION
+# PHASE 9 — MERCHANT PRODUCTIZATION
 
 ## Status
 
@@ -747,20 +764,25 @@ Operational Diagnostics
 PLANNED
 ```
 
-Deliverables:
+### Deliverables
 
 ```txt
 Shopify Integration
+
 OAuth
+
 Merchant Onboarding
+
 Operational Dashboards
+
 AI Command Center
+
 Merchant Workspace
 ```
 
 ---
 
-# PHASE 9 — YC READINESS
+# PHASE 10 — YC READINESS
 
 ## Status
 
@@ -768,78 +790,58 @@ Merchant Workspace
 PLANNED
 ```
 
-Deliverables:
+### Deliverables
 
 ```txt
 Architecture Documentation
+
 Infrastructure Diagrams
+
 Replay Demonstrations
+
 Scalability Benchmarks
+
 Investor Narrative
+
 Technical Whitepaper
+
 Demo Environment
 ```
 
 ---
 
-# INFRASTRUCTURE ROADMAP
+# NEXT IMPLEMENTATION
 
-Terraform remains intentionally excluded from current implementation phases.
-
-Terraform enters after platform architecture stabilizes.
-
-Future ownership:
+Current Recommendation:
 
 ```txt
-Infrastructure Provisioning
-Cloud Resources
-Networking
-Secrets
-Deployment Pipelines
-Environment Management
+Phase 6C — Planning Integrity
 ```
 
-Terraform is NOT part of:
+Build first:
 
 ```txt
-Replay Runtime
-Behavioral Intelligence
-Opportunity Detection
-Decision Systems
+packages/runtime/src/planning-verification
 ```
 
----
-
-# FINAL TARGET
-
-Build:
+Before:
 
 ```txt
-Stripe + Datadog + OpenAI
-for commerce operations.
+OpenAI
+
+Anthropic
+
+Model Routing
+
+AI Orchestration
 ```
 
-Not:
+Reason:
 
-```txt
-Chatbot
-Support Widget
-GPT Wrapper
-Shopify Plugin
-```
+Deterministic systems should decide:
 
-Execution order:
+What should happen
 
-```txt
-Infrastructure First
+before AI decides:
 
-Behavioral Intelligence Second
-
-Decision Systems Third
-
-Workflow Runtime Fourth
-
-AI Orchestration Fifth
-
-Scale Last
-```
+How it should be communicated
