@@ -12,8 +12,16 @@ describe("provider execution runtime", () => {
           taskId: "task-1",
           profile: "reasoning",
         },
+
         boundaryReport: {
           checkedTargets: [],
+
+          governanceReport: {
+            taskId: "task-1",
+            approved: true,
+            violations: [],
+          },
+
           result: {
             valid: true,
             violations: [],
@@ -21,7 +29,9 @@ describe("provider execution runtime", () => {
         },
       });
 
-    expect(decision.authorized).toBe(true);
+    expect(
+      decision.authorized,
+    ).toBe(true);
   });
 
   it("rejects invalid requests", () => {
@@ -31,8 +41,16 @@ describe("provider execution runtime", () => {
           taskId: "task-1",
           profile: "reasoning",
         },
+
         boundaryReport: {
           checkedTargets: [],
+
+          governanceReport: {
+            taskId: "task-1",
+            approved: true,
+            violations: [],
+          },
+
           result: {
             valid: false,
             violations: [],
@@ -40,6 +58,42 @@ describe("provider execution runtime", () => {
         },
       });
 
-    expect(decision.authorized).toBe(false);
+    expect(
+      decision.authorized,
+    ).toBe(false);
   });
+
+  it(
+    "rejects execution when governance invalidates boundary",
+    () => {
+      const decision =
+        authorizeProviderExecution({
+          routingDecision: {
+            taskId: "task-1",
+            profile: "reasoning",
+          },
+
+          boundaryReport: {
+            checkedTargets: [],
+
+            governanceReport: {
+              taskId: "task-1",
+              approved: false,
+              violations: [
+                "Capability mismatch",
+              ],
+            },
+
+            result: {
+              valid: false,
+              violations: [],
+            },
+          },
+        });
+
+      expect(
+        decision.authorized,
+      ).toBe(false);
+    },
+  );
 });

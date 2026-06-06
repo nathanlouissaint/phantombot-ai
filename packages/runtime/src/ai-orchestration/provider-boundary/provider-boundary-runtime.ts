@@ -6,6 +6,7 @@
  *
  * Owns:
  * - provider-boundary report construction
+ * - governance integration
  * - validation aggregation
  * - replay-safe enforcement output
  *
@@ -28,15 +29,33 @@ import {
 } from "./provider-boundary-validator";
 
 import type {
-  ProviderBoundaryInspectionTarget,
+  ProviderBoundaryRequest,
   ProviderBoundaryReport,
+  ProviderBoundaryValidationResult,
 } from "./provider-boundary.types";
 
 export function enforceProviderBoundary(
-  targets: ProviderBoundaryInspectionTarget[]
+  request: ProviderBoundaryRequest,
 ): ProviderBoundaryReport {
+  const boundaryResult =
+    validateProviderBoundaryTargets(
+      request.targets,
+    );
+
+  const result: ProviderBoundaryValidationResult =
+    request.governanceReport.approved
+      ? boundaryResult
+      : {
+          valid: false,
+          violations: boundaryResult.violations,
+        };
+
   return {
-    checkedTargets: targets,
-    result: validateProviderBoundaryTargets(targets),
+    checkedTargets: request.targets,
+
+    governanceReport:
+      request.governanceReport,
+
+    result,
   };
 }

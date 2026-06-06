@@ -15,8 +15,16 @@ describe(
             taskId: "task-1",
             profile: "reasoning" as const,
           },
+
           boundaryReport: {
             checkedTargets: [],
+
+            governanceReport: {
+              taskId: "task-1",
+              approved: true,
+              violations: [],
+            },
+
             result: {
               valid: true,
               violations: [],
@@ -26,16 +34,16 @@ describe(
 
         const live =
           authorizeProviderExecution(
-            request
+            request,
           );
 
         const replay =
           authorizeProviderExecution(
-            request
+            request,
           );
 
         expect(replay).toEqual(live);
-      }
+      },
     );
-  }
+  },
 );

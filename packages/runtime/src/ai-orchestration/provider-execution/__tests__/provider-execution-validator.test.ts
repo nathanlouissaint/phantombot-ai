@@ -12,8 +12,16 @@ describe("provider execution validator", () => {
           taskId: "task-1",
           profile: "reasoning",
         },
+
         boundaryReport: {
           checkedTargets: [],
+
+          governanceReport: {
+            taskId: "task-1",
+            approved: true,
+            violations: [],
+          },
+
           result: {
             valid: true,
             violations: [],
@@ -31,8 +39,18 @@ describe("provider execution validator", () => {
           taskId: "task-1",
           profile: "reasoning",
         },
+
         boundaryReport: {
           checkedTargets: [],
+
+          governanceReport: {
+            taskId: "task-1",
+            approved: false,
+            violations: [
+              "Routing governance failed",
+            ],
+          },
+
           result: {
             valid: false,
             violations: [],

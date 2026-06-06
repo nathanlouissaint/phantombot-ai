@@ -8,6 +8,7 @@
  * - provider boundary inspection targets
  * - provider boundary violation contracts
  * - provider boundary validation results
+ * - provider boundary governance integration
  *
  * Does NOT Own:
  * - provider adapter execution
@@ -20,7 +21,12 @@
  * - provider-specific values are only allowed at the provider adapter boundary
  * - deterministic layers must stay provider-agnostic
  * - all validation must remain replay-safe
+ * - governance lineage must be preserved
  */
+
+import type {
+  RoutingGovernanceReport,
+} from "../routing-governance";
 
 export type ProviderBoundaryLayer =
   | "replay"
@@ -75,8 +81,30 @@ export interface ProviderBoundaryValidationResult {
   violations: ProviderBoundaryViolation[];
 }
 
+/**
+ * Phase 8F
+ *
+ * Purpose:
+ * Carry routing-governance lineage into
+ * provider-boundary enforcement.
+ */
+export interface ProviderBoundaryRequest {
+  targets: ProviderBoundaryInspectionTarget[];
+
+  governanceReport: RoutingGovernanceReport;
+}
+
+/**
+ * Phase 8F
+ *
+ * Purpose:
+ * Preserve governance lineage through
+ * provider-boundary enforcement.
+ */
 export interface ProviderBoundaryReport {
   checkedTargets: ProviderBoundaryInspectionTarget[];
+
+  governanceReport: RoutingGovernanceReport;
 
   result: ProviderBoundaryValidationResult;
 }
