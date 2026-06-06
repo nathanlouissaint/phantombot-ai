@@ -1,6 +1,6 @@
 # PHANTOMBOT AI — CURRENT STATE
 
-Last Updated: Phase 8A Complete
+Last Updated: Phase 8C Complete
 
 ---
 
@@ -25,13 +25,13 @@ Status: Stable
 
 Typecheck: PASS
 
-Runtime Test Files: 57 Passed
+Runtime Test Files: 63 Passed
 
-Runtime Tests: 112 Passed
+Runtime Tests: 121 Passed
 
-Current Phase: Phase 8A Complete
+Current Phase: Phase 8C Complete
 
-Next Phase: Phase 8B — Provider Adapter Execution Isolation
+Next Phase: Phase 8D — Routing Integration
 ```
 
 These values must never decrease.
@@ -79,9 +79,15 @@ Execution Context
 ↓
 Capability Planning
 ↓
+Capability Resolution
+↓
+Resolved Capability Set
+↓
 Model Routing
 ↓
 Provider Boundary Enforcement
+↓
+Provider Execution Authorization
 ↓
 Provider Adapter Boundary
 ↓
@@ -109,8 +115,10 @@ Execution Strategy
 Planning Verification
 Execution Context
 Capability Planning
+Capability Resolution
 Model Routing
 Provider Boundary Enforcement
+Provider Execution Authorization
 ```
 
 Forbidden APIs:
@@ -122,11 +130,13 @@ Math.random()
 crypto.randomUUID()
 ```
 
-Also forbidden inside deterministic runtime:
+Forbidden inside deterministic runtime:
 
 ```txt
 OpenAI
 Anthropic
+Claude
+GPT
 Provider SDKs
 Persistence
 SQL
@@ -135,6 +145,7 @@ External APIs
 Prompt Execution
 Model Calls
 Network Access
+Provider API Clients
 ```
 
 ---
@@ -162,9 +173,13 @@ Same Context
 ↓
 Same Capability Plans
 ↓
+Same Capability Resolution
+↓
 Same Routing Decisions
 ↓
 Same Boundary Decisions
+↓
+Same Execution Decisions
 ```
 
 All planning and orchestration boundary layers must remain:
@@ -223,6 +238,10 @@ Provider Agnostic
 ✓ Phase 7G — Capability Planning
 
 ✓ Phase 8A — Provider Boundary Enforcement
+
+✓ Phase 8B — Provider Adapter Execution Isolation
+
+✓ Phase 8C — Capability Resolution
 ```
 
 ---
@@ -258,9 +277,15 @@ Execution Context Runtime
 ↓
 Capability Planning
 ↓
+Capability Resolution
+↓
+Resolved Capability Set
+↓
 Model Routing
 ↓
 Provider Boundary Enforcement
+↓
+Provider Execution Authorization
 ↓
 Provider Adapter Boundary
 ↓
@@ -269,7 +294,7 @@ Future Model Providers
 
 ---
 
-# PHASE 8A — PROVIDER BOUNDARY ENFORCEMENT
+# PHASE 8B — PROVIDER ADAPTER EXECUTION ISOLATION
 
 Status:
 
@@ -280,47 +305,41 @@ COMPLETE
 Directory:
 
 ```txt
-packages/runtime/src/ai-orchestration/provider-boundary
+packages/runtime/src/ai-orchestration/provider-execution
 ```
 
 Delivered:
 
 ```txt
-✓ Provider Boundary Contracts
+✓ Provider Execution Contracts
 
-✓ Provider Boundary Policy
+✓ Provider Execution Policy
 
-✓ Provider Boundary Validation
+✓ Provider Execution Validation
 
-✓ Provider Boundary Runtime
+✓ Provider Execution Runtime
 
-✓ Replay-Safe Enforcement
+✓ Execution Authorization
 
-✓ Deterministic Violation Detection
+✓ Execution Rejection
 
-✓ Provider Leak Detection
+✓ Replay-Safe Authorization
 
-✓ Provider SDK Leak Detection
+✓ Deterministic Execution Decisions
 
-✓ Prompt Leak Detection
-
-✓ External Call Detection
-
-✓ Persistence Leak Detection
-
-✓ Non-Deterministic API Detection
+✓ Boundary Enforcement Integration
 ```
 
 Files:
 
 ```txt
-provider-boundary.types.ts
+provider-execution.types.ts
 
-provider-boundary-policy.ts
+provider-execution-policy.ts
 
-provider-boundary-validator.ts
+provider-execution-validator.ts
 
-provider-boundary-runtime.ts
+provider-execution-runtime.ts
 
 index.ts
 ```
@@ -328,27 +347,109 @@ index.ts
 Tests:
 
 ```txt
-provider-boundary-validator.test.ts
+provider-execution-validator.test.ts
 
-provider-boundary-runtime.test.ts
+provider-execution-runtime.test.ts
 
-provider-boundary-runtime.replay.test.ts
+provider-execution-runtime.replay.test.ts
 ```
 
 Produces:
 
 ```txt
-ProviderBoundaryValidationResult
+ProviderExecutionValidationResult
 
-ProviderBoundaryViolation[]
+ProviderExecutionDecision
 
-ProviderBoundaryReport
+ProviderExecutionViolation[]
 ```
 
 Architectural Purpose:
 
 ```txt
-Guarantee that provider-specific logic cannot leak into deterministic runtime, orchestration, planning, routing, or capability layers.
+Guarantee provider adapters cannot execute unless routing and provider-boundary enforcement have successfully completed.
+```
+
+Pipeline Addition:
+
+```txt
+RoutingDecision
+↓
+ProviderBoundaryReport
+↓
+ProviderExecutionDecision
+↓
+ProviderAdapter
+```
+
+---
+
+# PHASE 8C — CAPABILITY RESOLUTION
+
+Status:
+
+```txt
+COMPLETE
+```
+
+Directory:
+
+```txt
+packages/runtime/src/ai-orchestration/capability-resolution
+```
+
+Delivered:
+
+```txt
+✓ Capability Resolution Contracts
+
+✓ Capability Resolution Validation
+
+✓ Capability Resolution Runtime
+
+✓ Deterministic Capability Ordering
+
+✓ Resolved Capability Set Output
+
+✓ Replay-Safe Resolution
+
+✓ Provider-Agnostic Capability Resolution
+```
+
+Files:
+
+```txt
+capability-resolution.types.ts
+
+capability-resolution-validator.ts
+
+capability-resolution-runtime.ts
+
+index.ts
+```
+
+Tests:
+
+```txt
+capability-resolution-validator.test.ts
+
+capability-resolution-runtime.test.ts
+
+capability-resolution-runtime.replay.test.ts
+```
+
+Produces:
+
+```txt
+ResolvedCapability
+
+ResolvedCapabilitySet
+```
+
+Architectural Purpose:
+
+```txt
+Resolve capability plans into deterministic resolved capability sets before model routing occurs.
 ```
 
 Pipeline Addition:
@@ -356,11 +457,9 @@ Pipeline Addition:
 ```txt
 CapabilityPlan
 ↓
-RoutingDecision
+ResolvedCapabilitySet
 ↓
-ProviderBoundaryReport
-↓
-ProviderAdapter
+ModelRouting
 ```
 
 ---
@@ -376,7 +475,7 @@ packages/runtime/src/ai-orchestration
 Status:
 
 ```txt
-BOUNDARY COMPLETE THROUGH PROVIDER ENFORCEMENT
+BOUNDARY COMPLETE THROUGH CAPABILITY RESOLUTION AND EXECUTION AUTHORIZATION
 ```
 
 Completed:
@@ -396,7 +495,11 @@ Completed:
 
 ✓ Capability Planning
 
+✓ Capability Resolution
+
 ✓ Provider Boundary Enforcement
+
+✓ Provider Execution Authorization
 ```
 
 Current AI Orchestration Subsystems:
@@ -417,9 +520,13 @@ execution-context-validator.ts
 
 capability-planning/
 
+capability-resolution/
+
 model-routing/
 
 provider-boundary/
+
+provider-execution/
 
 orchestration-verification/
 
@@ -439,13 +546,13 @@ PASS
 Runtime Test Files:
 
 ```txt
-57 Passed
+63 Passed
 ```
 
 Runtime Tests:
 
 ```txt
-112 Passed
+121 Passed
 ```
 
 Validation Commands:
@@ -459,9 +566,9 @@ pnpm --filter @phantombot/runtime test
 Latest Verified Output:
 
 ```txt
-Test Files 57 passed (57)
+Test Files 63 passed (63)
 
-Tests 112 passed (112)
+Tests 121 passed (121)
 ```
 
 ---
@@ -469,43 +576,33 @@ Tests 112 passed (112)
 # NEXT PHASE
 
 ```txt
-Phase 8B — Provider Adapter Execution Isolation
+Phase 8D — Routing Integration
 ```
 
 Goal:
 
 ```txt
-Guarantee provider adapters can only execute after deterministic orchestration, planning, routing, and provider-boundary enforcement have completed successfully.
+Refactor model routing so routing decisions consume resolved capability sets instead of bypassing capability planning.
 ```
 
 Build Next:
 
 ```txt
-packages/runtime/src/ai-orchestration/provider-execution
+packages/runtime/src/ai-orchestration/model-routing
 ```
 
-Recommended Files:
+Expected Integration:
 
 ```txt
-provider-execution.types.ts
-
-provider-execution-policy.ts
-
-provider-execution-validator.ts
-
-provider-execution-runtime.ts
-
-index.ts
-```
-
-Recommended Tests:
-
-```txt
-provider-execution-validator.test.ts
-
-provider-execution-runtime.test.ts
-
-provider-execution-runtime.replay.test.ts
+CapabilityPlan
+↓
+CapabilityResolution
+↓
+ResolvedCapabilitySet
+↓
+ModelRouting
+↓
+RoutingDecision
 ```
 
 Do NOT Build Yet:
@@ -555,9 +652,15 @@ Execution Context
 ↓
 Capability Planning
 ↓
+Capability Resolution
+↓
+Resolved Capability Set
+↓
 Model Routing
 ↓
 Provider Boundary Enforcement
+↓
+Provider Execution Authorization
 ↓
 Provider Adapter Boundary
 ↓
@@ -568,16 +671,22 @@ Future Model Providers
 
 # PROVIDER GOVERNANCE STATUS
 
-Provider-specific execution is still prohibited.
+Provider-specific execution remains prohibited.
 
 Current allowed architecture:
 
 ```txt
 Capability Planning
 ↓
+Capability Resolution
+↓
+Resolved Capability Set
+↓
 Model Routing
 ↓
 Provider Boundary Enforcement
+↓
+Provider Execution Authorization
 ↓
 Provider Adapter Boundary
 ```
@@ -593,6 +702,10 @@ Capability Planning
 ↓
 Anthropic
 
+Capability Resolution
+↓
+Prompt Execution
+
 Model Routing
 ↓
 Prompt Execution
@@ -600,6 +713,10 @@ Prompt Execution
 Decision Engine
 ↓
 Provider SDK
+
+Workflow Runtime
+↓
+Provider API
 ```
 
 ---
@@ -611,13 +728,13 @@ Branch: architecture/core-system
 
 Typecheck: PASS
 
-Runtime Test Files: 57
+Runtime Test Files: 63
 
-Runtime Tests: 112
+Runtime Tests: 121
 
-Current Phase: Phase 8A Complete
+Current Phase: Phase 8C Complete
 
-Next Phase: Phase 8B — Provider Adapter Execution Isolation
+Next Phase: Phase 8D — Routing Integration
 
 Status: Stable
 ```

@@ -1,35 +1,29 @@
-/*
-PHASE 7D
-
-Defines deterministic model routing contracts.
-
-This layer does NOT:
-
-- Select providers
-- Execute prompts
-- Call APIs
-
-This layer only describes the capabilities
-required by orchestration tasks.
-
-Replay Safe
-Serializable
-Provider Agnostic
-*/
+/**
+ * Phase 8D
+ *
+ * Purpose:
+ * Define deterministic model routing contracts derived from resolved capabilities.
+ *
+ * Responsibilities:
+ * - Describe routing profiles
+ * - Describe routing decisions
+ * - Keep routing provider agnostic
+ *
+ * Constraints:
+ * - No provider selection
+ * - No model selection
+ * - No prompt execution
+ * - No SDK imports
+ * - No API calls
+ * - No persistence
+ * - Replay safe
+ */
 
 export type RoutingProfile =
   | "classification"
   | "reasoning"
   | "summarization"
   | "content_generation";
-
-export interface RoutingRequest {
-  taskId: string;
-
-  taskType: string;
-
-  profile: RoutingProfile;
-}
 
 export interface RoutingDecision {
   taskId: string;

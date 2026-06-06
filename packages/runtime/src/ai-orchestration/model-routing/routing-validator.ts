@@ -1,21 +1,27 @@
-/*
-PHASE 7D
+/**
+ * Phase 8D
+ *
+ * Purpose:
+ * Validate deterministic routing decisions.
+ *
+ * Responsibilities:
+ * - Detect missing task identity
+ * - Detect missing routing profile
+ * - Keep validation provider agnostic
+ *
+ * Constraints:
+ * - No providers
+ * - No models
+ * - No execution
+ * - No side effects
+ */
 
-Validates routing decisions.
-
-Detects:
-
-- Missing profiles
-- Invalid profiles
-- Empty task identifiers
-
-Used before provider adapters exist.
-*/
-
-import type { RoutingDecision } from "./routing.types";
+import type {
+  RoutingDecision,
+} from "./routing.types";
 
 export function validateRoutingDecision(
-  decision: RoutingDecision
+  decision: RoutingDecision,
 ): string[] {
   const violations: string[] = [];
 
