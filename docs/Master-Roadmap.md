@@ -77,7 +77,11 @@ Execution Strategy
         ↓
 Planning Verification
         ↓
-AI Orchestration
+AI Orchestration Boundary
+        ↓
+Provider Adapters
+        ↓
+Model Providers
         ↓
 Merchant Outcomes
 ```
@@ -187,21 +191,41 @@ Completed:
 
 ✓ Phase 3 — Infrastructure Isolation
 
-✓ Phase 4 — Distributed Runtime
+✓ Phase 4A — Runtime Coordination Foundation
 
-✓ Phase 5A — Behavioral Intelligence
+✓ Phase 4B — Deterministic Worker Runtime
+
+✓ Phase 5A — Behavioral Intelligence Foundation
 
 ✓ Phase 6A — Decision Engine
 
 ✓ Phase 6B — Workflow Runtime
+
+✓ Workflow Coordinator
+
+✓ Workflow Graph
+
+✓ Execution Strategy
+
+✓ Strategy Verification
+
+✓ Phase 6C — Planning Integrity
+
+✓ Phase 7A — Orchestration Contracts
+
+✓ Phase 7B — Task Definitions
+
+✓ Phase 7C — Execution Context
 ```
 
 Current Repository State:
 
 ```txt
-99 Runtime Files
+Typecheck PASS
 
-33 Runtime Directories
+39 Runtime Test Files
+
+88 Runtime Tests
 
 Decision Engine
 
@@ -214,6 +238,10 @@ Workflow Graph
 Execution Strategy
 
 Strategy Verification
+
+Planning Verification
+
+AI Orchestration
 ```
 
 ---
@@ -423,7 +451,6 @@ interface PredictiveSignal {
   rationale: string;
 }
 ```
-
 ---
 
 # PHASE 6A — DECISION ENGINE
@@ -557,7 +584,7 @@ ExecutionStrategy[]
 ## Status
 
 ```txt
-NEXT
+COMPLETE
 ```
 
 ## Goal
@@ -576,18 +603,22 @@ Decision → Plan Validation
 Plan → Workflow Validation
 
 Workflow → Strategy Validation
-```
-
-### Dependency Verification
-
-```txt
-Graph Consistency
 
 Dependency Validation
 
 Cycle Detection
 
-Missing Node Detection
+Replay Verification
+
+Orphan Plan Detection
+
+Orphan Workflow Detection
+
+Orphan Strategy Detection
+
+Cross-Layer Consistency Validation
+
+End-To-End Planning Lineage Validation
 ```
 
 ### Replay Verification Expansion
@@ -607,8 +638,6 @@ Same Strategies
 ### Deterministic Audit Layer
 
 ```txt
-Unstable Sort Detection
-
 Orphan Plans
 
 Orphan Workflows
@@ -616,6 +645,8 @@ Orphan Workflows
 Orphan Strategies
 
 Invalid Dependencies
+
+Cross-Layer Violations
 ```
 
 ---
@@ -642,7 +673,7 @@ interface PlanningVerificationResult {
 
 ---
 
-## Target Structure
+## Structure
 
 ```txt
 planning-verification/
@@ -657,16 +688,194 @@ planning-verification/
 
 ├── dependency-validator.ts
 
+├── orphan-validator.ts
+
+├── cross-layer-validator.ts
+
 ├── planning-verification.ts
 
 └── __tests__
     ├── planning-verification.test.ts
-    └── planning-verification.replay.test.ts
+    ├── planning-verification.replay.test.ts
+    ├── dependency-validator.test.ts
+    ├── orphan-validator.test.ts
+    └── cross-layer-validator.test.ts
+```
+---
+
+# PHASE 7 — AI ORCHESTRATION
+
+## Goal
+
+Introduce AI only after deterministic systems are complete.
+
+Build Order:
+
+```txt
+✓ 7A — Orchestration Contracts
+
+✓ 7B — Task Definitions
+
+✓ 7C — Execution Context
+
+→ 7D — Model Routing Contracts
+
+○ 7E — Orchestration Verification
+
+○ 7F — Provider Adapters
 ```
 
 ---
 
-# PHASE 7 — AI ORCHESTRATION
+# PHASE 7A — ORCHESTRATION CONTRACTS
+
+## Status
+
+```txt
+COMPLETE
+```
+
+### Delivered
+
+```txt
+OrchestrationTask
+
+OrchestrationEnvelope
+
+Replay-Safe Interfaces
+
+Deterministic Contracts
+```
+
+---
+
+# PHASE 7B — TASK DEFINITIONS
+
+## Status
+
+```txt
+COMPLETE
+```
+
+### Delivered
+
+```txt
+Task Definitions
+
+Task Runtime
+
+Task Serialization
+
+Replay Verification
+```
+
+---
+
+# PHASE 7C — EXECUTION CONTEXT
+
+## Status
+
+```txt
+COMPLETE
+```
+
+### Delivered
+
+```txt
+Execution Context Runtime
+
+Context Construction
+
+Deterministic Reconstruction
+
+Replay Verification
+
+Provider Agnostic Context
+```
+
+Current Files:
+
+```txt
+orchestration.types.ts
+
+task-definition-runtime.ts
+
+execution-context-runtime.ts
+
+orchestration-runtime.ts
+```
+
+Current Tests:
+
+```txt
+orchestration-runtime.test.ts
+
+orchestration-runtime.replay.test.ts
+
+task-definition-runtime.test.ts
+
+task-definition-runtime.replay.test.ts
+
+execution-context-runtime.test.ts
+
+execution-context-runtime.replay.test.ts
+```
+
+---
+
+# PHASE 7D — MODEL ROUTING CONTRACTS
+
+## Status
+
+```txt
+CURRENT
+```
+
+## Goal
+
+Deterministically map orchestration tasks to capability requirements without selecting a provider.
+
+Produces:
+
+```txt
+RoutingProfile
+
+RoutingRequest
+
+RoutingDecision
+```
+
+Directory:
+
+```txt
+packages/runtime/src/ai-orchestration/model-routing
+```
+
+Planned Files:
+
+```txt
+routing.types.ts
+
+routing-profiles.ts
+
+model-router.ts
+
+routing-validator.ts
+```
+
+Planned Tests:
+
+```txt
+model-router.test.ts
+
+model-router.replay.test.ts
+
+routing-validator.test.ts
+```
+
+---
+
+# PHASE 7E — ORCHESTRATION VERIFICATION
 
 ## Status
 
@@ -674,56 +883,40 @@ planning-verification/
 PLANNED
 ```
 
-## Goal
-
-Introduce AI only after deterministic systems are complete.
-
----
-
-## Owns
+### Deliverables
 
 ```txt
-OpenAI
+Route Validation
 
-Anthropic
+Task Verification
 
-Future Models
+Replay Verification
 
-Model Routing
-
-Prompt Construction
-
-Content Generation
+Provider Boundary Enforcement
 ```
 
 ---
 
-## Does NOT Own
+# PHASE 7F — PROVIDER ADAPTERS
+
+## Status
 
 ```txt
-Replay
-
-Behavioral Intelligence
-
-Opportunity Detection
-
-Decision Evaluation
-
-Workflow Planning
+PLANNED
 ```
 
----
-
-## Pipeline
+### Deliverables
 
 ```txt
-ExecutionStrategy[]
-        ↓
-OrchestrationRequest[]
-        ↓
-Model Runtime
-        ↓
-Generated Content
+OpenAI Adapter
+
+Anthropic Adapter
+
+Provider Registry
+
+Adapter Contracts
+
+Execution Boundary Enforcement
 ```
 
 ---
@@ -815,13 +1008,13 @@ Demo Environment
 Current Recommendation:
 
 ```txt
-Phase 6C — Planning Integrity
+Phase 7D — Model Routing Contracts
 ```
 
-Build first:
+Build First:
 
 ```txt
-packages/runtime/src/planning-verification
+packages/runtime/src/ai-orchestration/model-routing
 ```
 
 Before:
@@ -831,17 +1024,45 @@ OpenAI
 
 Anthropic
 
-Model Routing
+Provider Adapters
 
-AI Orchestration
+Prompt Construction
+
+Content Generation
 ```
 
 Reason:
 
+```txt
 Deterministic systems should decide:
 
-What should happen
+WHAT capabilities are required
 
-before AI decides:
+before AI providers decide:
 
-How it should be communicated
+HOW content is generated
+```
+
+---
+
+# CURRENT CHECKPOINT
+
+```txt
+Branch:
+architecture/core-system
+
+Typecheck:
+PASS
+
+Runtime Test Files:
+39
+
+Runtime Tests:
+88
+
+Current Phase:
+7D — Model Routing Contracts
+
+Status:
+Stable
+```

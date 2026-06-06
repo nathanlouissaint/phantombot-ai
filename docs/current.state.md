@@ -1,6 +1,6 @@
 # PHANTOMBOT AI — CURRENT STATE
 
-Last Updated: Phase 6C Complete
+Last Updated: Phase 7G Complete
 
 ---
 
@@ -13,6 +13,28 @@ PhantomBot AI
 Vision:
 
 The deterministic AI operating system for commerce.
+
+---
+
+# VERIFIED CHECKPOINT
+
+```txt
+Branch: architecture/core-system
+
+Status: Stable
+
+Typecheck: PASS
+
+Runtime Test Files: 54 Passed
+
+Runtime Tests: 105 Passed
+
+Current Phase: Phase 7G Complete
+
+Next Phase: Phase 8A — Provider Boundary Enforcement
+```
+
+These values must never decrease.
 
 ---
 
@@ -51,7 +73,15 @@ Execution Strategy
 ↓
 Planning Verification
 ↓
-Future AI Orchestration
+AI Orchestration Boundary
+↓
+Capability Planning
+↓
+Model Routing
+↓
+Provider Adapters
+↓
+Future Model Providers
 ↓
 Merchant Outcomes
 ```
@@ -60,7 +90,7 @@ Merchant Outcomes
 
 # NON-NEGOTIABLE RULES
 
-Forbidden inside:
+Forbidden inside deterministic runtime layers:
 
 ```txt
 Replay
@@ -73,6 +103,8 @@ Workflow Coordinator
 Workflow Graph
 Execution Strategy
 Planning Verification
+Capability Planning
+Model Routing
 ```
 
 Forbidden APIs:
@@ -84,7 +116,7 @@ Math.random()
 crypto.randomUUID()
 ```
 
-Also forbidden:
+Also forbidden inside deterministic runtime:
 
 ```txt
 OpenAI
@@ -93,9 +125,9 @@ Persistence
 SQL
 Database Access
 External APIs
+Prompt Execution
+Model Calls
 ```
-
-inside deterministic runtime layers.
 
 ---
 
@@ -115,22 +147,29 @@ Same Decisions
 Same Plans
 ↓
 Same Strategies
+↓
+Same Tasks
+↓
+Same Context
+↓
+Same Capability Plans
+↓
+Same Routing Decisions
 ```
 
-All planning layers must remain:
+All planning and orchestration boundary layers must remain:
 
 ```txt
 Deterministic
 Replay Safe
 Serializable
 Reconstructable
+Provider Agnostic
 ```
 
 ---
 
-# VERIFIED STATUS
-
-Completed:
+# COMPLETED PHASES
 
 ```txt
 ✓ Phase 1 — Product Foundation
@@ -145,7 +184,7 @@ Completed:
 
 ✓ Phase 5A — Behavioral Intelligence Foundation
 
-✓ Phase 6A — Decision Engine Foundation
+✓ Phase 6A — Decision Engine
 
 ✓ Phase 6B — Workflow Runtime
 
@@ -157,38 +196,22 @@ Completed:
 
 ✓ Strategy Verification
 
-✓ Phase 6C — Planning Integrity Complete
+✓ Phase 6C — Planning Integrity
+
+✓ Phase 7A — Orchestration Contracts
+
+✓ Phase 7B — Task Definitions
+
+✓ Phase 7C — Execution Context
+
+✓ Phase 7D — Model Routing Contracts
+
+✓ Phase 7E — Orchestration Verification
+
+✓ Phase 7F — Provider Adapter Foundation
+
+✓ Phase 7G — Capability Planning
 ```
-
-Current Phase:
-
-```txt
-→ Phase 7A — AI Orchestration Foundation
-```
-
----
-
-# CURRENT VERIFIED METRICS
-
-Typecheck:
-
-```txt
-PASS
-```
-
-Runtime Test Files:
-
-```txt
-33 Passed
-```
-
-Runtime Tests:
-
-```txt
-82 Passed
-```
-
-These values must never decrease.
 
 ---
 
@@ -217,202 +240,22 @@ Execution Strategy
 ↓
 Planning Verification
 ↓
-Future AI Orchestration
-```
-
----
-
-# BEHAVIORAL INTELLIGENCE
-
-Implemented:
-
-```txt
-Session Intelligence Projection
-```
-
-Produces:
-
-```txt
-Deterministic Shopper State
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# OPPORTUNITY ENGINE
-
-Implemented:
-
-```txt
-Recovery Opportunities
-
-Conversion Opportunities
-
-Upsell Opportunities
-
-Retention Opportunities
-```
-
-Produces:
-
-```txt
-Opportunity[]
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# DECISION ENGINE
-
-Directory:
-
-```txt
-packages/runtime/src/decision-engine
-```
-
-Implemented:
-
-```txt
-decision.types.ts
-
-decision-eligibility.ts
-
-decision-priority.ts
-
-decision-conflicts.ts
-
-decision-policy.ts
-
-decision-engine.ts
-```
-
-Produces:
-
-```txt
-Decision[]
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# WORKFLOW RUNTIME
-
-Directory:
-
-```txt
-packages/runtime/src/workflow-runtime
-```
-
-Produces:
-
-```txt
-ExecutionPlan[]
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# WORKFLOW COORDINATOR
-
-Directory:
-
-```txt
-packages/runtime/src/workflow-coordinator
-```
-
-Produces:
-
-```txt
-CoordinatedWorkflow[]
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# WORKFLOW GRAPH
-
-Directory:
-
-```txt
-packages/runtime/src/workflow-graph
-```
-
-Produces:
-
-```txt
-WorkflowGraph
-```
-
-Current Dependency Rule:
-
-```txt
-Recovery
+Orchestration Task Runtime
 ↓
-Conversion
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
----
-
-# EXECUTION STRATEGY
-
-Directory:
-
-```txt
-packages/runtime/src/execution-strategy
-```
-
-Produces:
-
-```txt
-ExecutionStrategy[]
-```
-
-Status:
-
-```txt
-COMPLETE
+Execution Context Runtime
+↓
+Capability Planning
+↓
+Model Routing
+↓
+Provider Adapter Boundary
+↓
+Future Model Providers
 ```
 
 ---
 
-# STRATEGY VERIFICATION
-
-Directory:
-
-```txt
-packages/runtime/src/strategy-verification
-```
+# PHASE 7G — CAPABILITY PLANNING
 
 Status:
 
@@ -420,288 +263,140 @@ Status:
 COMPLETE
 ```
 
----
-
-# PLANNING VERIFICATION
-
 Directory:
 
 ```txt
-packages/runtime/src/planning-verification
-```
-
-Status:
-
-```txt
-COMPLETE
-```
-
-Implemented:
-
-```txt
-planning-verification.types.ts
-
-decision-plan-validator.ts
-
-workflow-validator.ts
-
-strategy-validator.ts
-
-dependency-validator.ts
-
-orphan-validator.ts
-
-cross-layer-validator.ts
-
-planning-verification.ts
-```
-
-Tests:
-
-```txt
-planning-verification.test.ts
-
-planning-verification.replay.test.ts
-
-dependency-validator.test.ts
-
-orphan-validator.test.ts
-
-cross-layer-validator.test.ts
+packages/runtime/src/ai-orchestration/capability-planning
 ```
 
 Delivered:
 
 ```txt
-✓ Decision → Plan Validation
+✓ Provider-Independent Capability Contracts
 
-✓ Plan → Workflow Validation
+✓ Capability Requirement Definitions
 
-✓ Workflow → Strategy Validation
+✓ Capability Plan Construction
 
-✓ Dependency Validation
+✓ Capability Plan Validation
 
-✓ Replay Verification
+✓ Replay-Safe Capability Planning
 
-✓ Cycle Detection
+✓ Deterministic Task-to-Capability Mapping
+```
 
-✓ Orphan Plan Detection
+Files:
 
-✓ Orphan Workflow Detection
+```txt
+capability.types.ts
 
-✓ Orphan Strategy Detection
+capability-planner.ts
 
-✓ Cross-Layer Consistency Validation
+capability-validator.ts
 
-✓ End-To-End Planning Lineage Validation
+index.ts
+```
+
+Tests:
+
+```txt
+capability-planner.test.ts
+
+capability-planner.replay.test.ts
+
+capability-validator.test.ts
 ```
 
 Produces:
 
-```ts
-interface PlanningVerificationResult {
-  valid: boolean;
-  violations: string[];
-}
+```txt
+CapabilityRequirement[]
+
+CapabilityPlan
 ```
 
----
-
-# PHASE 6C FINAL DELIVERABLES
-
-Completed:
+Architectural Purpose:
 
 ```txt
-✓ Planning Verification Contracts
-
-✓ Decision → Plan Validation
-
-✓ Plan → Workflow Validation
-
-✓ Workflow → Strategy Validation
-
-✓ Dependency Validation
-
-✓ Cycle Detection
-
-✓ Replay Verification
-
-✓ Orphan Detection
-
-✓ Cross-Layer Consistency Validation
-
-✓ Planning Integrity Expansion
-
-✓ Typecheck PASS
-
-✓ 33 Test Files Passing
-
-✓ 82 Tests Passing
+Translate orchestration tasks into provider-independent capability requirements before model routing occurs.
 ```
 
-Architecture Protected By:
+Pipeline Addition:
 
 ```txt
-Decision
+OrchestrationTask
 ↓
-ExecutionPlan
+ExecutionContext
 ↓
-CoordinatedWorkflow
+CapabilityPlan
 ↓
-ExecutionStrategy
-```
-
-Validated Through:
-
-```txt
-Local Validation
-
-Dependency Validation
-
-Cycle Detection
-
-Orphan Detection
-
-Cross-Layer Consistency Validation
-
-Replay Verification
+RoutingDecision
+↓
+ProviderAdapter
 ```
 
 ---
 
-# CURRENT ARCHITECTURE REVIEW
+# AI ORCHESTRATION STATUS
 
-Strong Layers:
-
-```txt
-✓ Replay
-
-✓ Session Intelligence
-
-✓ Opportunity Engine
-
-✓ Decision Engine
-
-✓ Workflow Runtime
-
-✓ Workflow Coordinator
-
-✓ Workflow Graph
-
-✓ Execution Strategy
-
-✓ Strategy Verification
-
-✓ Planning Verification
-```
-
-Workflow Graph Justification:
+Directory:
 
 ```txt
-✓ Dependency Validation
-
-✓ Cycle Detection
-
-✓ Planning Integrity Support
-```
-
-Future Justification:
-
-```txt
-Multi-Dependency Chains
-
-Critical Path Analysis
-
-Parallel Execution Modeling
-```
-
----
-
-# NEXT PHASE
-
-```txt
-Phase 7A — AI Orchestration Foundation
-```
-
-Build Order:
-
-```txt
-7A — Orchestration Contracts
-
-7B — Task Definitions
-
-7C — Execution Context
-
-7D — Model Routing Contracts
-
-7E — Orchestration Verification
-```
-
-Do NOT Build Yet:
-
-```txt
-OpenAI Integrations
-
-Anthropic Integrations
-
-Prompt Systems
-
-External Model Providers
-```
-
----
-
-# PHASE 7 GOAL
-
-Create a deterministic orchestration boundary that can eventually support:
-
-```txt
-OpenAI
-
-Anthropic
-
-Future Models
-
-Custom Models
-```
-
-Without allowing any AI provider into:
-
-```txt
-Replay
-
-Behavioral Intelligence
-
-Opportunity Detection
-
-Decision Engine
-
-Workflow Runtime
-
-Workflow Coordinator
-
-Workflow Graph
-
-Execution Strategy
-
-Planning Verification
-```
-
----
-
-# CURRENT CHECKPOINT
-
-Branch:
-
-```txt
-architecture/core-system
+packages/runtime/src/ai-orchestration
 ```
 
 Status:
 
 ```txt
-Stable
+BOUNDARY COMPLETE THROUGH CAPABILITY PLANNING
 ```
+
+Completed:
+
+```txt
+✓ Orchestration Contracts
+
+✓ Task Definitions
+
+✓ Execution Context Runtime
+
+✓ Model Routing
+
+✓ Orchestration Verification
+
+✓ Provider Adapter Foundation
+
+✓ Capability Planning
+```
+
+Current AI Orchestration Subsystems:
+
+```txt
+orchestration-contracts.ts
+orchestration-policy.ts
+orchestration-runtime.ts
+orchestration.types.ts
+
+task-definition.types.ts
+task-definition-policy.ts
+task-definition-runtime.ts
+
+execution-context.types.ts
+execution-context-runtime.ts
+execution-context-validator.ts
+
+capability-planning/
+
+model-routing/
+
+orchestration-verification/
+
+provider-adapters/
+```
+
+---
+
+# CURRENT VERIFIED METRICS
 
 Typecheck:
 
@@ -709,14 +404,144 @@ Typecheck:
 PASS
 ```
 
-Tests:
+Runtime Test Files:
 
 ```txt
-82 Passing
+54 Passed
 ```
 
-Ready For:
+Runtime Tests:
 
 ```txt
-Phase 7A — AI Orchestration Foundation
+105 Passed
+```
+
+Validation Commands:
+
+```bash
+pnpm turbo run typecheck
+
+pnpm --filter @phantombot/runtime test
+```
+
+Latest Verified Output:
+
+```txt
+Test Files 54 passed (54)
+
+Tests 105 passed (105)
+```
+
+---
+
+# NEXT PHASE
+
+```txt
+Phase 8A — Provider Boundary Enforcement
+```
+
+Goal:
+
+```txt
+Formally enforce that provider-specific logic cannot leak into deterministic runtime, planning, routing, or capability layers.
+```
+
+Build Next:
+
+```txt
+packages/runtime/src/ai-orchestration/provider-boundary
+```
+
+Recommended Files:
+
+```txt
+provider-boundary.types.ts
+
+provider-boundary-policy.ts
+
+provider-boundary-validator.ts
+
+provider-boundary-runtime.ts
+
+index.ts
+```
+
+Recommended Tests:
+
+```txt
+provider-boundary-validator.test.ts
+
+provider-boundary-runtime.test.ts
+
+provider-boundary-runtime.replay.test.ts
+```
+
+Do NOT Build Yet:
+
+```txt
+OpenAI Adapter
+
+Anthropic Adapter
+
+Prompt Execution
+
+External Model Calls
+
+Content Generation
+
+Provider API Clients
+```
+
+---
+
+# CURRENT ARCHITECTURE SNAPSHOT
+
+```txt
+Replay
+↓
+Session Intelligence
+↓
+Opportunity Engine
+↓
+Decision Engine
+↓
+Workflow Runtime
+↓
+Workflow Coordinator
+↓
+Workflow Graph
+↓
+Execution Strategy
+↓
+Planning Verification
+↓
+AI Orchestration Boundary
+↓
+Execution Context
+↓
+Capability Planning
+↓
+Model Routing
+↓
+Provider Adapter Boundary
+↓
+Future Model Providers
+```
+
+Verified State:
+
+```txt
+Branch: architecture/core-system
+
+Typecheck: PASS
+
+Runtime Test Files: 54
+
+Runtime Tests: 105
+
+Current Phase: Phase 7G Complete
+
+Next Phase: Phase 8A — Provider Boundary Enforcement
+
+Status: Stable
 ```

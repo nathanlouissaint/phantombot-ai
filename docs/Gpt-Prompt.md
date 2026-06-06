@@ -1,75 +1,29 @@
-# PHANTOMBOT AI CONTINUATION
+We are continuing PhantomBot AI.
 
-Project:
-PhantomBot AI
+Current branch:
 
-Branch:
+```txt
 architecture/core-system
+```
 
-Roadmap:
-v3.0
+Current verified state:
 
-Vision:
-The deterministic AI operating system for commerce.
+```txt
+Typecheck: PASS
+Runtime Test Files: 54 Passed
+Runtime Tests: 105 Passed
+Current Phase: Phase 7G Complete
+Next Phase: Phase 8A — Provider Boundary Enforcement
+```
 
-CORE RULES
+Completed architecture:
 
-Forbidden inside deterministic layers:
-
-- Date.now()
-- new Date()
-- Math.random()
-- crypto.randomUUID()
-
-Forbidden:
-
-- OpenAI
-- Anthropic
-- SQL
-- Persistence
-- Database Access
-- External APIs
-
-Replay Invariant:
-
-Events
-↓
+```txt
 Replay
 ↓
-Same State
+Session Intelligence
 ↓
-Same Opportunities
-↓
-Same Decisions
-↓
-Same Plans
-↓
-Same Strategies
-
-Current Verified Baseline
-
-Typecheck:
-PASS
-
-Test Files:
-31 Passed
-
-Tests:
-74 Passed
-
-These numbers must never decrease.
-
-CURRENT ARCHITECTURE
-
-Commerce Events
-↓
-Replay Infrastructure
-↓
-Session Intelligence Projection
-↓
-Deterministic Shopper State
-↓
-Opportunity Detection
+Opportunity Engine
 ↓
 Decision Engine
 ↓
@@ -83,126 +37,117 @@ Execution Strategy
 ↓
 Planning Verification
 ↓
-Future AI Orchestration
+AI Orchestration Boundary
+↓
+Execution Context
+↓
+Capability Planning
+↓
+Model Routing
+↓
+Provider Adapter Boundary
+↓
+Future Model Providers
+```
 
-COMPLETED
+Recently completed:
 
-✓ Phase 1 — Product Foundation
+```txt
+Phase 7G — Capability Planning
+```
 
-✓ Phase 2 — Deterministic Runtime Foundation
+Files added:
 
-✓ Phase 3 — Infrastructure Isolation
+```txt
+packages/runtime/src/ai-orchestration/capability-planning/capability.types.ts
+packages/runtime/src/ai-orchestration/capability-planning/capability-planner.ts
+packages/runtime/src/ai-orchestration/capability-planning/capability-validator.ts
+packages/runtime/src/ai-orchestration/capability-planning/index.ts
+packages/runtime/src/ai-orchestration/capability-planning/__tests__/capability-planner.test.ts
+packages/runtime/src/ai-orchestration/capability-planning/__tests__/capability-planner.replay.test.ts
+packages/runtime/src/ai-orchestration/capability-planning/__tests__/capability-validator.test.ts
+```
 
-✓ Phase 4A — Runtime Coordination Foundation
+Validation passed:
 
-✓ Phase 4B — Deterministic Worker Runtime
+```txt
+pnpm turbo run typecheck
 
-✓ Phase 5A — Behavioral Intelligence Foundation
+pnpm --filter @phantombot/runtime test
 
-✓ Phase 6A — Decision Engine Foundation
+Test Files 54 passed
+Tests 105 passed
+```
 
-✓ Phase 6B — Workflow Runtime
+Core rules:
 
-✓ Workflow Coordinator
+```txt
+Do not build OpenAI integration.
+Do not build Anthropic integration.
+Do not execute prompts.
+Do not call external model APIs.
+Do not add persistence, SQL, database access, or external APIs inside deterministic runtime.
+Do not use Date.now(), new Date(), Math.random(), or crypto.randomUUID() inside deterministic layers.
+```
 
-✓ Workflow Graph
+Next task:
 
-✓ Execution Strategy
+```txt
+Build Phase 8A — Provider Boundary Enforcement
+```
 
-✓ Strategy Verification
+Goal:
 
-CURRENT PHASE
+```txt
+Create deterministic enforcement that provider-specific logic cannot leak into replay, behavioral intelligence, opportunity detection, decision engine, workflow runtime, workflow graph, execution strategy, planning verification, capability planning, or model routing.
+```
 
-→ Phase 6C — Planning Integrity
+Recommended directory:
 
-IMPLEMENTED
+```txt
+packages/runtime/src/ai-orchestration/provider-boundary
+```
 
-Directory:
+Build:
 
-packages/runtime/src/planning-verification
-
-Files:
-
-planning-verification.types.ts
-
-decision-plan-validator.ts
-
-workflow-validator.ts
-
-strategy-validator.ts
-
-dependency-validator.ts
-
-planning-verification.ts
+```txt
+provider-boundary.types.ts
+provider-boundary-policy.ts
+provider-boundary-validator.ts
+provider-boundary-runtime.ts
+index.ts
+```
 
 Tests:
 
-planning-verification.test.ts
+```txt
+provider-boundary-validator.test.ts
+provider-boundary-runtime.test.ts
+provider-boundary-runtime.replay.test.ts
+```
 
-planning-verification.replay.test.ts
+After implementation, run:
 
-dependency-validator.test.ts
+```bash
+pnpm turbo run typecheck
 
-DELIVERED
+pnpm --filter @phantombot/runtime test
+```
 
-✓ Decision → Plan Validation
+Expected minimum:
 
-✓ Plan → Workflow Validation
-
-✓ Workflow → Strategy Validation
-
-✓ Dependency Validation
-
-✓ Cycle Detection
-
-✓ Replay Verification
-
-NEXT TASK
-
-Build:
-
-orphan-validator.ts
-
-Purpose:
-
-- Detect orphan plans
-- Detect orphan workflows
-- Detect orphan strategies
-
-Then:
-
-1. Add orphan-validator tests
-2. Integrate orphan validation into planning-verification.ts
-3. Run typecheck
-4. Run runtime tests
-5. Preserve deterministic guarantees
-
-AFTER ORPHAN DETECTION
-
-Build:
-
-Cross-Layer Consistency Validation
-
-Verify:
-
-Decision
-↓
-Plan
-↓
-Workflow
-↓
-Strategy
-
-forms a complete chain with no gaps.
-
-Do not redesign existing phases.
-
-Extend the architecture forward from the current verified state only.
+```txt
+Typecheck: PASS
+Runtime Test Files: >= 57 Passed
+Runtime Tests: >= 108 Passed
+```
 
 Always provide:
 
-- CLI commands
-- File contents
-- Tests
-- Expected test counts
-- Architectural reasoning
+```txt
+CLI commands
+file contents
+tests
+expected test counts
+architectural reasoning
+```
