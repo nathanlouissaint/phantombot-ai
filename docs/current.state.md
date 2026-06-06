@@ -1,6 +1,6 @@
 # PHANTOMBOT AI — CURRENT STATE
 
-Last Updated: Phase 7G Complete
+Last Updated: Phase 8A Complete
 
 ---
 
@@ -25,13 +25,13 @@ Status: Stable
 
 Typecheck: PASS
 
-Runtime Test Files: 54 Passed
+Runtime Test Files: 57 Passed
 
-Runtime Tests: 105 Passed
+Runtime Tests: 112 Passed
 
-Current Phase: Phase 7G Complete
+Current Phase: Phase 8A Complete
 
-Next Phase: Phase 8A — Provider Boundary Enforcement
+Next Phase: Phase 8B — Provider Adapter Execution Isolation
 ```
 
 These values must never decrease.
@@ -75,11 +75,15 @@ Planning Verification
 ↓
 AI Orchestration Boundary
 ↓
+Execution Context
+↓
 Capability Planning
 ↓
 Model Routing
 ↓
-Provider Adapters
+Provider Boundary Enforcement
+↓
+Provider Adapter Boundary
 ↓
 Future Model Providers
 ↓
@@ -103,8 +107,10 @@ Workflow Coordinator
 Workflow Graph
 Execution Strategy
 Planning Verification
+Execution Context
 Capability Planning
 Model Routing
+Provider Boundary Enforcement
 ```
 
 Forbidden APIs:
@@ -121,12 +127,14 @@ Also forbidden inside deterministic runtime:
 ```txt
 OpenAI
 Anthropic
+Provider SDKs
 Persistence
 SQL
 Database Access
 External APIs
 Prompt Execution
 Model Calls
+Network Access
 ```
 
 ---
@@ -155,6 +163,8 @@ Same Context
 Same Capability Plans
 ↓
 Same Routing Decisions
+↓
+Same Boundary Decisions
 ```
 
 All planning and orchestration boundary layers must remain:
@@ -211,6 +221,8 @@ Provider Agnostic
 ✓ Phase 7F — Provider Adapter Foundation
 
 ✓ Phase 7G — Capability Planning
+
+✓ Phase 8A — Provider Boundary Enforcement
 ```
 
 ---
@@ -248,6 +260,8 @@ Capability Planning
 ↓
 Model Routing
 ↓
+Provider Boundary Enforcement
+↓
 Provider Adapter Boundary
 ↓
 Future Model Providers
@@ -255,7 +269,7 @@ Future Model Providers
 
 ---
 
-# PHASE 7G — CAPABILITY PLANNING
+# PHASE 8A — PROVIDER BOUNDARY ENFORCEMENT
 
 Status:
 
@@ -266,33 +280,47 @@ COMPLETE
 Directory:
 
 ```txt
-packages/runtime/src/ai-orchestration/capability-planning
+packages/runtime/src/ai-orchestration/provider-boundary
 ```
 
 Delivered:
 
 ```txt
-✓ Provider-Independent Capability Contracts
+✓ Provider Boundary Contracts
 
-✓ Capability Requirement Definitions
+✓ Provider Boundary Policy
 
-✓ Capability Plan Construction
+✓ Provider Boundary Validation
 
-✓ Capability Plan Validation
+✓ Provider Boundary Runtime
 
-✓ Replay-Safe Capability Planning
+✓ Replay-Safe Enforcement
 
-✓ Deterministic Task-to-Capability Mapping
+✓ Deterministic Violation Detection
+
+✓ Provider Leak Detection
+
+✓ Provider SDK Leak Detection
+
+✓ Prompt Leak Detection
+
+✓ External Call Detection
+
+✓ Persistence Leak Detection
+
+✓ Non-Deterministic API Detection
 ```
 
 Files:
 
 ```txt
-capability.types.ts
+provider-boundary.types.ts
 
-capability-planner.ts
+provider-boundary-policy.ts
 
-capability-validator.ts
+provider-boundary-validator.ts
+
+provider-boundary-runtime.ts
 
 index.ts
 ```
@@ -300,37 +328,37 @@ index.ts
 Tests:
 
 ```txt
-capability-planner.test.ts
+provider-boundary-validator.test.ts
 
-capability-planner.replay.test.ts
+provider-boundary-runtime.test.ts
 
-capability-validator.test.ts
+provider-boundary-runtime.replay.test.ts
 ```
 
 Produces:
 
 ```txt
-CapabilityRequirement[]
+ProviderBoundaryValidationResult
 
-CapabilityPlan
+ProviderBoundaryViolation[]
+
+ProviderBoundaryReport
 ```
 
 Architectural Purpose:
 
 ```txt
-Translate orchestration tasks into provider-independent capability requirements before model routing occurs.
+Guarantee that provider-specific logic cannot leak into deterministic runtime, orchestration, planning, routing, or capability layers.
 ```
 
 Pipeline Addition:
 
 ```txt
-OrchestrationTask
-↓
-ExecutionContext
-↓
 CapabilityPlan
 ↓
 RoutingDecision
+↓
+ProviderBoundaryReport
 ↓
 ProviderAdapter
 ```
@@ -348,7 +376,7 @@ packages/runtime/src/ai-orchestration
 Status:
 
 ```txt
-BOUNDARY COMPLETE THROUGH CAPABILITY PLANNING
+BOUNDARY COMPLETE THROUGH PROVIDER ENFORCEMENT
 ```
 
 Completed:
@@ -367,6 +395,8 @@ Completed:
 ✓ Provider Adapter Foundation
 
 ✓ Capability Planning
+
+✓ Provider Boundary Enforcement
 ```
 
 Current AI Orchestration Subsystems:
@@ -389,6 +419,8 @@ capability-planning/
 
 model-routing/
 
+provider-boundary/
+
 orchestration-verification/
 
 provider-adapters/
@@ -407,13 +439,13 @@ PASS
 Runtime Test Files:
 
 ```txt
-54 Passed
+57 Passed
 ```
 
 Runtime Tests:
 
 ```txt
-105 Passed
+112 Passed
 ```
 
 Validation Commands:
@@ -427,9 +459,9 @@ pnpm --filter @phantombot/runtime test
 Latest Verified Output:
 
 ```txt
-Test Files 54 passed (54)
+Test Files 57 passed (57)
 
-Tests 105 passed (105)
+Tests 112 passed (112)
 ```
 
 ---
@@ -437,31 +469,31 @@ Tests 105 passed (105)
 # NEXT PHASE
 
 ```txt
-Phase 8A — Provider Boundary Enforcement
+Phase 8B — Provider Adapter Execution Isolation
 ```
 
 Goal:
 
 ```txt
-Formally enforce that provider-specific logic cannot leak into deterministic runtime, planning, routing, or capability layers.
+Guarantee provider adapters can only execute after deterministic orchestration, planning, routing, and provider-boundary enforcement have completed successfully.
 ```
 
 Build Next:
 
 ```txt
-packages/runtime/src/ai-orchestration/provider-boundary
+packages/runtime/src/ai-orchestration/provider-execution
 ```
 
 Recommended Files:
 
 ```txt
-provider-boundary.types.ts
+provider-execution.types.ts
 
-provider-boundary-policy.ts
+provider-execution-policy.ts
 
-provider-boundary-validator.ts
+provider-execution-validator.ts
 
-provider-boundary-runtime.ts
+provider-execution-runtime.ts
 
 index.ts
 ```
@@ -469,11 +501,11 @@ index.ts
 Recommended Tests:
 
 ```txt
-provider-boundary-validator.test.ts
+provider-execution-validator.test.ts
 
-provider-boundary-runtime.test.ts
+provider-execution-runtime.test.ts
 
-provider-boundary-runtime.replay.test.ts
+provider-execution-runtime.replay.test.ts
 ```
 
 Do NOT Build Yet:
@@ -488,6 +520,8 @@ Prompt Execution
 External Model Calls
 
 Content Generation
+
+Provider SDK Clients
 
 Provider API Clients
 ```
@@ -523,25 +557,67 @@ Capability Planning
 ↓
 Model Routing
 ↓
+Provider Boundary Enforcement
+↓
 Provider Adapter Boundary
 ↓
 Future Model Providers
 ```
 
-Verified State:
+---
+
+# PROVIDER GOVERNANCE STATUS
+
+Provider-specific execution is still prohibited.
+
+Current allowed architecture:
+
+```txt
+Capability Planning
+↓
+Model Routing
+↓
+Provider Boundary Enforcement
+↓
+Provider Adapter Boundary
+```
+
+Current prohibited architecture:
+
+```txt
+Capability Planning
+↓
+OpenAI
+
+Capability Planning
+↓
+Anthropic
+
+Model Routing
+↓
+Prompt Execution
+
+Decision Engine
+↓
+Provider SDK
+```
+
+---
+
+# VERIFIED STATE
 
 ```txt
 Branch: architecture/core-system
 
 Typecheck: PASS
 
-Runtime Test Files: 54
+Runtime Test Files: 57
 
-Runtime Tests: 105
+Runtime Tests: 112
 
-Current Phase: Phase 7G Complete
+Current Phase: Phase 8A Complete
 
-Next Phase: Phase 8A — Provider Boundary Enforcement
+Next Phase: Phase 8B — Provider Adapter Execution Isolation
 
 Status: Stable
 ```
